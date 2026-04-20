@@ -122,6 +122,10 @@ install_sdrangel() {
     sudo snap install sdrangel
     sudo snap connect sdrangel:raw-usb
     sudo snap connect sdrangel:audio-record
+    sudo systemctl enable --now snapd.socket
+    sudo systemctl enable --now snapd.apparmor
+    sudo snap refresh
+    # sudo snap warnings
 }
 
 
