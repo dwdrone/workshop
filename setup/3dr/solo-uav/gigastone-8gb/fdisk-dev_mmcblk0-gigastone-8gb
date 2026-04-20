@@ -1,0 +1,9 @@
+Disk /dev/mmcblk0: 7.44 GiB, 7988051968 bytes, 15601664 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x00000000
+
+Device         Boot Start      End  Sectors  Size Id Type
+/dev/mmcblk0p1       8192 15601663 15593472  7.4G  b W95 FAT32
