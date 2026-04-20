@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "version 20260417-1128"
+echo "version 20260420-1716"
 
 INSTALL_USER="kali"
 INSTALL_GROUP="${INSTALL_USER}"
