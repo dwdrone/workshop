@@ -1,0 +1,22 @@
+Feb 13 18:07:28 3dr_solo local0.info +226 pixrc: main: built Jan 26 2020 18:39:40
+Feb 13 18:07:28 3dr_solo local0.info +247 pixrc: main: rcSourceIps: 10.1.1.1,127.0.0.1
+Feb 13 18:07:28 3dr_solo local0.info +252 pixrc: main: rcDestPort:  5005
+Feb 13 18:07:28 3dr_solo local0.info +255 pixrc: main: rcDsmDev:    /dev/ttymxc2
+Feb 13 18:07:28 3dr_solo local0.info +255 pixrc: main: Throttle PWM in  1000...2000
+Feb 13 18:07:28 3dr_solo local0.info +255 pixrc: main:          PWM out 1000...1900
+Feb 13 18:07:28 3dr_solo local0.info +255 pixrc: main: Other    PWM in  1000...2000
+Feb 13 18:07:28 3dr_solo local0.info +255 pixrc: main:          PWM out 1000...2000
+Feb 13 18:07:28 3dr_solo local0.info +255 pixrc: udp: listening on port 5005
+Feb 13 18:07:28 3dr_solo local0.info +731 pixrc: udp: failsafe start after 448 ms of inactivity
+Feb 13 18:07:28 3dr_solo local0.info +743 pixrc: serial: started
+Feb 13 18:07:28 3dr_solo local0.info +743 pixrc: serial: failsafe start
+Feb 13 18:07:29 3dr_solo local0.info +030 pixrc: udp: failsafe end after 747 ms
+Feb 13 18:07:29 3dr_solo local0.info +044 pixrc: serial: failsafe end
+Feb 13 18:07:30 3dr_solo local0.info +854 pixrc: cmd: uplink attached
+Feb 13 18:07:38 3dr_solo local0.info +291 pixrc: a:21,m:748,n:465,u:0,d:0,o:0,q:0,udp=50036,ser=21178
+Feb 13 18:07:48 3dr_solo local0.info +291 pixrc: a:20,m:30,n:500,u:0,d:0,o:0,q:0,udp=30218,ser=21508
+Feb 13 18:07:58 3dr_solo local0.info +296 pixrc: a:20,m:41,n:500,u:0,d:0,o:0,q:1,udp=40680,ser=20758
+Feb 13 18:08:08 3dr_solo local0.info +291 pixrc: a:20,m:25,n:500,u:0,d:0,o:0,q:0,udp=25282,ser=20915
+Feb 13 18:08:18 3dr_solo local0.info +291 pixrc: a:20,m:35,n:500,u:0,d:0,o:0,q:0,udp=35136,ser=20845
+Feb 13 18:08:28 3dr_solo local0.info +291 pixrc: a:20,m:32,n:500,u:0,d:0,o:0,q:0,udp=32464,ser=20923
+Feb 13 18:08:38 3dr_solo local0.info +293 pixrc: a:20,m:35,n:500,u:0,d:0,o:0,q:0,udp=34554,ser=20942

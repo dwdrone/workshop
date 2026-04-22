@@ -1,0 +1,28 @@
+Feb 13 18:07:28 3dr_solo local4.info +167 tlm: Installing SIGQUIT signal handler
+Feb 13 18:07:28 3dr_solo local4.info +218 tlm: telem_forwarder starting: built Jan 26 2020 18:39:50
+Feb 13 18:07:28 3dr_solo local4.info +220 tlm: serial port: /dev/ttymxc1
+Feb 13 18:07:28 3dr_solo local4.info +229 tlm: serial baudrate: 921600
+Feb 13 18:07:28 3dr_solo local4.info +229 tlm: serial hw flow: true
+Feb 13 18:07:28 3dr_solo local4.info +229 tlm: UDP dest port: 14550
+Feb 13 18:07:28 3dr_solo local4.info +230 tlm: use GPS time: true
+Feb 13 18:07:28 3dr_solo local4.info +230 tlm: tos: 0x7f
+Feb 13 18:07:28 3dr_solo local4.info +230 tlm: opened port 14560
+Feb 13 18:07:28 3dr_solo local4.info +232 tlm: opened serial port /dev/ttymxc1
+Feb 13 18:07:28 3dr_solo local4.err +339 tlm: poll returned zero
+Feb 13 18:07:28 3dr_solo local4.info +446 tlm: adding new client 10.1.1.10:38680
+Feb 13 18:07:28 3dr_solo local4.info +446 tlm: ARP: Seen (254/17) from 10.1.1.10:38680 client=0x764dec44
+Feb 13 18:07:28 3dr_solo local4.info +447 tlm: ARP: Seen (57/57) from 10.1.1.10:38680 client=0x764dec44
+Feb 13 18:07:30 3dr_solo local4.info +581 tlm: adding new client 127.0.0.1:50288
+Feb 13 18:07:30 3dr_solo local4.info +581 tlm: ARP: Seen (255/0) from 127.0.0.1:50288 client=0x764dec44
+Feb 13 18:07:30 3dr_solo local4.info +846 tlm: SET_MODE: from 127.0.0.1:50288
+Feb 13 18:07:30 3dr_solo local4.info +846 tlm: SET_MODE: len=6 src_sys=255 src_comp=0
+Feb 13 18:07:30 3dr_solo local4.info +846 tlm: SET_MODE: custom_mode=0.0.0.5 target_system=1 base_mode=1
+Feb 13 18:07:38 3dr_solo local4.info +241 tlm: down: 255 m/s, 8395 b/s, 9%; up: 7 m/s, 187 b/s, 0%
+Feb 13 18:07:38 3dr_solo local4.info +241 tlm: up err: 0, 2, 0
+Feb 13 18:07:48 3dr_solo local4.info +242 tlm: down: 92 m/s, 2838 b/s, 3%; up: 3 m/s, 54 b/s, 0%
+Feb 13 18:07:58 3dr_solo local4.info +243 tlm: down: 92 m/s, 2829 b/s, 3%; up: 3 m/s, 53 b/s, 0%
+Feb 13 18:08:08 3dr_solo local4.info +243 tlm: down: 90 m/s, 2759 b/s, 2%; up: 4 m/s, 92 b/s, 0%
+Feb 13 18:08:18 3dr_solo local4.info +244 tlm: down: 57 m/s, 1651 b/s, 1%; up: 3 m/s, 53 b/s, 0%
+Feb 13 18:08:28 3dr_solo local4.info +245 tlm: down: 114 m/s, 3595 b/s, 3%; up: 4 m/s, 110 b/s, 0%
+Feb 13 18:08:28 3dr_solo local4.info +245 tlm: seq errs: (1,1):2
+Feb 13 18:08:38 3dr_solo local4.info +245 tlm: down: 119 m/s, 3651 b/s, 3%; up: 7 m/s, 125 b/s, 0%
