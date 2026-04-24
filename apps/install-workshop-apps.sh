@@ -3,7 +3,9 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "version 20260420-1716"
+echo "version 20260423-1848"
+
+# TODO: mavlink wireshark plugin
 
 INSTALL_USER="kali"
 INSTALL_GROUP="${INSTALL_USER}"
@@ -23,6 +25,10 @@ sudo apt install -y git
 #sudo apt install -y python3 python3-pip python3-venv openjdk-17-jdk curl unzip pipenv
 sudo apt install -y python3 python3-pip python3-venv openjdk-21-jdk curl unzip pipenv
 
+# --- Install flatpack ---
+echo "--- Installing additional wifi tools ---"
+sudo apt install hcxdumptool hcxtools
+
 # --- Install snapd ---
 echo "--- Installing and starting snapd ---"
 sudo apt install -y snapd
@@ -33,6 +39,7 @@ sudo systemctl start snapd
 echo "--- Installing flatpack ---"
 sudo apt install -y flatpak
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
 
 # --- Apps Directory ---
 echo "--- Creating apps directory ---"
