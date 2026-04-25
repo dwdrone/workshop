@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 15 – SiK Telemetry Radios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-presentation">PRESENTATION</span><span style="color:var(--dw-gray); font-size:0.7em;">30 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">SiK Telemetry Radios</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 15</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 2 – RF Communications</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Understand the SiK radio architecture and its role in UAV telemetry</div>
+    <div class="objective-box">Identify the key configuration parameters and their security implications</div>
+    <div class="objective-box">Explain how MAVLink data flows over the SiK link</div>
+    <div class="objective-box">Describe how an attacker can passively eavesdrop on SiK telemetry</div>
+</section>
+
+<section>
+    <h2>What is a SiK Radio?</h2>
+    <p><strong>SiK</strong> is an open-source firmware for small 915 MHz and 433 MHz telemetry radios used in UAVs.</p>
+<p><strong>Original development:</strong> 3DR (now open-source community)</p>
+<p><strong>Hardware:</strong> SiLabs Si1000 microcontroller + RF transceiver</p>
+<p><img src="../img/holybro_sik_radio.png" style="width: 50%; height: auto;" align="center"></p>
+</section>
+
+<section>
+    <h2>Common hardware implementations:</h2>
+    <ul>
+<li>
+<p>3DR Radio v1/v2 (original)</p>
+</li>
+<li>
+<p>RFDesign RFD900 (longer range)</p>
+</li>
+<li>
+<p>HolyBro SiK Telemetry Radio (current consumer version)</p>
+</li>
+<li>
+<p>mRo SiK Radio</p>
+</li>
+</ul>
+<p><strong>Physical connectors:</strong></p>
+<ul>
+<li>
+<p><strong>Air side:</strong> connected to the UAV flight controller via UART (JST-GH or Molex)</p>
+</li>
+<li>
+<p><strong>Ground side:</strong> connects to the GCS laptop via USB (appears as <code>/dev/ttyUSB0</code>)</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>SiK Frequency Bands</h2>
+    <table>
+<thead>
+<tr>
+<th>Region</th>
+<th>Frequency</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>USA</td>
+<td>900–928 MHz (ISM)</td>
+<td>FCC Part 15.247</td>
+</tr>
+<tr>
+<td>Europe</td>
+<td>433 MHz</td>
+<td>ETSI EN 300 220</td>
+</tr>
+<tr>
+<td>Australia</td>
+<td>915–928 MHz</td>
+<td>ACMA Class license</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Transmit power:</strong> Up to +20 dBm (100 mW) typical; RFD900 up to +30 dBm (1W)</p>
+<p><strong>Range:</strong> 300m – 40km depending on antenna and power</p>
+</section>
+
+<section>
+    <h2>SiK Protocol Overview</h2>
+    <p>SiK radios create a transparent serial link — they are invisible to the MAVLink stack.
+<strong>How it works:</strong></p>
+<ol>
+<li>
+<p>Air radio receives bytes on its UART from the flight controller</p>
+</li>
+<li>
+<p>Data is packetized and transmitted over 915 MHz using FHSS (Frequency Hopping Spread Spectrum)</p>
+</li>
+<li>
+<p>Ground radio receives packets, reassembles, and outputs bytes to GCS over USB serial</p>
+</li>
+<li>
+<p>GCS application (QGroundControl, MAVProxy) reads MAVLink from the USB serial port</p>
+</li>
+</ol>
+<p><strong>From the GCS perspective:</strong> the radio link is transparent — it looks like a direct serial connection to the flight controller.</p>
+</section>
+
+<section>
+    <h2>Key SiK Parameters</h2>
+    <p>Parameters are configured using AT commands over the serial port (similar to a modem):</p>
+<pre><code class="language-bash"># Connect to SiK radio
+minicom -D /dev/ttyUSB0 -b 57600
+
+# Enter AT command mode (type +++ with no newline)
++++
+
+# Read all parameters
+ATI5
+
+# Common parameters:
+# S1: SERIAL_SPEED (57600 default)
+# S3: AIR_SPEED (64 kbps default)
+# S5: NUM_CHANNELS (50 FHSS channels)
+# S6: DUTY_CYCLE (100% default)
+# S7: LBT_RSSI (Listen Before Talk)
+# S9: MAVLINK (1 = MAVLink framing)
+# S10: OPPRESEND (0 = off)
+# S15: ENCRYPT_LEVEL (0 = none)
+# S16: ENCRYPTION_KEY (32 hex chars)
+</code></pre>
+</section>
+
+<section>
+    <h2>NET ID: The Critical Security Parameter</h2>
+    <p><strong>NET ID</strong> (<code>S3</code> — actually part of FHSS configuration) determines which radio network this device belongs to.</p>
+<p>Two SiK radios communicate only if they have the same NET ID.</p>
+<p><strong>Default NET ID: 25</strong></p>
+<div class="warning-box"><strong>Security implication:</strong> Any SiK radio with NET ID 25 will receive all traffic from any other SiK radio with NET ID 25. </div>
+<pre><code class="language-bash"># View NET ID
+ATI5
+# Look for: S3: NET_ID=25
+
+# Change NET ID
+ATS3=42   # Set to 42
+AT&amp;W      # Write to EEPROM
+ATZ       # Reboot radio
+</code></pre>
+</section>
+
+<section>
+    <h2>Encryption: Available but Rarely Used</h2>
+    <p>SiK supports <strong>AES-128</strong> encryption:</p>
+<pre><code class="language-bash"># Enable encryption
+ATS15=1         # Set encryption level to 1 (AES-128)
+ATS16=AABBCCDDEEFF00112233445566778899  # 32-char hex key
+AT&amp;W            # Write to EEPROM
+ATZ             # Reboot
+
+# Both air and ground radio must use the same key
+</code></pre>
+<p><strong>Why encryption is rarely deployed:</strong></p>
+<ul>
+<li>
+<p>Requires manual key management (no key exchange protocol)</p>
+</li>
+<li>
+<p>AES key must be provisioned on both radios</p>
+</li>
+<li>
+<p>No documentation in most manufacturer quick-start guides</p>
+</li>
+<li>
+<p>Default is always off</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Frequency Hopping Spread Spectrum (FHSS)</h2>
+    <p>SiK uses FHSS to improve reliability and reduce interference:</p>
+<ul>
+<li>
+<p>Hops between 50 channels in the 900 MHz band</p>
+</li>
+<li>
+<p>Hop sequence is deterministic based on NET ID</p>
+</li>
+<li>
+<p>Both radios must be synchronized to the same sequence</p>
+</li>
+</ul>
+<div class="warning-box"><strong>Security implication:</strong> FHSS provides modest obscurity but not security. An attacker with HackRF:</div>
+<ul>
+<li>
+<p>Can scan all 50 channels to find active hops</p>
+</li>
+<li>
+<p>Can reconstruct the hop sequence after observing a few hops</p>
+</li>
+<li>
+<p>Can capture full traffic with a wideband capture (20 MHz bandwidth covers the whole band)</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>SiK Eavesdropping Attack</h2>
+    <p><strong>Passive eavesdropping</strong> requires:</p>
+<ol>
+<li>
+<p>HackRF One (covers 900 MHz band)</p>
+</li>
+<li>
+<p>GQRX or URH for signal capture</p>
+</li>
+<li>
+<p>Knowledge of SiK modulation (FSK, 64 kbps default)</p>
+</li>
+</ol>
+<p><strong>Passive replay attack:</strong></p>
+<ol>
+<li>
+<p>Capture a MAVLink packet sequence (e.g., a specific command)</p>
+</li>
+<li>
+<p>Retransmit the captured I/Q samples using HackRF</p>
+</li>
+<li>
+<p>Flight controller receives the replayed MAVLink command</p>
+</li>
+</ol>
+</section>
+
+<section>
+    <h2>SiK Active Attack</h2>
+    <p><strong>Active attack (requires TX capability):</strong></p>
+<ol>
+<li>
+<p>Configure a second SiK radio with matching NET ID</p>
+</li>
+<li>
+<p>Connect to MAVProxy</p>
+</li>
+<li>
+<p>Send arbitrary MAVLink commands</p>
+</li>
+</ol>
+<pre><code class="language-bash"># Connect a SiK radio with matching NET ID to the victim drone
+mavproxy.py --master=/dev/ttyUSB0 --baud=57600
+
+# Now you have full MAVLink access
+MAV&gt; param show *
+MAV&gt; mode GUIDED
+</code></pre>
+</section>
+
+<section>
+    <h2>Mitigation Recommendations</h2>
+    <table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Passive eavesdropping</td>
+<td>Enable AES-128 encryption with a strong random key</td>
+</tr>
+<tr>
+<td>NET ID interception</td>
+<td>Use a non-default, random NET ID</td>
+</tr>
+<tr>
+<td>Replay attack</td>
+<td>Enable MAVLink v2 message signing</td>
+</tr>
+<tr>
+<td>Active injection</td>
+<td>Restrict MAVLink system ID (SYSID_MYGCS parameter)</td>
+</tr>
+<tr>
+<td>Physical access</td>
+<td>Secure the radio hardware from tamper</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>Summary</h2>
+    <table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Secure Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NET ID</td>
+<td>25</td>
+<td>Random, unique per deployment</td>
+</tr>
+<tr>
+<td>AIR SPEED</td>
+<td>64 kbps</td>
+<td>Acceptable</td>
+</tr>
+<tr>
+<td>ENCRYPTION</td>
+<td>Off</td>
+<td>AES-128 with unique key</td>
+</tr>
+<tr>
+<td>MAVLink signing</td>
+<td>Off</td>
+<td>On (v2 only)</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>

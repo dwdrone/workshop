@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 22 – Lab: Adversarial Forensics on UAS Logs</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-lab">LAB</span><span style="color:var(--dw-gray); font-size:0.7em;">30 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">Lab: Adversarial Forensics on UAS Logs</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 22</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 2 – Payloads & Logging</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Extract flight logs from the 3DR Solo via SSH</div>
+    <div class="objective-box">Analyze logs to reconstruct flight history, GPS track, and operator behavior</div>
+    <div class="objective-box">Identify mission waypoints and sensitive locations</div>
+    <div class="objective-box">Demonstrate the forensic intelligence value of UAS logs</div>
+</section>
+
+<section>
+    <h2>Background</h2>
+    <p>"Adversarial forensics" means applying forensic analysis techniques from the perspective of an attacker or intelligence collector — not as a defender performing incident response, but as someone who has gained unauthorized access to the drone's data.</p>
+</section>
+
+<section>
+    <h2>Phase 1: Access and List Logs</h2>
+    <pre><code class="language-bash"># Ensure you are connected to SoloLink WiFi
+# SSH to the Solo UAV
+ssh root@10.1.1.10
+
+# Find the log directory
+find / -name &quot;*.BIN&quot; 2&gt;/dev/null
+ls -lh /log/
+
+# List all available logs with timestamps
+ls -lht /log/*.BIN | head -20
+</code></pre>
+<p><strong>Note:</strong> Each <code>.BIN</code> file is one flight session. The file number is sequential — the highest number is the most recent flight.</p>
+</section>
+
+<section>
+    <h2>Phase 2: Exfiltrate Logs</h2>
+    <pre><code class="language-bash"># From your laptop (separate terminal, not the SSH session):
+mkdir -p ~/workshop/logs/solo/
+
+# Copy all logs from the Solo
+scp -o StrictHostKeyChecking=no root@10.1.1.10:/log/*.BIN ~/workshop/logs/solo/
+
+# Verify files were transferred
+ls -lh ~/workshop/logs/solo/
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 3: Analyze with MAVExplorer (CLI)</h2>
+    <pre><code class="language-bash">cd ~/workshop/logs/solo/
+
+# List all message types in the log (what data was recorded)
+mavlogdump.py 1.BIN --types
+
+# Extract GPS track
+mavlogdump.py 1.BIN --type GPS &gt; gps-track.txt
+cat gps-track.txt | head -20
+
+# Extract mode change history
+mavlogdump.py 1.BIN --type MODE
+# Shows: timestamp, mode number, mode name
+
+# Extract arm/disarm events
+mavlogdump.py 1.BIN --type EV
+# Event 10 = Armed, Event 11 = Disarmed
+
+# Extract parameter snapshot (how the drone was configured)
+mavlogdump.py 1.BIN --type PARM | grep &quot;FS_\|ARMING\|FENCE&quot;
+
+# Extract any mission commands that were executed
+mavlogdump.py 1.BIN --type CMD
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 4: Reconstruct the Flight Path</h2>
+    <h3>Option A: QGroundControl</h3>
+<ul>
+<li>
+<p>Open QGroundControl on your laptop</p>
+</li>
+<li>
+<p>Analyze → Log Files → Open Log → select a .BIN file</p>
+</li>
+<li>
+<p>Click the "Flight Data" tab</p>
+</li>
+<li>
+<p>The flight path is displayed on the map</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Phase 4: Reconstruct the Flight Path</h2>
+    <h3>Option B: Python Script</h3>
+<pre><code class="language-python"># Save as: extract_gps.py
+from pymavlink import mavutil
+import sys
+
+logfile = sys.argv[1] if len(sys.argv) &gt; 1 else '1.BIN'
+
+print(&quot;timestamp_us,latitude,longitude,altitude_m,ground_speed&quot;)
+
+log = mavutil.mavlink_connection(logfile)
+while True:
+    msg = log.recv_match(type='GPS', blocking=True)
+    if msg is None:
+        break
+    if msg.Status &gt;= 3:  # Only if we have a GPS fix
+        print(f&quot;{msg.TimeUS},{msg.Lat/1e7:.7f},{msg.Lng/1e7:.7f},{msg.Alt/100:.1f},{msg.Spd:.1f}&quot;)
+</code></pre>
+<pre><code class="language-bash">python3 extract_gps.py ~/workshop/logs/solo/1.BIN &gt; flight-path.csv
+
+# Open in spreadsheet or mapping tool
+# Or visualize with gpx:
+cat flight-path.csv | head -5
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 4: Reconstruct the Flight Path</h2>
+    <h3>Option C: Convert to KML for Google Earth</h3>
+<pre><code class="language-bash"># Using mavlogdump to generate KML
+# (Requires Mission Planner on Windows, or use the Python approach)
+mavlogdump.py 1.BIN --type GPS --format kml &gt; flight.kml
+# Open flight.kml in Google Earth or Google Maps (import file)
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 5: Intelligence Extraction</h2>
+    <p>Answer these questions from the log data:</p>
+<ol>
+<li>
+<p>How many total flights are in the log directory?</p>
+</li>
+<li>
+<p>How long was the longest flight?</p>
+</li>
+<li>
+<p>What is the home location (takeoff point)?</p>
+</li>
+<li>
+<p>What was the maximum altitude reached?</p>
+</li>
+<li>
+<p>Were any autonomous mission waypoints executed?</p>
+</li>
+</ol>
+</section>
+
+<section>
+    <h2>Phase 5: Intellegnece Extraction (Answers)</h2>
+    <pre><code class="language-bash"># 1. How many total flights are in the log directory?
+ls /log/*.BIN | wc -l
+
+# 2. How long was the longest flight?
+# (Check start/end timestamps in each BIN file)
+mavlogdump.py 1.BIN --type GPS | awk -F',' 'NR==1{start=$1} END{print (NR&gt;1)? &quot;Duration (us):&quot;, $1-start : &quot;No GPS data&quot;}'
+
+# 3. What is the home location (takeoff point)?
+mavlogdump.py 1.BIN --type GPS | head -5
+# First GPS fix = likely home location
+
+# 4. What was the maximum altitude reached?
+mavlogdump.py 1.BIN --type GPS | awk -F',' 'NR&gt;1 &amp;&amp; $5 &gt; max {max=$5} END{print &quot;Max alt (cm):&quot;, max}'
+
+# 5. Were any autonomous mission waypoints executed?
+mavlogdump.py 1.BIN --type CMD | grep -v &quot;^#&quot;
+</code></pre>
+</section>
+
+<section>
+    <h2>Plot the operator's home location:</h2>
+    <pre><code class="language-python">from pymavlink import mavutil
+
+log = mavutil.mavlink_connection('1.BIN')
+first_gps = None
+
+while True:
+    msg = log.recv_match(type='GPS', blocking=True)
+    if msg is None:
+        break
+    if msg.Status &gt;= 3 and first_gps is None:
+        first_gps = msg
+        print(f&quot;First GPS fix (likely takeoff/home location):&quot;)
+        print(f&quot;  Latitude:  {msg.Lat/1e7:.7f}&quot;)
+        print(f&quot;  Longitude: {msg.Lng/1e7:.7f}&quot;)
+        print(f&quot;  Altitude:  {msg.Alt/100:.1f} m&quot;)
+        print(f&quot;  Google Maps: https://maps.google.com/?q={msg.Lat/1e7},{msg.Lng/1e7}&quot;)
+        break
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 6: Check for Anomalous Events</h2>
+    <pre><code class="language-bash"># Check for failsafe triggers
+mavlogdump.py 1.BIN --type ERR
+
+# Check for GPS loss events
+mavlogdump.py 1.BIN --type EV | grep -i &quot;gps\|fail\|lost&quot;
+
+# Check for parameter changes during flight (unusual)
+mavlogdump.py 1.BIN --type PARM
+
+# Check status messages (text log)
+mavlogdump.py 1.BIN --type MSG
+</code></pre>
+</section>
+
+<section>
+    <h2>Findings Template</h2>
+    <p>Fill in for the most recent log file:</p>
+<table>
+<thead>
+<tr>
+<th>Intelligence Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total flights in log</td>
+<td></td>
+</tr>
+<tr>
+<td>First flight date/time</td>
+<td></td>
+</tr>
+<tr>
+<td>Most recent flight date/time</td>
+<td></td>
+</tr>
+<tr>
+<td>Home/takeoff location (lat, lon)</td>
+<td></td>
+</tr>
+<tr>
+<td>Maximum altitude</td>
+<td></td>
+</tr>
+<tr>
+<td>Longest flight duration</td>
+<td></td>
+</tr>
+<tr>
+<td>Autonomous waypoints used</td>
+<td>Yes / No</td>
+</tr>
+<tr>
+<td>Failsafe events</td>
+<td></td>
+</tr>
+<tr>
+<td>Notable error messages</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>Discussion Questions</h2>
+    <ol>
+<li>
+<p>If this drone was used by a journalist to photograph a protest, what could an attacker learn from these logs?</p>
+</li>
+<li>
+<p>How would you detect that logs had been tampered with or deleted?</p>
+</li>
+<li>
+<p>Should log files be protected with encryption at rest? What would be required?</p>
+</li>
+<li>
+<p>As a drone operator running sensitive missions, what OPSEC measures would you implement to reduce forensic exposure?</p>
+</li>
+</ol>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>
