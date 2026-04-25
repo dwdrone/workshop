@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 01 – Intro - UAS Cybersecurity</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-presentation">PRESENTATION</span><span style="color:var(--dw-gray); font-size:0.7em;">60 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">Intro - UAS Cybersecurity</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 01</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 1 – UAV & Drone</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Instructors</h2>
+    <p><strong>Ron Broberg</strong>
+<img src="../img/ron.png" style="width: 40%; height: auto;" align="right"></p>
+<ul>
+<li>
+<p>Penetration Tester @ Dark Wolf</p>
+</li>
+<li>
+<p>Previously @ Lockheed Martin</p>
+</li>
+<li>
+<p>Specializing in UAS, IoT and RF </p>
+</li>
+<li>
+<p>DC31 Black Badge Winner IoT CTF</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Instructors</h2>
+    <p><strong>Rudy Mendoza</strong>
+<img src="../img/Rudy.jpg" style="width: 40%; height: auto;" align="right"></p>
+<ul>
+<li>
+<p>Penetration Tester @ Dark Wolf</p>
+</li>
+<li>
+<p>Previoulsy with the U.S Air Force</p>
+</li>
+<li>
+<p>Specializing in UAS, and IoT</p>
+</li>
+<li>
+<p>DC31 Black Badge Winner IoT CTF</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Intro to UAS</div>
+    <div class="objective-box">Identify the UAS threat landscape</div>
+    <div class="objective-box">Understand attack vectors targeting UAS</div>
+    <div class="objective-box">Apply core security principles to UAS contexts</div>
+    <div class="objective-box">Survey the regulatory and framework landscape</div>
+</section>
+
+<section>
+    <h2>What is a UAS?</h2>
+    <ul>
+<li>
+<p>Definition of UAS</p>
+</li>
+<li>
+<p>Components: UAV, ground control, communication links</p>
+</li>
+<li>
+<p>Civilian and military applications</p>
+</li>
+<li>
+<p>Rapid growth in usage</p>
+</li>
+<li>
+<p>Increasing complexity</p>
+</li>
+</ul>
+<p><img src="../img/Spot+with+Sparrow+.jpg" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;"></p>
+</section>
+
+<section>
+    <h2>UAS Cybersecurity Overview</h2>
+    <ul>
+<li>
+<p>Unique cyber risks for UAS</p>
+</li>
+<li>
+<p>Integration of IT and OT systems</p>
+</li>
+<li>
+<p>High-value targets</p>
+</li>
+<li>
+<p>Potential for remote attacks</p>
+</li>
+<li>
+<p>Need for robust security</p>
+</li>
+</ul>
+<p><img src="../img/Man-In-The-Middle-Attack-On-Drone-32.ppm" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;"></p>
+</section>
+
+<section>
+    <h2>Threat Landscape (1/3)</h2>
+    <h3>Eavesdropping</h3>
+<ul>
+<li>
+<p>Intercepting unencrypted telemetry, video feeds, or RC commands</p>
+</li>
+<li>
+<p>Passive capture with SDR hardware (RTL-SDR, HackRF One)</p>
+</li>
+<li>
+<p>Reveals flight paths, operator locations, payload data</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Threat Landscape (2/3)</h2>
+    <h3>GPS Spoofing</h3>
+<ul>
+<li>
+<p>Feeding false GPS signals to the drone's GNSS receiver</p>
+</li>
+<li>
+<p>Causes the drone to fly to unintended locations or return to a false home</p>
+</li>
+<li>
+<p>Cheap SDR hardware can generate spoofed signals</p>
+</li>
+</ul>
+<h3>Command Hijacking (C2 Takeover)</h3>
+<ul>
+<li>
+<p>Injecting unauthorized MAVLink or RC commands</p>
+</li>
+<li>
+<p>Requires access to the control channel</p>
+</li>
+<li>
+<p>Can force landing, RTL, or custom waypoints</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Threat Landscape (3/3)</h2>
+    <h3>Data Theft</h3>
+<ul>
+<li>
+<p>Exfiltrating flight logs, mission plans, camera footage</p>
+</li>
+<li>
+<p>Often accomplished via GCS network access or physical access to SD cards</p>
+</li>
+</ul>
+<h3>Denial of Service (DoS)</h3>
+<ul>
+<li>
+<p>RF jamming of control link or GPS</p>
+</li>
+<li>
+<p>Network flooding of GCS WiFi</p>
+</li>
+<li>
+<p>Forces drone into failsafe behavior (hover, RTL, land)</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Attack Vectors</h2>
+    <table>
+<thead>
+<tr>
+<th>Vector</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wireless interception</td>
+<td>Passive SDR capture of unencrypted RF</td>
+</tr>
+<tr>
+<td>Network attacks</td>
+<td>Access to GCS WiFi network, then web/SSH exploitation</td>
+</tr>
+<tr>
+<td>Malware</td>
+<td>Malicious firmware or GCS application</td>
+</tr>
+<tr>
+<td>Physical access</td>
+<td>Direct UART/USB access to flight controller or GCS</td>
+</tr>
+<tr>
+<td>Insider threat</td>
+<td>Operator with malicious intent</td>
+</tr>
+<tr>
+<td>Supply chain</td>
+<td>Compromised firmware from manufacturer or update server</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>Security Principles: CIA+</h2>
+    <p><strong>Confidentiality</strong> – Only authorized parties can read data</p>
+<p><strong>Integrity</strong> – Data has not been modified in transit</p>
+<p><strong>Availability</strong> – Systems and data are accessible when needed</p>
+<p><strong>Authenticity</strong> – The source of data or commands is verified
+<strong>Non-repudiation</strong> – Actions cannot be denied after the fact</p>
+<div class="warning-box">All five properties apply to UAS. A drone that cannot verify command authenticity is vulnerable to spoofing. A drone with no integrity checking on firmware updates is vulnerable to implants.</div>
+</section>
+
+<section>
+    <h2>Authentication & Access Control</h2>
+    <ul>
+<li>
+<p>Default credentials on GCS web interfaces (admin/admin, root/root)</p>
+</li>
+<li>
+<p>Lack of mutual authentication between drone and GCS</p>
+</li>
+<li>
+<p>Unprotected MAVLink endpoints (no system ID enforcement)</p>
+</li>
+<li>
+<p>Bluetooth or WiFi pairing with no PIN or certificate</p>
+</li>
+</ul>
+<p><strong>Best practices:</strong></p>
+<ul>
+<li>
+<p>Strong user authentication</p>
+</li>
+<li>
+<p>Role-based access control</p>
+</li>
+<li>
+<p>Multi-factor authentication</p>
+</li>
+<li>
+<p>Secure credential storage</p>
+</li>
+<li>
+<p>Regular access reviews</p>
+</li>
+<li>
+<p>Zero Trust</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Data Protection</h2>
+    <ul>
+<li>
+<p>Data at rest</p>
+</li>
+<li>
+<p>Data in transit</p>
+</li>
+<li>
+<p>Secure data storage</p>
+</li>
+<li>
+<p>Data minimization</p>
+</li>
+<li>
+<p>Regular data backups</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Communication Security</h2>
+    <h3>Telemetry (SiK Radio, 433/915 MHz)</h3>
+<ul>
+<li>
+<p>Optional AES-128 encryption via NET ID parameter</p>
+</li>
+<li>
+<p>Most deployments leave encryption unconfigured</p>
+</li>
+<li>
+<p>Vulnerable to passive eavesdropping and replay</p>
+</li>
+</ul>
+<h3>RC Control</h3>
+<ul>
+<li>
+<p>Older protocols (PWM, PPM, SBUS) have no encryption</p>
+</li>
+<li>
+<p>DSM2/DSMX vulnerable to replay and brute-force</p>
+</li>
+<li>
+<p>FrSky and newer protocols offer binding but limited authentication</p>
+</li>
+</ul>
+<h3>WiFi (GCS Links)</h3>
+<ul>
+<li>
+<p>Often WPA2-PSK with weak or default passphrases</p>
+</li>
+<li>
+<p>Narrow channel bandwidth technique can crack WPA2 handshakes</p>
+</li>
+<li>
+<p>Unencrypted HTTP management interfaces common</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Software & Firmware Security</h2>
+    <ul>
+<li>
+<p>Firmware images often unsigned — no verification before flashing</p>
+</li>
+<li>
+<p>Over-the-air updates frequently unencrypted and unauthenticated</p>
+</li>
+<li>
+<p>Embedded Linux systems with no hardening (open ports, root login, no firewall)</p>
+</li>
+<li>
+<p>Android GCS applications leak credentials, API keys, or hardcoded endpoints</p>
+</li>
+</ul>
+<p><strong>Key technique:</strong> Binwalk for firmware extraction and analysis</p>
+</section>
+
+<section>
+    <h2>Physical Security</h2>
+    <ul>
+<li>
+<p>UART debug ports left accessible on production hardware</p>
+</li>
+<li>
+<p>JTAG/SWD debug interfaces enabled</p>
+</li>
+<li>
+<p>SD card accessible without authentication</p>
+</li>
+<li>
+<p>USB interfaces expose ADB, MSC, or serial console</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Regulatory & Framework Landscape</h2>
+    <table>
+<thead>
+<tr>
+<th>Framework</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FAA Part 107</td>
+<td>US commercial UAS operations</td>
+</tr>
+<tr>
+<td>FAA Part 89</td>
+<td>Remote ID requirements</td>
+</tr>
+<tr>
+<td>NIST CSF</td>
+<td>Risk-based cybersecurity framework</td>
+</tr>
+<tr>
+<td>NIST SP 800-53</td>
+<td>Security controls catalog</td>
+</tr>
+<tr>
+<td>ISO/IEC 27001</td>
+<td>Information security management</td>
+</tr>
+<tr>
+<td>ETSI EN 303 645</td>
+<td>Consumer IoT device security</td>
+</tr>
+<tr>
+<td>ENISA IoT Baseline</td>
+<td>IoT security recommendations</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>Risk Assessment Process</h2>
+    <ol>
+<li>
+<p><strong>Identify</strong> assets and systems in scope</p>
+</li>
+<li>
+<p><strong>Assess</strong> threats and vulnerabilities</p>
+</li>
+<li>
+<p><strong>Determine</strong> likelihood and impact</p>
+</li>
+<li>
+<p><strong>Prioritize</strong> risks by severity</p>
+</li>
+<li>
+<p><strong>Mitigate</strong> through controls and configuration</p>
+</li>
+<li>
+<p><strong>Monitor</strong> continuously for new threats</p>
+</li>
+</ol>
+</section>
+
+<section>
+    <h2>Incident Response for UAS</h2>
+    <p>When a UAS security incident occurs:</p>
+<ol>
+<li>
+<p><strong>Detect</strong> — identify anomalous behavior (unexpected flight path, loss of link)</p>
+</li>
+<li>
+<p><strong>Contain</strong> — land the drone safely, isolate the GCS network</p>
+</li>
+<li>
+<p><strong>Analyze</strong> — review flight logs, telemetry, and GCS logs</p>
+</li>
+<li>
+<p><strong>Remediate</strong> — patch vulnerability, change credentials, update firmware</p>
+</li>
+<li>
+<p><strong>Report</strong> — document findings and lessons learned</p>
+</li>
+</ol>
+</section>
+
+<section>
+    <h2>Case Study: GPS Spoofing Attack</h2>
+    <ul>
+<li>
+<p>Attacker transmits fake GPS signals</p>
+</li>
+<li>
+<p>UAV receives incorrect location data</p>
+</li>
+<li>
+<p>UAV deviates from intended path</p>
+</li>
+<li>
+<p>Potential for loss or hijack</p>
+</li>
+<li>
+<p>Mitigation: multi-sensor navigation</p>
+</li>
+</ul>
+<p><img src="../img/GPS-spoofing-attack-on-GPS-Enabled-Drone-36.ppm" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;"></p>
+</section>
+
+<section>
+    <h2>Case Study: Command Hijacking</h2>
+    <ul>
+<li>
+<p>Attacker intercepts control link</p>
+</li>
+<li>
+<p>Sends unauthorized commands</p>
+</li>
+<li>
+<p>UAV performs unintended actions</p>
+</li>
+<li>
+<p>Risk of crash or theft</p>
+</li>
+<li>
+<p>Mitigation: encrypted control links</p>
+</li>
+</ul>
+<p><img src="../img/Man-In-The-Middle-Attack-On-Drone-32.ppm" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;"></p>
+</section>
+
+<section>
+    <h2>Future Trends</h2>
+    <ul>
+<li>
+<p>AI-driven threat detection</p>
+</li>
+<li>
+<p>Quantum-resistant encryption</p>
+</li>
+<li>
+<p>Autonomous security responses</p>
+</li>
+<li>
+<p>Integration with 5G networks</p>
+</li>
+<li>
+<p>Increased regulatory oversight</p>
+</li>
+</ul>
+<p><img src="../img/drone-swarm-blue-skies.webp" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;"></p>
+</section>
+
+<section>
+    <h2>UAS Cybersecurity Challenges</h2>
+    <ul>
+<li>
+<p>Rapid technology evolution</p>
+</li>
+<li>
+<p>Resource constraints on UAVs</p>
+</li>
+<li>
+<p>Diverse operating environments</p>
+</li>
+<li>
+<p>Balancing usability and security</p>
+</li>
+<li>
+<p>Global regulatory differences</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>UAS Cybersecurity Opportunities</h2>
+    <ul>
+<li>
+<p>Innovation in secure design</p>
+</li>
+<li>
+<p>Collaboration across industries</p>
+</li>
+<li>
+<p>Standardization efforts</p>
+</li>
+<li>
+<p>Advanced threat intelligence</p>
+</li>
+<li>
+<p>Public-private partnerships</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <ul>
+<li>
+<p>UAS are complex systems with a wide attack surface spanning air, ground, and RF</p>
+</li>
+<li>
+<p>Most vulnerabilities stem from missing or misconfigured security controls, not novel exploits</p>
+</li>
+<li>
+<p>Encryption, authentication, and firmware integrity are the most impactful controls</p>
+</li>
+<li>
+<p>Operators and manufacturers share responsibility for secure operation</p>
+</li>
+</ul>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>

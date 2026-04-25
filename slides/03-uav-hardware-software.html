@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 03 – UAV Hardware, Software & Cybersecurity</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-presentation">PRESENTATION</span><span style="color:var(--dw-gray); font-size:0.7em;">60 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">UAV Hardware, Software & Cybersecurity</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 03</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 1 – UAV & Drone</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Identify the major hardware components of a consumer/prosumer UAV</div>
+    <div class="objective-box">Understand the software stack running on each component</div>
+    <div class="objective-box">Map hardware and software components to cybersecurity considerations</div>
+</section>
+
+<section>
+    <h2>UAS Overview</h2>
+    <p>A UAS is not a single device — it is a system of systems.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ID</th>
+<th style="text-align: left;">Subsystem Name</th>
+<th style="text-align: left;">ID</th>
+<th style="text-align: right;">Subsystem Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><strong>Flight Computer</strong></td>
+<td style="text-align: left;">6</td>
+<td style="text-align: right;"><strong>RC Receiver</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><strong>Companion Computer</strong></td>
+<td style="text-align: left;">7</td>
+<td style="text-align: right;"><strong>IMU (Inertial Measurement Unit)</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><strong>Motors &amp; ESC</strong></td>
+<td style="text-align: left;">8</td>
+<td style="text-align: right;"><strong>GPS/GNSS Receiver</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;"><strong>Power Distribution Board</strong></td>
+<td style="text-align: left;">9</td>
+<td style="text-align: right;"><strong>ADS-B Receiver/Transmitter</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;"><strong>Telemetry Radios</strong></td>
+<td style="text-align: left;">10</td>
+<td style="text-align: right;"><strong>Camera / Gimbal</strong></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>1. Flight Controller (Autopilot)</h2>
+    <p>The <strong>flight controller (FC)</strong> is the brain of the drone. It stabilizes the aircraft, interprets RC commands, executes missions, and communicates with the GCS.
+<img src="../img/3dr-cube-ventral.jpeg" style="float: right; width: 400px; margin-left: 20px;"></p>
+</section>
+
+<section>
+    <h2>Flight Controller Common Firmware:</h2>
+    <table>
+<thead>
+<tr>
+<th>Firmware</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ArduPilot</strong></td>
+<td>Open source, broad hardware support, large community</td>
+</tr>
+<tr>
+<td><strong>PX4</strong></td>
+<td>Open source, professional/commercial focus</td>
+</tr>
+<tr>
+<td><strong>DJI Naza</strong></td>
+<td>Proprietary, DJI drones</td>
+</tr>
+<tr>
+<td><strong>Betaflight</strong></td>
+<td>Open source, racing and freestyle FPV</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Hardware platforms:</strong> Pixhawk, Cube Orange, Holybro, MatekSys, SpeedyBee</p>
+<p><strong>OS:</strong> RTOS (NuttX for PX4/ArduPilot on bare metal) or Linux (ArduPilot on Linux)</p>
+</section>
+
+<section>
+    <h2>Flight Computer (Cybersecurity)</h2>
+    <ul>
+<li>
+<p>Parameters stored in EEPROM — readable/writable via MAVLink with no authentication</p>
+</li>
+<li>
+<p>Serial console often accessible via UART with root-equivalent access</p>
+</li>
+<li>
+<p>No secure boot on most commercial flight controllers</p>
+</li>
+<li>
+<p>Firmware update via USB with no signature verification</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>2. Companion Computer</h2>
+    <p>Many advanced drones pair the flight controller with a <strong>companion computer</strong> for higher-level processing.
+<img src="../img/3dr-solo-imx6-dorsal.png" style="float: right; width: 500px; margin-left: 20px;"></p>
+</section>
+
+<section>
+    <h2>Companion Computer Examples:</h2>
+    <ul>
+<li>
+<p>3DR Solo: Freescale iMX6 (ARM Cortex-A9), runs Linux Yocto</p>
+</li>
+<li>
+<p>DJI Manifold: NVIDIA Jetson</p>
+</li>
+<li>
+<p>Generic: Raspberry Pi, NVIDIA Jetson Nano, Intel NUC</p>
+</li>
+</ul>
+<h3>Responsibilities:</h3>
+<ul>
+<li>
+<p>Payload processing (computer vision, object tracking)</p>
+</li>
+<li>
+<p>Advanced mission logic</p>
+</li>
+<li>
+<p>Telemetry forwarding between flight controller and GCS</p>
+</li>
+<li>
+<p>Running companion apps and scripts</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Companion Computer Cybersecurity:</h2>
+    <ul>
+<li>
+<p>Full Linux environment — all Linux attack surface applies</p>
+</li>
+<li>
+<p>Often has SSH enabled with weak or default credentials</p>
+</li>
+<li>
+<p>WiFi access point hosted by companion computer</p>
+</li>
+<li>
+<p>Accessible from GCS network</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>3. Motors & ESC</h2>
+    <p><strong>Brushless DC (BLDC) motors</strong> are standard for consumer and commercial drones.</p>
+<p><img src="../img/uav-motor-annotated.jpeg" style="float: right; width: 500px; margin-left: 20px;"></p>
+</section>
+
+<section>
+    <h2>ESC (Electronic Speed Controller):</h2>
+    <ul>
+<li>
+<p>Converts DC power to 3-phase AC for the BLDC motor</p>
+</li>
+<li>
+<p>Receives PWM or DSHOT signal from flight controller</p>
+</li>
+<li>
+<p>Can be programmed via BLHeliSuite over USB or signal wire</p>
+</li>
+<li>
+<p>BLHeli32 supports firmware updates over the air via the flight controller</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>ESC Cybersecurity:</h2>
+    <ul>
+<li>
+<p>ESC firmware can be modified to alter motor behavior</p>
+</li>
+<li>
+<p>BLHeli passthrough allows reprogramming ESCs through the flight controller</p>
+</li>
+<li>
+<p>DoS: corrupted ESC signal causes motor failure in flight</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>4. Power Distribution Board & BEC</h2>
+    <p><strong>PDB (Power Distribution Board):</strong></p>
+<ul>
+<li>
+<p>Routes battery power to motors, ESC, and other components</p>
+</li>
+<li>
+<p>Some PDBs include a built-in voltage regulator</p>
+</li>
+</ul>
+<p><strong>BEC (Battery Eliminator Circuit):</strong></p>
+<ul>
+<li>
+<p>Steps down battery voltage (11.1V / 14.8V) to regulated 5V or 12V</p>
+</li>
+<li>
+<p>Powers flight controller, servos, and accessories</p>
+</li>
+</ul>
+<p><img src="../img/uav-pdu-amazon.jpeg" style="float: right; width: 300px; margin-left: 20px;"></p>
+</section>
+
+<section>
+    <h2>PDB Cybersecurity:</h2>
+    <ul>
+<li>
+<p>Physical: access to power rails allows hardware implant</p>
+</li>
+<li>
+<p>Shared power bus means a shorted component can affect all subsystems</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>5. Telemetry Radio</h2>
+    <p><strong>SiK Radios (RFDesign, HolyBro, 3DR):</strong></p>
+<ul>
+<li>
+<p>433 MHz (EU/Asia) or 915 MHz (USA)</p>
+</li>
+<li>
+<p>250 mW typical output</p>
+</li>
+<li>
+<p>Bidirectional: carries MAVLink from drone to GCS</p>
+</li>
+<li>
+<p>Parameters: NET ID, AIR SPEED, DUTY CYCLE, ECC</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Telemetry Radio Cybersecurity:</h2>
+    <ul>
+<li>
+<p>AES-128 encryption available but rarely configured</p>
+</li>
+<li>
+<p>Default NET ID (25) means any SiK radio can receive traffic</p>
+</li>
+<li>
+<p>Passive capture with HackRF or RTL-SDR</p>
+</li>
+<li>
+<p>Replay of captured MAVLink frames</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>6. RC Receiver</h2>
+    <p><strong>RC protocols:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PWM</strong></td>
+<td>One wire per channel, no feedback, analog</td>
+</tr>
+<tr>
+<td><strong>PPM</strong></td>
+<td>All channels on one wire, sequential pulses</td>
+</tr>
+<tr>
+<td><strong>SBUS</strong></td>
+<td>Frsky/Futaba serial protocol, inverted UART</td>
+</tr>
+<tr>
+<td><strong>DSM2/DSMX</strong></td>
+<td>Spektrum 2.4 GHz spread spectrum</td>
+</tr>
+<tr>
+<td><strong>CRSF</strong></td>
+<td>ExpressLRS/TBS Crossfire, bidirectional, encrypted</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>RC Cybersecurity:</h2>
+    <ul>
+<li>
+<p>Older protocols (PWM, PPM, SBUS) have no authentication or encryption</p>
+</li>
+<li>
+<p>DSM2 vulnerable to replay attack: capture bind sequence, replay to take over</p>
+</li>
+<li>
+<p>DSMX: harder but still documented vulnerabilities</p>
+</li>
+<li>
+<p>RC jamming forces failsafe behavior (RTL, land, or hover)</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>7. IMU (Inertial Measurement Unit)</h2>
+    <p>Sensors that measure the drone's physical state:</p>
+<ul>
+<li>
+<p><strong>Accelerometers</strong> – measure linear acceleration (3 axes)</p>
+</li>
+<li>
+<p><strong>Gyroscopes</strong> – measure angular velocity (3 axes)</p>
+</li>
+<li>
+<p><strong>Magnetometer/Compass</strong> – measure magnetic heading (3 axes)</p>
+</li>
+<li>
+<p><strong>Barometer</strong> – measure altitude by air pressure</p>
+</li>
+</ul>
+<p><strong>Common IMU chips:</strong> ICM-42688-P, ICM-20689, MPU-6000, MS5611</p>
+</section>
+
+<section>
+    <h2>IMU Cybersecurity:</h2>
+    <ul>
+<li>
+<p>Sensor spoofing: acoustic injection (laser or sound waves at resonant frequency)</p>
+</li>
+<li>
+<p>Magnetic spoofing: external magnetic field corrupts heading</p>
+</li>
+<li>
+<p>Barometric spoofing: localized pressure changes (rare but demonstrated)</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>8. GPS / GNSS Receiver</h2>
+    <p>Provides absolute position (latitude, longitude, altitude) and time.</p>
+<p><strong>Satellite constellations:</strong></p>
+<ul>
+<li>
+<p>GPS (US) – L1: 1575.42 MHz</p>
+</li>
+<li>
+<p>GLONASS (Russia)</p>
+</li>
+<li>
+<p>BeiDou (China)</p>
+</li>
+<li>
+<p>Galileo (EU)</p>
+</li>
+</ul>
+<p><strong>Common receivers:</strong></p>
+<ul>
+<li>
+<p>u-blox NEO-7N (3DR Solo)</p>
+</li>
+<li>
+<p>u-blox M8/M9/F9 series</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>GNSS Cybersecurity:</h2>
+    <ul>
+<li>
+<p>GPS signals are unencrypted and unauthenticated — anyone can spoof them</p>
+</li>
+<li>
+<p>GPS spoofing demonstrated against DJI, commercial, and military drones</p>
+</li>
+<li>
+<p>Inertial navigation (dead reckoning) as fallback is limited</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>9. ADS-B/ Remote ID</h2>
+    <p><strong>Automatic Dependent Surveillance-Broadcast (ADS-B):</strong></p>
+<ul>
+<li>
+<p>1090 MHz</p>
+</li>
+<li>
+<p>Broadcasts: ICAO address, position, altitude, velocity, callsign</p>
+</li>
+<li>
+<p>Standard in manned aviation; increasingly required for UAV</p>
+</li>
+</ul>
+<p><strong>ADS-B In</strong> (receive only): drone listens for nearby aircraft, avoids collision
+<strong>ADS-B Out</strong> (transmit): drone broadcasts its own position</p>
+</section>
+
+<section>
+    <h2>ADSB Cybersecurity:</h2>
+    <ul>
+<li>
+<p>ADS-B is unauthenticated — trivially spoofable</p>
+</li>
+<li>
+<p>False aircraft injection causes GCS/autopilot alerts</p>
+</li>
+<li>
+<p>Suppression of own signal causes detection gap</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>10. Camera & Gimbal</h2>
+    <p><strong>Camera types:</strong></p>
+<ul>
+<li>
+<p>GoPro (WiFi-enabled, HTTP API)</p>
+</li>
+<li>
+<p>DJI integrated cameras</p>
+</li>
+<li>
+<p>Thermal / multispectral sensors</p>
+</li>
+<li>
+<p>FPV cameras (analog or digital)</p>
+</li>
+</ul>
+<p><strong>Gimbal:</strong></p>
+<ul>
+<li>
+<p>2-axis or 3-axis stabilization</p>
+</li>
+<li>
+<p>Controlled via MAVLink or dedicated serial protocol</p>
+</li>
+<li>
+<p>Some support pan/tilt from GCS</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Camera Cybersecurity:</h2>
+    <ul>
+<li>
+<p>GoPro WiFi exposes HTTP API (port 80) — no authentication on older models</p>
+</li>
+<li>
+<p>Analog video downlink is unencrypted and eavesdroppable</p>
+</li>
+<li>
+<p>Digital video streams (RTP/RTSP) often unencrypted on local WiFi</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Assessment Summary by Component</h2>
+    <table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Key Vulnerabilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flight controller</td>
+<td>UART shell, unsigned firmware, unauthenticated MAVLink</td>
+</tr>
+<tr>
+<td>Companion computer</td>
+<td>SSH default creds, open ports, no hardening</td>
+</tr>
+<tr>
+<td>RC receiver</td>
+<td>No encryption (PWM/PPM/SBUS), DSM2 replay</td>
+</tr>
+<tr>
+<td>Telemetry radio</td>
+<td>Unencrypted by default, global NET ID</td>
+</tr>
+<tr>
+<td>GPS</td>
+<td>Spoofable — unencrypted satellite signals</td>
+</tr>
+<tr>
+<td>GoPro / camera</td>
+<td>Unauthenticated HTTP API, unencrypted video</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>BLHeli passthrough, firmware modification</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>
