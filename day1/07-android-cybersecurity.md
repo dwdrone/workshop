@@ -47,7 +47,7 @@ adb devices
 # Should show: <serial>  device
 ```
 
-**Key ADB commands:**
+## Key ADB commands:
 
 | Command | Purpose |
 |---------|---------|
@@ -60,7 +60,8 @@ adb devices
 | `adb backup -apk -all -f backup.ab` | Full device backup |
 | `adb bugreport` | Collect diagnostic info |
 
-**Extract an installed APK:**
+## Extract an installed APK:
+
 ```bash
 # Find package name
 adb shell pm list packages | grep -i solex
@@ -74,7 +75,7 @@ adb pull /data/app/com.solex.app-1/base.apk solex.apk
 
 ---
 
-## Static Analysis: APKtool & Jadx
+## Static Analysis: APKtool 
 
 **APKtool** – decompiles APK to smali bytecode and resources
 
@@ -88,6 +89,7 @@ apktool d solex.apk -o solex_decoded/
 #   res/                  (layouts, strings, drawables)
 #   smali/                (Dalvik bytecode — harder to read)
 ```
+## Static Analysis: JADX
 
 **Jadx** – decompiles APK directly to readable Java source
 
@@ -99,7 +101,7 @@ jadx-gui solex.apk
 jadx solex.apk -d solex_java/
 ```
 
-**What to look for in static analysis:**
+## What to look for in static analysis:
 
 ```bash
 # Hardcoded credentials, API keys, secrets
@@ -136,7 +138,7 @@ frida-ps -U
 frida -U -n "com.solex.app" -e "Java.perform(function(){ ... })"
 ```
 
-**Common Frida hooks:**
+## Common Frida hooks:**
 - Hook `SharedPreferences.getString()` — intercept stored values
 - Hook `OkHttpClient` or `HttpURLConnection` — capture network requests
 - Hook cryptographic functions — extract keys

@@ -125,8 +125,11 @@
 adb devices
 # Should show: &lt;serial&gt;  device
 </code></pre>
-<p><strong>Key ADB commands:</strong></p>
-<table>
+</section>
+
+<section>
+    <h2>Key ADB commands:</h2>
+    <table>
 <thead>
 <tr>
 <th>Command</th>
@@ -168,8 +171,11 @@ adb devices
 </tr>
 </tbody>
 </table>
-<p><strong>Extract an installed APK:</strong></p>
-<pre><code class="language-bash"># Find package name
+</section>
+
+<section>
+    <h2>Extract an installed APK:</h2>
+    <pre><code class="language-bash"># Find package name
 adb shell pm list packages | grep -i solex
 
 # Get APK path
@@ -181,7 +187,7 @@ adb pull /data/app/com.solex.app-1/base.apk solex.apk
 </section>
 
 <section>
-    <h2>Static Analysis: APKtool & Jadx</h2>
+    <h2>Static Analysis: APKtool</h2>
     <p><strong>APKtool</strong> – decompiles APK to smali bytecode and resources</p>
 <pre><code class="language-bash"># Decompile
 apktool d solex.apk -o solex_decoded/
@@ -192,15 +198,22 @@ apktool d solex.apk -o solex_decoded/
 #   res/                  (layouts, strings, drawables)
 #   smali/                (Dalvik bytecode — harder to read)
 </code></pre>
-<p><strong>Jadx</strong> – decompiles APK directly to readable Java source</p>
+</section>
+
+<section>
+    <h2>Static Analysis: JADX</h2>
+    <p><strong>Jadx</strong> – decompiles APK directly to readable Java source</p>
 <pre><code class="language-bash"># GUI version
 jadx-gui solex.apk
 
 # CLI version
 jadx solex.apk -d solex_java/
 </code></pre>
-<p><strong>What to look for in static analysis:</strong></p>
-<pre><code class="language-bash"># Hardcoded credentials, API keys, secrets
+</section>
+
+<section>
+    <h2>What to look for in static analysis:</h2>
+    <pre><code class="language-bash"># Hardcoded credentials, API keys, secrets
 grep -r &quot;password\|secret\|key\|token&quot; solex_java/ --include=&quot;*.java&quot;
 
 # Network endpoints
@@ -230,8 +243,11 @@ frida-ps -U
 # Attach to a running app
 frida -U -n &quot;com.solex.app&quot; -e &quot;Java.perform(function(){ ... })&quot;
 </code></pre>
-<p><strong>Common Frida hooks:</strong></p>
-<ul>
+</section>
+
+<section>
+    <h2>Common Frida hooks:**</h2>
+    <ul>
 <li>
 <p>Hook <code>SharedPreferences.getString()</code> — intercept stored values</p>
 </li>
