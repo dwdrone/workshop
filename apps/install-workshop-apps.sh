@@ -59,6 +59,10 @@ install_wireshark() {
     # sudo dpkg-reconfigure wireshark-common # Select 'Yes' when prompted
     sudo usermod -aG wireshark ${INSTALL_USER}
     # Note: The 'vagrant' user will need to log out and back in for group changes to take effect.
+    mkdir -p /home/kali/.local/lib/wireshark/plugins
+    cp ../files/bit32.lua /home/kali/.local/lib/wireshark/plugins
+    cp ../files/mavlink_2_common.lua /home/kali/.local/lib/wireshark/plugins
+    
 } 
 
 # --- Install JADX-GUI ---
