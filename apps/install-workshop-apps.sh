@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "version 20260423-1848"
+echo "version 20260425-2140"
 
 # TODO: mavlink wireshark plugin
 
@@ -11,7 +11,7 @@ INSTALL_USER="kali"
 INSTALL_GROUP="${INSTALL_USER}"
 HOME_DIR="/home/${INSTALL_USER}"
 APP_DIR="${HOME_DIR}/workshop/apps"
-echo "Starting app installation for Dark Wolf workshop for user ${USER} on Ubuntu 24.04 and similar"
+echo "Starting app installation for Dark Wolf workshop for user ${USER} on Kali Rolling 2026.1  and similar"
 
 # Update and Upgrade system
 echo "--- Updating and upgrading system packages ---"
@@ -208,8 +208,11 @@ setup_python_app_venv() {
 
 # Install Frida
 install_frida() {
-    setup_python_app_venv "frida" "frida-tools"
+    setup_python_app_venv "frida" "frida-tools==14.8.1"
+    cd /home/kali/workshop/apps/frida
+    git clone https://github.com/rootbsd/fridump3
 }
+
 
 # Install Sikw00f
 install_sikw00f() {
