@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 07 – Introduction to Android Cybersecurity</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-presentation">PRESENTATION</span><span style="color:var(--dw-gray); font-size:0.7em;">30 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">Introduction to Android Cybersecurity</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 07</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 1 – Ground Control</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Understand the Android security model as it applies to GCS applications</div>
+    <div class="objective-box">Learn to use ADB (Android Debug Bridge) for device access</div>
+    <div class="objective-box">Know the key tools for static and dynamic APK analysis</div>
+    <div class="objective-box">Identify common vulnerabilities in Android GCS applications</div>
+</section>
+
+<section>
+    <h2>Android Security Model</h2>
+    <p><strong>Key concepts:</strong></p>
+<ul>
+<li>
+<p>Each app runs in an isolated <strong>sandbox</strong> with a unique Linux UID</p>
+</li>
+<li>
+<p>Apps request <strong>permissions</strong> declared in AndroidManifest.xml</p>
+</li>
+<li>
+<p><strong>Intents</strong> allow inter-app communication (a common attack surface)</p>
+</li>
+<li>
+<p><strong>APK</strong> (Android Package Kit) — the app distribution format, a signed ZIP</p>
+</li>
+</ul>
+<p><strong>Relevant to GCS apps:</strong></p>
+<ul>
+<li>
+<p>Many GCS apps request dangerous permissions: LOCATION, CAMERA, STORAGE, INTERNET, BLUETOOTH</p>
+</li>
+<li>
+<p>Apps connecting to drones via WiFi may store credentials insecurely</p>
+</li>
+<li>
+<p>Apps may have network endpoints hard-coded in plaintext</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>ADB: Android Debug Bridge</h2>
+    <p>ADB is the primary tool for interacting with Android devices from a computer.</p>
+<p><strong>Setup:</strong></p>
+<pre><code class="language-bash"># Enable Developer Options on the Android device:
+# Settings → About Phone → Tap &quot;Build Number&quot; 7 times
+
+# Enable USB Debugging:
+# Settings → Developer Options → USB Debugging: ON
+
+# Verify device is connected
+adb devices
+# Should show: &lt;serial&gt;  device
+</code></pre>
+</section>
+
+<section>
+    <h2>Key ADB commands:</h2>
+    <table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>adb devices</code></td>
+<td>List connected devices</td>
+</tr>
+<tr>
+<td><code>adb shell</code></td>
+<td>Open interactive shell on device</td>
+</tr>
+<tr>
+<td><code>adb pull &lt;remote&gt; &lt;local&gt;</code></td>
+<td>Copy file from device</td>
+</tr>
+<tr>
+<td><code>adb push &lt;local&gt; &lt;remote&gt;</code></td>
+<td>Copy file to device</td>
+</tr>
+<tr>
+<td><code>adb install app.apk</code></td>
+<td>Install an APK</td>
+</tr>
+<tr>
+<td><code>adb logcat</code></td>
+<td>View real-time device logs</td>
+</tr>
+<tr>
+<td><code>adb backup -apk -all -f backup.ab</code></td>
+<td>Full device backup</td>
+</tr>
+<tr>
+<td><code>adb bugreport</code></td>
+<td>Collect diagnostic info</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>Extract an installed APK:</h2>
+    <pre><code class="language-bash"># Find package name
+adb shell pm list packages | grep -i solex
+
+# Get APK path
+adb shell pm path com.solex.app
+
+# Pull the APK
+adb pull /data/app/com.solex.app-1/base.apk solex.apk
+</code></pre>
+</section>
+
+<section>
+    <h2>Static Analysis: APKtool</h2>
+    <p><strong>APKtool</strong> – decompiles APK to smali bytecode and resources</p>
+<pre><code class="language-bash"># Decompile
+apktool d solex.apk -o solex_decoded/
+
+# Output:
+# solex_decoded/
+#   AndroidManifest.xml   (permissions, activities, services)
+#   res/                  (layouts, strings, drawables)
+#   smali/                (Dalvik bytecode — harder to read)
+</code></pre>
+</section>
+
+<section>
+    <h2>Static Analysis: JADX</h2>
+    <p><strong>Jadx</strong> – decompiles APK directly to readable Java source</p>
+<pre><code class="language-bash"># GUI version
+jadx-gui solex.apk
+
+# CLI version
+jadx solex.apk -d solex_java/
+</code></pre>
+</section>
+
+<section>
+    <h2>What to look for in static analysis:</h2>
+    <pre><code class="language-bash"># Hardcoded credentials, API keys, secrets
+grep -r &quot;password\|secret\|key\|token&quot; solex_java/ --include=&quot;*.java&quot;
+
+# Network endpoints
+grep -r &quot;http\|https\|ftp&quot; solex_java/ --include=&quot;*.java&quot;
+
+# Interesting permissions (AndroidManifest.xml)
+grep &quot;uses-permission&quot; solex_decoded/AndroidManifest.xml
+
+# Exported components (potential attack surface)
+grep &quot;exported=\&quot;true\&quot;&quot; solex_decoded/AndroidManifest.xml
+</code></pre>
+</section>
+
+<section>
+    <h2>Dynamic Analysis: Frida</h2>
+    <p><strong>Frida</strong> is a dynamic instrumentation toolkit that allows you to inject JavaScript into running Android processes.</p>
+<p><strong>Setup:</strong></p>
+<pre><code class="language-bash"># Download frida-server for Android ARM
+# Transfer to device and run as root
+adb push frida-server /data/local/tmp/
+adb shell &quot;chmod +x /data/local/tmp/frida-server&quot;
+adb shell &quot;/data/local/tmp/frida-server &amp;&quot;
+
+# On laptop: enumerate running apps
+frida-ps -U
+
+# Attach to a running app
+frida -U -n &quot;com.solex.app&quot; -e &quot;Java.perform(function(){ ... })&quot;
+</code></pre>
+</section>
+
+<section>
+    <h2>Common Frida hooks:**</h2>
+    <ul>
+<li>
+<p>Hook <code>SharedPreferences.getString()</code> — intercept stored values</p>
+</li>
+<li>
+<p>Hook <code>OkHttpClient</code> or <code>HttpURLConnection</code> — capture network requests</p>
+</li>
+<li>
+<p>Hook cryptographic functions — extract keys</p>
+</li>
+<li>
+<p>Bypass SSL pinning to intercept HTTPS traffic</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Common Vulnerabilities in GCS Android Apps</h2>
+    <table>
+<thead>
+<tr>
+<th>Vulnerability</th>
+<th>Where Found</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hardcoded credentials</td>
+<td>Java source, strings.xml</td>
+<td>Full system access</td>
+</tr>
+<tr>
+<td>Insecure data storage</td>
+<td>SharedPreferences, SQLite, SD card</td>
+<td>Credential theft</td>
+</tr>
+<tr>
+<td>Unencrypted network traffic</td>
+<td>HTTP endpoints</td>
+<td>MITM, credential capture</td>
+</tr>
+<tr>
+<td>Exported activities</td>
+<td>AndroidManifest.xml</td>
+<td>Unauthorized access</td>
+</tr>
+<tr>
+<td>Weak SSL/TLS (no cert pinning)</td>
+<td>OkHttp, Retrofit config</td>
+<td>MITM attacks</td>
+</tr>
+<tr>
+<td>Excessive permissions</td>
+<td>AndroidManifest.xml</td>
+<td>Privacy violation</td>
+</tr>
+<tr>
+<td>Logs with sensitive data</td>
+<td>adb logcat</td>
+<td>Information disclosure</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>AndroBugs Framework</h2>
+    <p><strong>AndroBugs</strong> is an automated Android vulnerability scanner.</p>
+<pre><code class="language-bash">python androBugs.py -f solex.apk -t master
+</code></pre>
+<p>Reports vulnerabilities across categories:</p>
+<ul>
+<li>
+<p>Security permission issues</p>
+</li>
+<li>
+<p>Exported components</p>
+</li>
+<li>
+<p>Hardcoded sensitive strings</p>
+</li>
+<li>
+<p>Weak cryptography</p>
+</li>
+<li>
+<p>Insecure random number generation</p>
+</li>
+<li>
+<p>SQLite injection risks</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Summary</h2>
+    <table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADB</td>
+<td>Device access, APK extraction, shell, logs</td>
+</tr>
+<tr>
+<td>APKtool</td>
+<td>Decompile to smali + resources</td>
+</tr>
+<tr>
+<td>Jadx</td>
+<td>Decompile to readable Java</td>
+</tr>
+<tr>
+<td>AndroBugs</td>
+<td>Automated static vulnerability scan</td>
+</tr>
+<tr>
+<td>Frida</td>
+<td>Runtime hooking and dynamic analysis</td>
+</tr>
+<tr>
+<td>Wireshark</td>
+<td>Capture network traffic from the device</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>

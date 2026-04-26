@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 06 – Lab: QGroundControl & Mission Planning</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-lab">LAB</span><span style="color:var(--dw-gray); font-size:0.7em;">60 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">Lab: QGroundControl & Mission Planning</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 06</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 1 – UAV & Drone</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Connect to a live 3DR Solo UAV via QGroundControl</div>
+    <div class="objective-box">Enumerate the drone's parameters and identify security issues</div>
+    <div class="objective-box">Download and examine flight logs</div>
+    <div class="objective-box">Upload a custom mission plan</div>
+</section>
+
+<section>
+    <h2>Prerequisites</h2>
+    <ul>
+<li>
+<p>Laptop with QGroundControl installed</p>
+</li>
+<li>
+<p>3DR Solo powered on (use continuous power adapter — do NOT attach propellers)</p>
+</li>
+<li>
+<p>WiFi connected to SoloLink_XXXXXXXX (password is on the Solo box)</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Phase 1: Connect QGroundControl to the 3DR Solo</h2>
+    <pre><code># 3DR Solo network details:
+SSID:     SoloLink_XXXXXXXX (XXXXXX = last 6 of MAC)
+Password: sololink
+MAVLink:  UDP port 14550
+</code></pre>
+<ol>
+<li>
+<p>Connect your laptop WiFi to SoloLink_XXXXXXXX</p>
+</li>
+<li>
+<p>Open QGroundControl</p>
+</li>
+<li>
+<p>QGC auto-discovers the Solo on UDP 14550</p>
+</li>
+<li>
+<p>Wait for the vehicle to appear — you will see telemetry data populate</p>
+</li>
+</ol>
+<p><strong>Verify:</strong></p>
+<ul>
+<li>
+<p>Battery level appears in top bar</p>
+</li>
+<li>
+<p>GPS fix shows (if outdoors) or "No GPS" (indoors — normal)</p>
+</li>
+<li>
+<p>Vehicle type shows as ArduCopter</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Phase 2: Explore the Vehicle Parameters</h2>
+    <pre><code>In QGC: Vehicle Setup → Parameters
+</code></pre>
+<p><strong>Security-relevant parameters to examine:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>What to check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FS_THR_ENABLE</code></td>
+<td>Throttle failsafe enabled? (should be 1)</td>
+</tr>
+<tr>
+<td><code>FS_GCS_ENABLE</code></td>
+<td>GCS failsafe enabled? (should be 1 or 2)</td>
+</tr>
+<tr>
+<td><code>FS_THR_VALUE</code></td>
+<td>Failsafe threshold value</td>
+</tr>
+<tr>
+<td><code>ARMING_CHECK</code></td>
+<td>Bitmask of pre-arm safety checks</td>
+</tr>
+<tr>
+<td><code>FENCE_ENABLE</code></td>
+<td>Geofence active?</td>
+</tr>
+<tr>
+<td><code>FENCE_RADIUS</code></td>
+<td>Geofence radius in meters</td>
+</tr>
+<tr>
+<td><code>BRD_SAFETYENABLE</code></td>
+<td>Hardware safety switch required?</td>
+</tr>
+<tr>
+<td><code>SYSID_THISMAV</code></td>
+<td>MAVLink system ID of this vehicle</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>Questions:</h2>
+    <ol>
+<li>
+<p>Is the GCS failsafe enabled? What happens if the GCS link drops?</p>
+</li>
+<li>
+<p>Are all arming checks enabled? Which checks are disabled?</p>
+</li>
+<li>
+<p>Is there a geofence configured?</p>
+</li>
+</ol>
+</section>
+
+<section>
+    <h2>Phase 3: Connect via MAVProxy (CLI)</h2>
+    <p>MAVProxy is a command-line MAVLink proxy and GCS. It gives you raw access to the MAVLink interface.</p>
+<pre><code class="language-bash"># Install if needed
+pip install MAVProxy
+
+# Connect to the Solo
+mavproxy.py --master=udp:10.1.1.10:14550
+
+# Once connected:
+MAV&gt; mode STABILIZE        # Change flight mode (drone must be disarmed)
+MAV&gt; param show FS_*       # Show all failsafe parameters
+MAV&gt; param show ARMING*    # Show arming parameters
+MAV&gt; param set FENCE_ENABLE 0  # Disable the geofence
+MAV&gt; wp list               # List current waypoints/mission
+</code></pre>
+<div class="warning-box"><strong>Safety:</strong> Only run mode and parameter changes on a powered but propeller-free drone.</div>
+</section>
+
+<section>
+    <h2>Phase 4: Download and Review Flight Logs</h2>
+    <pre><code>In QGC: Analyze → Log Download
+</code></pre>
+<ol>
+<li>
+<p>Click "Refresh" to list logs on the vehicle</p>
+</li>
+<li>
+<p>Select a recent log file and download it</p>
+</li>
+<li>
+<p>Open the log in QGC's log viewer</p>
+</li>
+</ol>
+<p><strong>What to look for:</strong></p>
+<ul>
+<li>
+<p>GPS track: where has this drone been?</p>
+</li>
+<li>
+<p>Flight events: arming, disarming, mode changes, failsafes</p>
+</li>
+<li>
+<p>RC input: can you identify the pilot's inputs?</p>
+</li>
+<li>
+<p>Battery behavior: voltage curve over the flight</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>CLI alternative — download logs via SSH (Optional)</h2>
+    <pre><code class="language-bash">ssh root@10.1.1.10
+
+# ArduPilot DataFlash logs are stored on the Solo's filesystem
+find / -name &quot;*.BIN&quot; 2&gt;/dev/null
+find / -name &quot;*.log&quot; 2&gt;/dev/null
+
+# Exit SSH
+exit
+
+# Copy a log file to your laptop
+scp root@10.1.1.10:/log/1.BIN .
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 5: Upload a Mission</h2>
+    <ol>
+<li>
+<p>In QGC, click the <strong>Plan</strong> view (map icon)</p>
+</li>
+<li>
+<p>Select your vehicle</p>
+</li>
+<li>
+<p>Click on the map to add waypoints</p>
+</li>
+<li>
+<p>Set altitude for each waypoint (recommend: 10m for lab)</p>
+</li>
+<li>
+<p>Click <strong>Upload</strong> to send the mission to the drone</p>
+</li>
+</ol>
+<p><strong>Observe in MAVProxy:</strong></p>
+<pre><code class="language-bash">MAV&gt; wp list       # Confirm waypoints were received
+MAV&gt; wp getitem 1  # Show details of waypoint 1
+</code></pre>
+<div class="warning-box"><strong>Cybersecurity implication:</strong> The drone accepted the mission with no authentication. Any device on the SoloLink network could upload a mission.</div>
+</section>
+
+<section>
+    <h2>Discussion Questions</h2>
+    <ol>
+<li>
+<p>What would happen if an attacker on the SoloLink WiFi sent a COMMAND_LONG with MAV_CMD_DO_SET_MODE to AUTO?</p>
+</li>
+<li>
+<p>How could you use the downloaded flight logs in a threat intelligence or forensics context?</p>
+</li>
+<li>
+<p>What single parameter change would make the drone the hardest to hijack via MAVLink?</p>
+</li>
+<li>
+<p>In an actual penetration test, how would you document the unauthenticated MAVLink access finding?</p>
+</li>
+</ol>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>

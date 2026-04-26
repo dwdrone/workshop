@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 13 – DroneID & Remote ID</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-presentation">PRESENTATION</span><span style="color:var(--dw-gray); font-size:0.7em;">30 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">DroneID & Remote ID</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 13</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 2 – RF Communications</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Understand the FAA Remote ID requirement and what data is broadcast</div>
+    <div class="objective-box">Compare DJI DroneID and the Open Drone ID standard</div>
+    <div class="objective-box">Understand GPS/GNSS as a foundational UAS technology and attack vector</div>
+    <div class="objective-box">Identify Remote ID security vulnerabilities and spoofing techniques</div>
+</section>
+
+<section>
+    <h2>What is Remote ID?</h2>
+    <div class="warning-box">Remote ID is the ability of a drone in flight to provide identification and location information that can be received by other people through a broadcast signal.
+— FAA</div>
+<p><strong>Regulatory basis:</strong></p>
+<ul>
+<li>
+<p>FAA 14 CFR Part 89 (effective September 2023)</p>
+</li>
+<li>
+<p>Applies to all drones requiring registration (&gt;250g)</p>
+</li>
+<li>
+<p>Drones must broadcast from takeoff to shutdown</p>
+</li>
+</ul>
+<p><strong>Why it matters for security:</strong></p>
+<ul>
+<li>
+<p>Remote ID is designed to identify drones — but it is not authenticated</p>
+</li>
+<li>
+<p>Remote ID data can be spoofed, suppressed, or used to track operators</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Remote ID: What is Broadcast</h2>
+    <p>From takeoff to shutdown, Remote ID broadcasts:</p>
+<table>
+<thead>
+<tr>
+<th>Data Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Drone serial number</td>
+<td>FAA-registered UAS ID</td>
+</tr>
+<tr>
+<td>Drone location</td>
+<td>GPS latitude / longitude</td>
+</tr>
+<tr>
+<td>Drone altitude</td>
+<td>Above ground or sea level</td>
+</tr>
+<tr>
+<td>Drone velocity</td>
+<td>Speed and direction</td>
+</tr>
+<tr>
+<td>Takeoff location</td>
+<td>GPS coordinates of launch point</td>
+</tr>
+<tr>
+<td>Time mark</td>
+<td>UTC timestamp</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Broadcast methods:</strong></p>
+<ul>
+<li>
+<p><strong>WiFi Beacon</strong> (802.11n/ac/ax) — 2.4 or 5 GHz</p>
+</li>
+<li>
+<p><strong>Bluetooth 4 LE advertising</strong> (BLE 4 Legacy or Extended Advertising)</p>
+</li>
+<li>
+<p><strong>Bluetooth 5 Long Range</strong> (for extended range)</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>FAA Compliance Database</h2>
+    <p>The FAA maintains a searchable database of Remote ID compliant drones:</p>
+<ul>
+<li>
+<p><code>https://uasdoc.faa.gov/listDocs?docType=rid&amp;status=accepted</code></p>
+</li>
+<li>
+<p>Searchable by serial number, manufacturer, and model</p>
+</li>
+<li>
+<p>Used to verify whether a drone's Remote ID serial number is legitimate</p>
+</li>
+</ul>
+<p><strong>Security implication:</strong> An attacker can broadcast a spoofed serial number that appears in the FAA database — creating a false identity for an unauthorized drone.</p>
+</section>
+
+<section>
+    <h2>ArduPilot ArduRemoteID</h2>
+    <p>ArduPilot supports Remote ID via an external ESP32 module:</p>
+<ul>
+<li>
+<p><strong>ESP32-C3</strong> or <strong>ESP32-S3</strong> development boards</p>
+</li>
+<li>
+<p>Connected to autopilot via MAVLink (USB, serial, or DroneCAN)</p>
+</li>
+<li>
+<p>Receives position and identity data from ArduPilot over MAVLink</p>
+</li>
+<li>
+<p>Broadcasts via WiFi Beacon and/or BLE</p>
+</li>
+</ul>
+<p><strong>Firmware:</strong> <code>ArduRemoteID-ESP32C3_DEV.bin</code> (provided in workshop files)</p>
+<pre><code class="language-bash"># Flash the ESP32-C3 with ArduRemoteID
+esptool.py --port /dev/ttyUSB0 write_flash 0x0 ArduRemoteID-ESP32C3_DEV.bin
+</code></pre>
+</section>
+
+<section>
+    <h2>DJI DroneID</h2>
+    <p><strong>DJI DroneID</strong> is DJI's proprietary Remote ID implementation.</p>
+<ul>
+<li>
+<p>Broadcasts on WiFi channel alongside the drone's control link</p>
+</li>
+<li>
+<p>Initially undocumented — reverse engineered by the community (2023)</p>
+</li>
+<li>
+<p>Includes: drone serial number, location, velocity, pilot location, home location</p>
+</li>
+</ul>
+<p><strong>Security research findings:</strong></p>
+<ul>
+<li>
+<p>DroneID was decoded by researchers without DJI authorization</p>
+</li>
+<li>
+<p>Location data is broadcast unencrypted</p>
+</li>
+<li>
+<p>Suppression tools exist (e.g., CIAJeepDoors) but are unreliable:</p>
+</li>
+<li>Does not fully stop broadcasts</li>
+<li>Broadcasts NULL data / "fakeSN"</li>
+<li>Some location packets may still leak</li>
+</ul>
+</section>
+
+<section>
+    <h2>Open Drone ID Standard</h2>
+    <p><strong>Open Drone ID</strong> is the open standard (ASTM F3411) implemented by non-DJI manufacturers.</p>
+<p><strong>Protocol layers:</strong></p>
+<ul>
+<li>
+<p>WiFi Beacon (802.11 management frames)</p>
+</li>
+<li>
+<p>Bluetooth 4 Legacy Advertising</p>
+</li>
+<li>
+<p>Bluetooth 5 Long Range + Extended Advertising</p>
+</li>
+</ul>
+<p><strong>Relevant implementations:</strong></p>
+<ul>
+<li>
+<p><code>opendroneid/transmitter-linux</code> — transmit from a Raspberry Pi or laptop</p>
+</li>
+<li>
+<p>ArduRemoteID — transmit from ESP32 attached to drone</p>
+</li>
+<li>
+<p>OpenDroneID Android app — receive and display Remote ID data</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Remote ID: Security Vulnerabilities</h2>
+    <table>
+<thead>
+<tr>
+<th>Vulnerability</th>
+<th>Description</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No authentication</td>
+<td>Serial number is not cryptographically signed</td>
+<td>Spoofing</td>
+</tr>
+<tr>
+<td>Unencrypted</td>
+<td>All data is in plaintext</td>
+<td>Tracking</td>
+</tr>
+<tr>
+<td>Takeoff location broadcast</td>
+<td>Reveals operator's location</td>
+<td>Privacy</td>
+</tr>
+<tr>
+<td>Suppression tools</td>
+<td>Broadcasting NULL/fake data</td>
+<td>Evasion</td>
+</tr>
+<tr>
+<td>Replay</td>
+<td>Rebroadcast a captured packet</td>
+<td>Identity theft</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>GPS/GNSS Review</h2>
+    <p>Remote ID relies on GPS for position data. Understanding GPS is key.</p>
+<p><strong>Constellations and frequencies:</strong></p>
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>Country</th>
+<th>L1 Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPS</td>
+<td>USA</td>
+<td>1575.42 MHz</td>
+</tr>
+<tr>
+<td>GLONASS</td>
+<td>Russia</td>
+<td>1598–1606 MHz</td>
+</tr>
+<tr>
+<td>BeiDou</td>
+<td>China</td>
+<td>1561.1 MHz</td>
+</tr>
+<tr>
+<td>Galileo</td>
+<td>EU</td>
+<td>1575.42 MHz</td>
+</tr>
+<tr>
+<td>QZSS</td>
+<td>Japan</td>
+<td>1575.42 MHz</td>
+</tr>
+</tbody>
+</table>
+<p><strong>NMEA 0183 protocol:</strong></p>
+<ul>
+<li>
+<p>ASCII-based serial protocol (RS-422, 4800/38400 baud)</p>
+</li>
+<li>
+<p>Standard output from consumer GNSS receivers</p>
+</li>
+<li>
+<p>Messages: <code>$GPGGA</code> (position), <code>$GPRMC</code> (recommended minimum), <code>$GPGSV</code> (satellite info)</p>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code>$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47
+</code></pre>
+<p><strong>u-blox u-center:</strong></p>
+<ul>
+<li>
+<p>GUI configuration tool for u-blox GNSS modules (NEO-7, M8, M9)</p>
+</li>
+<li>
+<p>Can configure satellite constellations, output rate, protocols</p>
+</li>
+<li>
+<p>Used to inspect 3DR Solo GPS module behavior</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>GPS Spoofing</h2>
+    <p>GPS signals are:</p>
+<ul>
+<li>
+<p>Unencrypted</p>
+</li>
+<li>
+<p>Unauthenticated</p>
+</li>
+<li>
+<p>Very weak (-130 dBm at receiver)</p>
+</li>
+</ul>
+<p><strong>Spoofing attack:</strong></p>
+<ul>
+<li>
+<p>Transmit stronger false GPS signals on 1575.42 MHz</p>
+</li>
+<li>
+<p>The receiver locks onto the spoofed signal</p>
+</li>
+<li>
+<p>Drone flies to spoofed coordinates or reports false position in Remote ID</p>
+</li>
+</ul>
+<p><strong>Tools:</strong> SDR (HackRF or USRP), GPS signal generation software (e.g., gps-sdr-sim)</p>
+<p><strong>Defenses:</strong></p>
+<ul>
+<li>
+<p>Multi-constellation GNSS (harder to spoof all simultaneously)</p>
+</li>
+<li>
+<p>Inertial navigation fallback</p>
+</li>
+<li>
+<p>Drone-to-drone cooperative positioning</p>
+</li>
+<li>
+<p>Galileo OSNMA (Open Service Navigation Message Authentication) — in rollout</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Summary</h2>
+    <table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Key Point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Remote ID</td>
+<td>FAA-mandated broadcast — serial, location, velocity, takeoff point</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>None — Remote ID serial numbers are spoofable</td>
+</tr>
+<tr>
+<td>DJI DroneID</td>
+<td>Reverse engineered — suppression tools exist but unreliable</td>
+</tr>
+<tr>
+<td>Open Drone ID</td>
+<td>ASTM standard — WiFi Beacon / BLE</td>
+</tr>
+<tr>
+<td>GPS</td>
+<td>Unencrypted and unauthenticated — spoofable with SDR</td>
+</tr>
+<tr>
+<td>NMEA 0183</td>
+<td>Standard GPS output format — used in 3DR Solo</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>
