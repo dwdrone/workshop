@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 09 – GCS Hardware, Software & Cybersecurity</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-presentation">PRESENTATION</span><span style="color:var(--dw-gray); font-size:0.7em;">30 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">GCS Hardware, Software & Cybersecurity</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 09</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 1 – Ground Control</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Identify the hardware and software components of a GCS</div>
+    <div class="objective-box">Compare dedicated hardware GCS (3DR Sololink) vs. tablet/phone-based GCS</div>
+    <div class="objective-box">Understand the network architecture between GCS and drone</div>
+    <div class="objective-box">Map GCS components to cybersecurity attack surface</div>
+</section>
+
+<section>
+    <h2>What is a Ground Control Station?</h2>
+    <p>The <strong>GCS</strong> is any system used to monitor and control a UAV. It receives telemetry, displays a map, and sends commands.</p>
+<p><strong>GCS form factors:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dedicated hardware</td>
+<td>3DR Sololink, DJI RC Pro, Skydio Remote</td>
+</tr>
+<tr>
+<td>Android tablet/phone</td>
+<td>DJI Fly, Solex, QGroundControl</td>
+</tr>
+<tr>
+<td>Laptop/desktop</td>
+<td>QGroundControl, Mission Planner, MAVProxy</td>
+</tr>
+<tr>
+<td>Web browser</td>
+<td>Auterion Suite, custom dashboards</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>3DR Sololink: Dedicated GCS Hardware (1/2)</h2>
+    <p>The <strong>3DR Sololink</strong> is the dedicated RC controller + GCS for the 3DR Solo.</p>
+<p><strong>Hardware:</strong></p>
+<ul>
+<li>
+<p>ARM Cortex-A9 (i.MX6) — same family as the Solo UAV companion computer</p>
+</li>
+<li>
+<p>Embedded Linux (OpenEmbedded / Yocto)</p>
+</li>
+<li>
+<p>802.11n 2.4 GHz WiFi radio (both client and AP modes)</p>
+</li>
+<li>
+<p>Physical RC sticks and buttons</p>
+</li>
+<li>
+<p>Android tablet mount (optional)</p>
+</li>
+</ul>
+<p><strong>Software:</strong></p>
+<ul>
+<li>
+<p>Runs a Linux OS with systemd</p>
+</li>
+<li>
+<p>Creates WiFi AP: <code>SoloLink_XXXXXXXX</code> (2.4 GHz)</p>
+</li>
+<li>
+<p>Bridges RC input to MAVLink MANUAL_CONTROL messages</p>
+</li>
+<li>
+<p>Hosts STM32-based front panel controller (buttons, LEDs)</p>
+</li>
+<li>
+<p>Runs <code>sololink</code> service that manages the GCS-UAV connection</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>3DR Sololink: Dedicated GCS Hardware (2/2)</h2>
+    <p><strong>Network architecture:</strong></p>
+<pre><code>[Android Phone / Solex App]
+          |  WiFi (SoloLink AP)
+    [3DR Sololink GCS]
+          |  WiFi (SoloLink-to-Solo bridge)
+    [3DR Solo UAV]
+          |  UART
+    [ArduCopter FC]
+</code></pre>
+<p><strong>Attack surface:</strong></p>
+<ul>
+<li>
+<p>SSH service accessible on SoloLink network (root login enabled by default)</p>
+</li>
+<li>
+<p>Web API for controller configuration</p>
+</li>
+<li>
+<p>STM32 serial interface</p>
+</li>
+<li>
+<p>UART console accessible via physical teardown</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>GCS Software: Mission Planner</h2>
+    <p><strong>Mission Planner</strong> (Windows, open source) is the reference GCS for ArduPilot.</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>
+<p>Full parameter editor</p>
+</li>
+<li>
+<p>Flight data display</p>
+</li>
+<li>
+<p>Flight planning and simulation (with X-Plane)</p>
+</li>
+<li>
+<p>Log analysis (MAVExplorer integration)</p>
+</li>
+<li>
+<p>Firmware flashing</p>
+</li>
+</ul>
+<p><strong>Attack surface:</strong></p>
+<ul>
+<li>
+<p>Connects to flight controller via serial or network</p>
+</li>
+<li>
+<p>Will execute arbitrary MAVLink commands against the connected vehicle</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>GCS Software: QGroundControl (QGC)</h2>
+    <p><strong>QGroundControl</strong> is the primary cross-platform GCS for both ArduPilot and PX4.</p>
+<p><strong>Capabilities:</strong></p>
+<ul>
+<li>
+<p>Live telemetry display (attitude, position, battery, GPS)</p>
+</li>
+<li>
+<p>Mission planning (upload/download waypoints)</p>
+</li>
+<li>
+<p>Parameter viewer and editor</p>
+</li>
+<li>
+<p>Log download and review</p>
+</li>
+<li>
+<p>Firmware update</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>GCS Network Architecture</h2>
+    <p>Understanding the network is essential for assessing the GCS.</p>
+<p><strong>3DR Solo networks:</strong></p>
+<table>
+<thead>
+<tr>
+<th>SSID</th>
+<th>Role</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SoloLink_XXXXXXXX</code></td>
+<td>GCS WiFi AP</td>
+<td>10.1.1.0/24</td>
+</tr>
+<tr>
+<td>(Solo internal)</td>
+<td>UAV-GCS link</td>
+<td>10.1.1.0/24</td>
+</tr>
+</tbody>
+</table>
+<p><strong>IP addresses:</strong></p>
+<ul>
+<li>
+<p><code>10.1.1.1</code> — Sololink GCS</p>
+</li>
+<li>
+<p><code>10.1.1.10</code> — 3DR Solo UAV</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Services</h2>
+    <p><strong>Services on the GCS (Sololink):</strong></p>
+<pre><code>22/tcp  SSH   (root login enabled)
+5502/tcp      Sololink API
+</code></pre>
+<p><strong>Services on the UAV (Solo):</strong></p>
+<pre><code>22/tcp  SSH   (root login enabled)
+14550/udp     MAVLink (GCS telemetry)
+14551/udp     MAVLink (secondary)
+80/tcp  HTTP  (if GoPro is mounted: 10.5.5.9)
+</code></pre>
+</section>
+
+<section>
+    <h2>GCS Exploitation Pathway</h2>
+    <p>A typical GCS attack chain:</p>
+<ol>
+<li>
+<p><strong>Connect</strong> to the GCS WiFi network (SoloLink_XXXXXXXX, default password: sololink)</p>
+</li>
+<li>
+<p><strong>Enumerate</strong> hosts with <code>nmap 10.1.1.0/24</code></p>
+</li>
+<li>
+<p><strong>Identify</strong> SSH on GCS (10.1.1.1:22) and UAV (10.1.1.10:22)</p>
+</li>
+<li>
+<p><strong>Access</strong> SSH with default credentials (root, no password)</p>
+</li>
+<li>
+<p><strong>Pivot</strong> from GCS to UAV</p>
+</li>
+<li>
+<p><strong>Interact</strong> with MAVLink directly from the UAV shell</p>
+</li>
+<li>
+<p><strong>Exfiltrate</strong> flight logs, WiFi credentials, and configuration</p>
+</li>
+</ol>
+</section>
+
+<section>
+    <h2>Summary</h2>
+    <table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Key Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3DR Sololink</td>
+<td>SSH root login, no password, exposed on WiFi</td>
+</tr>
+<tr>
+<td>Specta Remote</td>
+<td>Android ADB, APK vulnerabilities</td>
+</tr>
+<tr>
+<td>SoloLink WiFi</td>
+<td>WPA2 with default/known passphrase</td>
+</tr>
+<tr>
+<td>MAVLink endpoint</td>
+<td>Unauthenticated, accessible to all on network</td>
+</tr>
+<tr>
+<td>GCS software</td>
+<td>Full drone control plane — high-value target</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>

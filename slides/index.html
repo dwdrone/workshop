@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hack Our Drone – Slide Index</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #080808;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23131313' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E");
+            background-size: 56px 97px;
+            color: #f0f0f0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            background: linear-gradient(180deg, #080808 0%, #0d0d0d 100%);
+            padding: 64px 40px 52px;
+            text-align: center;
+            border-bottom: 2px solid #68E01A;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 60%, rgba(104,224,26,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-eyebrow {
+            color: #68E01A;
+            font-size: 0.78em;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+        .hero h1 {
+            color: #68E01A;
+            font-size: clamp(2.2em, 5vw, 3.4em);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 48px rgba(104,224,26,0.3);
+        }
+        .hero .subtitle {
+            color: #f0f0f0;
+            font-size: clamp(1em, 2.5vw, 1.3em);
+            font-weight: 300;
+            margin-bottom: 28px;
+        }
+        .hero-meta {
+            display: inline-flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-size: 0.8em;
+            color: #7a8290;
+        }
+        .hero-meta span { display: flex; align-items: center; gap: 6px; }
+        .hero-meta .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .dot-green { background: #68E01A; }
+        .dot-blue { background: #60a5fa; }
+        .dot-purple { background: #a78bfa; }
+        .dot-yellow { background: #fbbf24; }
+
+        /* ── Legend ── */
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            padding: 18px 40px;
+            background: #0a0a0a;
+            border-bottom: 1px solid #1a1a1a;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8em;
+            color: #7a8290;
+        }
+
+        /* ── Layout ── */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px 60px;
+        }
+
+        /* ── Day Header ── */
+        .day-section { margin-top: 48px; }
+        .day-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .day-badge {
+            background: #68E01A;
+            color: #080808;
+            font-size: 0.7em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .day-title {
+            color: #f0f0f0;
+            font-size: 1.35em;
+            font-weight: 600;
+        }
+        .day-count { color: #7a8290; font-size: 0.85em; margin-left: auto; }
+
+        /* ── Grid ── */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: #0f0f0f;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: transparent;
+            transition: background 0.18s;
+        }
+        .card:hover {
+            border-color: #68E01A;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 32px rgba(104,224,26,0.1);
+        }
+        .card:hover::before { background: #68E01A; }
+
+        .card.type-lab:hover {
+            border-color: #60a5fa;
+            box-shadow: 0 10px 32px rgba(96,165,250,0.1);
+        }
+        .card.type-lab:hover::before { background: #60a5fa; }
+
+        .card.type-activity:hover {
+            border-color: #a78bfa;
+            box-shadow: 0 10px 32px rgba(167,139,250,0.1);
+        }
+        .card.type-activity:hover::before { background: #a78bfa; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .card-num {
+            color: #7a8290;
+            font-size: 0.72em;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+        .card-title {
+            font-size: 1em;
+            font-weight: 600;
+            line-height: 1.35;
+            margin-bottom: 12px;
+            color: #f0f0f0;
+        }
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.68em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .badge-p {
+            background: rgba(104,224,26,0.1);
+            color: #68E01A;
+            border: 1px solid rgba(104,224,26,0.3);
+        }
+        .badge-l {
+            background: rgba(96,165,250,0.1);
+            color: #93c5fd;
+            border: 1px solid rgba(96,165,250,0.3);
+        }
+        .badge-a {
+            background: rgba(167,139,250,0.1);
+            color: #c4b5fd;
+            border: 1px solid rgba(167,139,250,0.3);
+        }
+        .duration {
+            color: #7a8290;
+            font-size: 0.75em;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .clock-icon { opacity: 0.6; }
+
+        /* ── Arrow indicator for links ── */
+        .card-arrow {
+            position: absolute;
+            top: 18px;
+            right: 16px;
+            color: #2a2a2a;
+            font-size: 0.8em;
+            transition: color 0.18s, transform 0.18s;
+        }
+        .card:hover .card-arrow { color: #68E01A; transform: translate(2px, -2px); }
+        .card.type-lab:hover .card-arrow { color: #60a5fa; }
+        .card.type-activity:hover .card-arrow { color: #a78bfa; }
+
+        /* ── Stats bar ── */
+        .stats-bar {
+            display: flex;
+            gap: 32px;
+            padding: 20px 32px;
+            background: #080808;
+            border-bottom: 1px solid #1a1a1a;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .stat { text-align: center; }
+        .stat-num { font-size: 2em; font-weight: 700; color: #68E01A; line-height: 1; }
+        .stat-label { font-size: 0.72em; color: #7a8290; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+        /* ── Footer ── */
+        .site-footer {
+            text-align: center;
+            padding: 28px 40px;
+            border-top: 1px solid #1a1a1a;
+            color: #3a3a3a;
+            font-size: 0.78em;
+        }
+        .site-footer a { color: #68E01A; text-decoration: none; }
+        .site-footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .hero { padding: 40px 20px 32px; }
+            .container { padding: 0 16px 40px; }
+            .grid { grid-template-columns: 1fr; }
+            .stats-bar { gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- HERO -->
+<!-- ============================================================ -->
+<header class="hero">
+    <p class="hero-eyebrow">Dark Wolf</p>
+    <h1>Hack Our Drone</h1>
+    <p class="subtitle">2-Day UAS Cybersecurity Workshop</p>
+    <div class="hero-meta">
+        <span><span class="dot dot-green"></span>23 Modules</span>
+        <span><span class="dot dot-blue"></span>10+ Lab Exercises</span>
+        <span><span class="dot dot-purple"></span>2 Full Days</span>
+        <span><span class="dot dot-yellow"></span>Beginner / Intermediate</span>
+    </div>
+</header>
+
+<!-- ============================================================ -->
+<!-- LEGEND / BADGE KEY -->
+<!-- ============================================================ -->
+<div class="legend">
+    <div class="legend-item"><span class="badge badge-p">Presentation</span> Instructor-led lecture</div>
+    <div class="legend-item"><span class="badge badge-l">Lab</span> Hands-on technical exercise</div>
+    <div class="legend-item"><span class="badge badge-a">Activity</span> Group exercise or discussion</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- STATS BAR -->
+<!-- ============================================================ -->
+<div class="stats-bar">
+    <div class="stat"><div class="stat-num">23</div><div class="stat-label">Total Modules</div></div>
+    <div class="stat"><div class="stat-num">11</div><div class="stat-label">Presentations</div></div>
+    <div class="stat"><div class="stat-num">11</div><div class="stat-label">Lab Sessions</div></div>
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Activity</div></div>
+    <div class="stat"><div class="stat-num">~15h</div><div class="stat-label">Total Content</div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MAIN CONTENT -->
+<!-- ============================================================ -->
+<main class="container">
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- DAY 1 -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section class="day-section">
+        <div class="day-header">
+            <span class="day-badge">Day 1</span>
+            <span class="day-title">UAV, Ground Control Systems &amp; Logging</span>
+            <span class="day-count">12 modules &bull; ~8.5 hours</span>
+        </div>
+        <div class="grid">
+
+            <!-- 01 -->
+            <a href="01-uas-cybersecurity.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 01</span></div>
+                <div class="card-title">UAS Cybersecurity</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 60 min</span>
+                </div>
+            </a>
+
+            <!-- 02 -->
+            <a href="02-attack-surface.html" class="card type-activity">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 02</span></div>
+                <div class="card-title">Attack Surface</div>
+                <div class="card-footer">
+                    <span class="badge badge-a">Activity</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 03 -->
+            <a href="03-uav-hardware-software.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 03</span></div>
+                <div class="card-title">UAV Hardware, Software &amp; Cybersecurity</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 60 min</span>
+                </div>
+            </a>
+
+            <!-- 04 -->
+            <a href="04-lab-firmware-analysis.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 04</span></div>
+                <div class="card-title">Lab: UAV Firmware Analysis</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 60 min</span>
+                </div>
+            </a>
+
+            <!-- 05 -->
+            <a href="05-uav-flight-controllers.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 05</span></div>
+                <div class="card-title">UAV Flight Controllers</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 06 -->
+            <a href="06-lab-qgroundcontrol.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 06</span></div>
+                <div class="card-title">Lab: QGroundControl &amp; Mission Planning</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 60 min</span>
+                </div>
+            </a>
+
+            <!-- 07 -->
+            <a href="07-android-cybersecurity.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 07</span></div>
+                <div class="card-title">Introduction to Android Cybersecurity</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 08 -->
+            <a href="08-lab-android-gcs.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 08</span></div>
+                <div class="card-title">Lab: Android GCS Application Analysis</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 60 min</span>
+                </div>
+            </a>
+
+            <!-- 09 -->
+            <a href="09-gcs-hardware-software.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 09</span></div>
+                <div class="card-title">GCS Hardware, Software &amp; Cybersecurity</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 10 -->
+            <a href="10-lab-gcs-exploitation.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 10</span></div>
+                <div class="card-title">Lab: GCS Exploitation</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 21 -->
+            <a href="21-uas-logging.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 21</span></div>
+                <div class="card-title">UAS Logging</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 15 min</span>
+                </div>
+            </a>
+
+            <!-- 22 -->
+            <a href="22-lab-forensics.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 22</span></div>
+                <div class="card-title">Lab: Adversarial Forensics on UAS Logs</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+        </div><!-- /grid -->
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- DAY 2 -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <section class="day-section">
+        <div class="day-header">
+            <span class="day-badge">Day 2</span>
+            <span class="day-title">RF Communications &amp; Payloads</span>
+            <span class="day-count">11 modules &bull; ~6.5 hours</span>
+        </div>
+        <div class="grid">
+
+            <!-- 11 -->
+            <a href="11-rf-communications.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 11</span></div>
+                <div class="card-title">UAS RF Communications</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 60 min</span>
+                </div>
+            </a>
+
+            <!-- 12 -->
+            <a href="12-lab-cracking-wireless.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 12</span></div>
+                <div class="card-title">Lab: Cracking Wireless Communications</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 60 min</span>
+                </div>
+            </a>
+
+            <!-- 13 -->
+            <a href="13-droneid-remoteid.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 13</span></div>
+                <div class="card-title">DroneID &amp; Remote ID</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 14 -->
+            <a href="14-lab-remoteid.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 14</span></div>
+                <div class="card-title">Lab: Remote ID</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 15 -->
+            <a href="15-sik-telemetry-radios.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 15</span></div>
+                <div class="card-title">SiK Telemetry Radios</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 16 -->
+            <a href="16-lab-sik-hacks.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 16</span></div>
+                <div class="card-title">Lab: SiK Radio Hacks</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 45 min</span>
+                </div>
+            </a>
+
+            <!-- 17 -->
+            <a href="17-mavlink.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 17</span></div>
+                <div class="card-title">MAVLink Telemetry for C2</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 18 -->
+            <a href="18-lab-mavlink-sniffing.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 18</span></div>
+                <div class="card-title">Lab: MAVLink Sniffing &amp; Spoofing</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 45 min</span>
+                </div>
+            </a>
+
+            <!-- 19 -->
+            <a href="19-uav-cameras.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 19</span></div>
+                <div class="card-title">UAV Cameras: Digital &amp; Analog</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 20 -->
+            <a href="20-lab-analog-video.html" class="card type-lab">
+                <span class="card-arrow">↗</span>
+                <div class="card-header"><span class="card-num">MODULE 20</span></div>
+                <div class="card-title">Lab: Analog Video Transmission Sniffing</div>
+                <div class="card-footer">
+                    <span class="badge badge-l">Lab</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 30 min</span>
+                </div>
+            </a>
+
+            <!-- 23 — LIVE LINK -->
+            <a href="23-cybersecurity-review.html" class="card type-presentation">
+                <span class="card-arrow">↗</span>
+                <div class="card-header">
+                    <span class="card-num">MODULE 23</span>
+                </div>
+                <div class="card-title">UAS Cybersecurity Review</div>
+                <div class="card-footer">
+                    <span class="badge badge-p">Presentation</span>
+                    <span class="duration"><span class="clock-icon">⏱</span> 45 min</span>
+                </div>
+            </a>
+
+        </div><!-- /grid -->
+    </section>
+
+</main>
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="site-footer">
+    <p>
+        Hack Our Drone — 2-Day UAS Cybersecurity Workshop &bull;
+        Dark Wolf Solutions &bull;
+        Slides built with <a href="https://revealjs.com" target="_blank" rel="noopener">Reveal.js</a>
+    </p>
+    <p style="margin-top:6px;">
+        For authorized training use only &bull;
+        All lab exercises require explicit written authorization
+    </p>
+</footer>
+
+</body>
+</html>
