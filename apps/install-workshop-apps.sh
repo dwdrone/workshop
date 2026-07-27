@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "version 20260425-2140"
+echo "version 20260725-1608"
 
 
 # TODO: mavlink wireshark plugin
@@ -12,7 +12,7 @@ INSTALL_USER="kali"
 INSTALL_GROUP="${INSTALL_USER}"
 HOME_DIR="/home/${INSTALL_USER}"
 APP_DIR="${HOME_DIR}/workshop/apps"
-echo "Starting app installation for Dark Wolf workshop for user ${USER} on Kali Rolling 2026.1  and similar"
+echo "Starting app installation for Dark Wolf workshop for user ${USER} on Kali Rolling 2026.2 and similar"
 
 echo "--- Updating and upgrading system packages ---"
 sudo apt update
