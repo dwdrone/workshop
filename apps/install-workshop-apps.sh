@@ -97,11 +97,18 @@ install_qgroundcontrol() {
     QGC_URL="https://github.com/mavlink/qgroundcontrol/releases/download/${QGC_VERSION}/${QGC_APP}"
     QGC_DIR="${APP_DIR}/QGroundControl"
     mkdir -p ${QGC_DIR}
+    mv runQGC.sh ${QGC_DIR} 
+    chmod +x ${QGC_DIR}/runQGC.sh
+    mv libfuse2.sh ${QGC_DIR} 
+    chmod +x ${QGC_DIR}/libfuse2.sh
     cd ${QGC_DIR}
     sudo apt install gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl -y
     sudo apt install python3-gi python3-gst-1.0 -y
-    sudo apt install libfuse2 -y
+    #sudo apt install libfuse2 -y
+    sudo apt install libfuse3-4 -y
     sudo apt install libxcb-xinerama0 libxkbcommon-x11-0 libxcb-cursor-dev -y
+    sudo libfuse2.sh
+    cd ${QGC_DIR}
 
     echo "Downloading ${QGC_APP}  v${QGC_VERSION} from ${QGC_URL}..."
     sudo curl -LO "${QGC_URL}"
@@ -109,6 +116,7 @@ install_qgroundcontrol() {
         sudo mv ${QGC_APP} QGroundControl.AppImage
     fi
     sudo chmod +x ${QGC_DIR}/QGroundControl.AppImage
+    sudo chmod +x ${QGC_DIR}/runQGC.sh
 }
 
 # --- Install OpenDroneID ---
@@ -149,7 +157,7 @@ install_missionplanner() {
         mkdir -p "${MP_DIR}"
         cd ${MP_DIR}
         sudo apt -y install mono-devel
-        sudo apt -y install mono-libraries-debug
+        sudo TERM=xterm apt -y install mono-libraries-debug
         sudo certmgr -ssl https://autotest.ardupilot.org/LogMessages/Copter/LogMessages.xml.xz
         wget http://ftp.us.debian.org/debian/pool/main/m/mono/ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
         sudo dpkg -i ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
