@@ -1,7 +1,7 @@
 git clone https://github.com/libfuse/libfuse
 cd libfuse
-sudo apt install gettext
-sudo apt install libtool
+sudo apt -y install gettext
+sudo apt -y install libtool
 export ACLOCAL_PATH=/usr/share/aclocal
 git checkout fuse_2_5_bugfix
 ./makeconf.sh
