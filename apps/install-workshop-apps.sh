@@ -5,6 +5,7 @@ set -e
 
 echo "version 20260425-2140"
 
+
 # TODO: mavlink wireshark plugin
 
 INSTALL_USER="kali"
@@ -13,11 +14,16 @@ HOME_DIR="/home/${INSTALL_USER}"
 APP_DIR="${HOME_DIR}/workshop/apps"
 echo "Starting app installation for Dark Wolf workshop for user ${USER} on Kali Rolling 2026.1  and similar"
 
-# Update and Upgrade system
 echo "--- Updating and upgrading system packages ---"
 sudo apt update
 sudo apt upgrade -y
 #sudo apt dist-upgrade -y
+
+
+sudo TERM=dumb DEBIAN_FRONTEND=noninteractive apt -y install mono-devel
+sudo TERM=dumb DEBIAN_FRONTEND=noninteractive apt -y install mono-libraries-debug
+
+
 
 # --- Install essential development tools ---
 echo "--- Installing Git, Python tools dependencies, OpenJDK ---"
@@ -107,7 +113,7 @@ install_qgroundcontrol() {
     #sudo apt install libfuse2 -y
     sudo apt install libfuse3-4 -y
     sudo apt install libxcb-xinerama0 libxkbcommon-x11-0 libxcb-cursor-dev -y
-    sudo libfuse2.sh
+    sudo ./libfuse2.sh
     cd ${QGC_DIR}
 
     echo "Downloading ${QGC_APP}  v${QGC_VERSION} from ${QGC_URL}..."
@@ -156,9 +162,7 @@ install_missionplanner() {
     if [ ! -d "${MP_DIR}" ]; then
         mkdir -p "${MP_DIR}"
         cd ${MP_DIR}
-        sudo apt -y install mono-devel
-        sudo TERM=xterm apt -y install mono-libraries-debug
-        sudo certmgr -ssl https://autotest.ardupilot.org/LogMessages/Copter/LogMessages.xml.xz
+        sudo TERM=dumb certmgr -ssl https://autotest.ardupilot.org/LogMessages/Copter/LogMessages.xml.xz
         wget http://ftp.us.debian.org/debian/pool/main/m/mono/ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
         sudo dpkg -i ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
         wget ${MP_URL}
