@@ -42,6 +42,41 @@
 
 ---
 
+## How These Two Days Fit Together
+
+This course follows a drone **from the inside out** — the same order a real security assessment does.
+
+- **Day 1 — The aircraft and its controller.** We open up the drone (hardware, firmware, flight controller), then the Ground Control Station (the Android app and the controller radio). You will pull firmware apart, read a live drone's parameters, and get a root shell on the aircraft.
+- **Day 2 — The invisible layer: radio.** Every drone is really a collection of *radio links*. We study each link (WiFi, telemetry, GPS, Remote ID, video) and attack it with a Software-Defined Radio.
+
+**Rule of thumb for the whole course:** almost every drone weakness comes down to one of three things — *no encryption, no authentication, or a default password*. Watch for those three ideas in every module.
+
+<img src="../img/dg-attack-chain.svg" style="width: 92%; height: auto;" align="center">
+
+*By the end of Day 1 you will walk this exact chain against a real 3DR Solo — from "connected to its WiFi" to "sending it commands."*
+
+---
+
+## Key Terms (You'll Hear These All Week)
+
+New to drones or to security? Keep this list handy — every term below returns in later modules.
+
+| Term | Plain-English meaning |
+|------|----------------------|
+| **UAS** | Unmanned Aircraft *System* — the whole package: the drone + controller + radio links |
+| **UAV** | The flying part alone (the aircraft) |
+| **GCS** | Ground Control Station — whatever you use to fly and monitor the drone (app, laptop, controller) |
+| **Flight Controller (FC)** | The small computer on the drone that keeps it stable and runs the mission |
+| **Autopilot firmware** | The software on the FC — usually **ArduPilot** or **PX4** |
+| **MAVLink** | The "language" the drone and GCS speak to each other (Module 5, 17) |
+| **Telemetry** | Live data coming *down* from the drone (battery, GPS, attitude) |
+| **RF** | Radio Frequency — any wireless signal (Day 2) |
+| **SDR** | Software-Defined Radio — a USB radio (like the HackRF) that can tune to almost any frequency (Module 11) |
+| **GNSS / GPS** | The satellite positioning the drone uses to know where it is |
+| **Payload** | Anything the drone carries — usually a camera (Module 19) |
+
+---
+
 ## What is a UAS?
 
 - Definition of UAS
@@ -63,10 +98,12 @@
 - Potential for remote attacks
 - Need for robust security
 
-<img src="../img/Man-In-The-Middle-Attack-On-Drone-32.ppm" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;">
+<img src="../img/Man-In-The-Middle-Attack-On-Drone-32.png" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;">
 
 
 ## Threat Landscape
+
+These are the five attack families you will actually perform this week. Each one maps to specific labs — so this slide is really a table of contents for the hands-on work.
 
 ### Eavesdropping
 - Intercepting unencrypted telemetry, video feeds, or RC commands
@@ -92,6 +129,8 @@
 - Network flooding of GCS WiFi
 - Forces drone into failsafe behavior (hover, RTL, land)
 
+> **Where you'll do each one:** Eavesdropping → Modules 12, 16, 18, 20. GPS spoofing → Module 13. Command hijacking → Modules 6, 10, 18. Data theft → Modules 4, 8, 22. DoS/jamming is discussed but not performed (it is illegal to transmit interference outside a shielded lab).
+
 ---
 
 ## Attack Vectors
@@ -109,16 +148,26 @@
 
 ## Security Principles: CIA+
 
+<img src="../img/nist-cia-triad.png" style="float: right; width: 30%; margin-left: 18px;">
+
+Security professionals judge every system against a short checklist. Learn it once and you can reason about *any* drone link. The classic core is the **CIA triad** (Confidentiality, Integrity, Availability); for drones we add **Authenticity** and **Non-repudiation**.
+
 **Confidentiality** – Only authorized parties can read data
+*Drone example:* video and telemetry should not be readable by a stranger with an antenna.
 
 **Integrity** – Data has not been modified in transit
+*Drone example:* a mission upload should arrive exactly as sent — no injected waypoints.
 
 **Availability** – Systems and data are accessible when needed
+*Drone example:* jamming the control link breaks availability and forces a failsafe.
 
 **Authenticity** – The source of data or commands is verified
-**Non-repudiation** – Actions cannot be denied after the fact
+*Drone example:* the drone should reject a command that did not come from *its* GCS.
 
-> All five properties apply to UAS. A drone that cannot verify command authenticity is vulnerable to spoofing. A drone with no integrity checking on firmware updates is vulnerable to implants.
+**Non-repudiation** – Actions cannot be denied after the fact
+*Drone example:* signed logs prove which GCS armed the drone and when.
+
+> All five properties apply to UAS. A drone that cannot verify command **authenticity** is vulnerable to spoofing (Modules 13, 17). A drone with no **integrity** checking on firmware updates is vulnerable to implants (Module 4). As you go through the labs, name which of these five properties each attack breaks.
 
 ---
 
@@ -230,7 +279,7 @@ When a UAS security incident occurs:
 - Potential for loss or hijack
 - Mitigation: multi-sensor navigation
 
-<img src="../img/GPS-spoofing-attack-on-GPS-Enabled-Drone-36.ppm" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;">
+<img src="../img/GPS-spoofing-attack-on-GPS-Enabled-Drone-36.png" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;">
 
 
 ---
@@ -243,7 +292,7 @@ When a UAS security incident occurs:
 - Risk of crash or theft
 - Mitigation: encrypted control links
 
-<img src="../img/Man-In-The-Middle-Attack-On-Drone-32.ppm" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;">
+<img src="../img/Man-In-The-Middle-Attack-On-Drone-32.png" style="float: right; width: 500px; margin-left: 20px; margin-top: -200px;">
 
 ---
 

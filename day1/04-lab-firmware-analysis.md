@@ -15,6 +15,18 @@
 
 ---
 
+## The Big Picture (Read This First)
+
+**What is "firmware"?** It is just the drone's entire hard drive — its operating system, config files, and passwords — packed into a file. If you can get a copy and open it up, you can read the drone's secrets *without the drone even being powered on*.
+
+**What you'll actually do in this lab, in one breath:** pull the microSD card out of a 3DR Solo → mount its Linux partitions on your Kali VM → find the password file → and then use an "overlay" trick to plant your own SSH key so you can log in as root whenever you want. That last step is a real **authentication bypass**.
+
+**Two file types you'll meet:**
+- **squashfs** — a *read-only, compressed* filesystem. Drones use it because it is small and can't be accidentally corrupted. You `unsquashfs` it to unpack it.
+- **`/etc/passwd` and `/etc/shadow`** — the Linux user list and the (hashed) passwords. Copy both out and you can try to crack the root password offline (we finish that crack in Lab 08).
+
+---
+
 ## Background
 
 UAV firmware contains the operating system, configuration files, startup scripts, and binaries that run on the drone's companion computer or flight controller. Analyzing firmware reveals:
@@ -225,6 +237,11 @@ The output should resemble the following
 ---
 ## Phase 6: Root Authentication Bypass
 ### Overlay File Systems
+
+**Why this is the key to the whole attack:** the Solo protects its main system by mounting it **read-only** (`ro`) — you can't tamper with it. But it *also* mounts a second partition **read-write** (`rw`) and layers it on top. At boot, the two are merged so that anything on the writable partition wins. That's an **overlay filesystem**.
+
+The designers did this so updates could stick. But it means: **anything we drop onto the writable partition (3) becomes part of the "protected" system on the next boot.** That is exactly how we will smuggle in our own SSH key below — the read-only protection never even sees it.
+
 Note that partition 2 `/dev/mmc0blk2` is mounted `read only` as indicated by the `ro` flag.
 
 Note that partition 3 `/dev/mmc0blk3` is mounted `read write` as indicated by the `rw` flag

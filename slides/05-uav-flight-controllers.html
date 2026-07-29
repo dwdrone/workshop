@@ -14,20 +14,25 @@
         --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
         --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
         --dw-white: #f0f0f0; --dw-gray: #7a8290;
+    }
+    :root {
         --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
         --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
         --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
-        --r-main-font-size: 26px;
+        --r-main-font-size: 23px;
     }
     .reveal-viewport { background: var(--dw-bg); }
     .reveal .slides { text-align: left; }
+    .reveal .slides section { top: 0 !important; }
     .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
-    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
-    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
-    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.8em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 6px; margin-bottom: 14px; font-size: 1.05em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.82em; text-transform: uppercase; letter-spacing: 1.5px; margin: 14px 0 8px; }
     .reveal a { color: var(--dw-green); }
-    .reveal p, .reveal li { line-height: 1.55; }
-    .reveal ul li { margin-bottom: 8px; }
+    .reveal p { line-height: 1.4; margin: 0 0 8px; }
+    .reveal ul, .reveal ol { margin: 0 0 8px; }
+    .reveal li { line-height: 1.38; }
+    .reveal ul li { margin-bottom: 4px; }
     .reveal ul li::marker { color: var(--dw-green); }
     .reveal .progress span { background: var(--dw-green); }
     .reveal .controls { color: var(--dw-green); }
@@ -37,27 +42,35 @@
     .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
     .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
     .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
-    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
-    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 10px 0; }
     .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
-    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
-    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
-    .reveal pre { margin: 0; box-shadow: none; }
-    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
-    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
-    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
-    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
     .highlight-green { color: var(--dw-green); font-weight: 600; }
     .highlight-red { color: #f87171; font-weight: 600; }
     .highlight-yellow { color: #fbbf24; font-weight: 600; }
     .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 12px; font-family: var(--r-code-font); font-size: 0.82em; line-height: 1.55; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 8px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0 0 8px; box-shadow: none; width: 100%; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 10px 12px; font-size: 0.78em; line-height: 1.45; max-height: none; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.68em; margin: 4px 0 8px; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 5px 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 5px 9px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .reveal img { max-height: 62vh; width: auto; border-radius: 6px; }
     .reveal strong, .reveal b { color: var(--dw-green); }
-    .reveal :not(pre) > code { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); font-size: 0.9em; }
+    .dw-back { position: fixed; top: 14px; left: 16px; z-index: 60; color: var(--dw-gray); text-decoration: none;
+        font-family: var(--r-main-font); font-size: 14px; font-weight: 600; padding: 6px 12px;
+        background: rgba(8,8,8,0.72); border: 1px solid var(--dw-border); border-radius: 6px;
+        backdrop-filter: blur(4px); transition: color .15s, border-color .15s; }
+    .dw-back:hover { color: var(--dw-green); border-color: var(--dw-green-border); }
+    @media print { .dw-back { display: none; } }
     </style>
 </head>
 <body>
+<a class="dw-back" href="index.html">&#8592; All Modules</a>
 <div class="reveal">
 <div class="slides">
 
@@ -100,11 +113,14 @@
 <p>Communicates with the GCS via MAVLink</p>
 </li>
 </ol>
-<p>The FC is the <strong>root of trust</strong> for the drone. If the FC is compromised, the drone is compromised.</p>
+<p><strong>What is a "control loop"?</strong> A multirotor is naturally unstable — it wants to tip over. Many times per second the FC compares <em>where the drone is pointing</em> (from the IMU) to <em>where it should be pointing</em>, then nudges each motor to correct the difference. That fast measure-compare-correct cycle is a <strong>PID loop</strong>. Steps 1→4 above repeat roughly 400 times every second.</p>
+<p><img src="../img/dg-control-loop.svg" style="width: 88%; height: auto;" align="center"></p>
+<p>The FC is the <strong>root of trust</strong> for the drone. If the FC is compromised, the drone is compromised — which is why so much of this course circles back to it.</p>
+<div class="warning-box"><strong>Beginner mental model:</strong> the FC is the pilot's hands and inner ear; the GCS (next modules) is the pilot's eyes and map. MAVLink is the phone line between them — and today that phone line has no caller ID and no encryption.</div>
 </section>
 
 <section>
-    <h2>ArduPilot (1/2)</h2>
+    <h2>ArduPilot</h2>
     <p><strong>Open source autopilot – ardupilot.org</strong></p>
 <ul>
 <li>
@@ -123,11 +139,7 @@
 <p>GCS: Mission Planner (Windows), QGroundControl (cross-platform), MAVProxy (CLI)</p>
 </li>
 </ul>
-</section>
-
-<section>
-    <h2>ArduPilot (2/2)</h2>
-    <p><strong>Key features:</strong></p>
+<p><strong>Key features:</strong></p>
 <ul>
 <li>
 <p>Fully configurable via MAVLink parameters</p>
@@ -196,6 +208,7 @@
 <section>
     <h2>MAVLink: The Bridge</h2>
     <p><strong>MAVLink (Micro Air Vehicle Link)</strong> is the lightweight messaging protocol connecting the flight controller to the GCS and companion computer.</p>
+<p><img src="../img/mavlink-structure.png" style="float: right; width: 40%; margin-left: 18px;"></p>
 <p><strong>Characteristics:</strong></p>
 <ul>
 <li>
@@ -327,7 +340,8 @@
 
 <section>
     <h2>Parameters System</h2>
-    <p>Flight controllers expose <strong>hundreds of configurable parameters</strong> that control every aspect of flight behavior.</p>
+    <p>Flight controllers expose <strong>hundreds of configurable parameters</strong> that control every aspect of flight behavior. Think of them as the drone's <strong>settings menu</strong> — except the whole menu is exposed over MAVLink, and by default anyone on the link can read <em>and change</em> it.</p>
+<p>A parameter is just a name/value pair (e.g. <code>FENCE_RADIUS = 300</code>). ArduPilot has ~1,200 of them. The security problem is not any single value — it is that the entire configuration is remotely writable without a password.</p>
 <pre><code># Examples of critical parameters:
 ARMING_CHECK     # Which pre-arm safety checks to perform
 FS_THR_ENABLE    # Throttle failsafe (what to do if RC lost)
@@ -388,6 +402,11 @@ param show ARMING*
 Reveal.initialize({
     hash: true,
     slideNumber: 'c/t',
+    width: 1180,
+    height: 760,
+    margin: 0.04,
+    minScale: 0.2,
+    maxScale: 1.5,
     transition: 'fade',
     transitionSpeed: 'fast',
     backgroundTransition: 'none',

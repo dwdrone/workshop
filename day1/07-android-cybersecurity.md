@@ -15,13 +15,23 @@
 
 ---
 
+## Why Android? The GCS Is an App
+
+For most consumer drones, the Ground Control Station *is* a phone app (Solex, the Specta app, DJI Fly). That app holds the WiFi password to the drone, speaks MAVLink, and sometimes ships secrets baked right into it. So "hacking the drone" often starts with **hacking its app** — which is what this module and Lab 08 are about.
+
+---
+
 ## Android Security Model
 
 **Key concepts:**
-- Each app runs in an isolated **sandbox** with a unique Linux UID
-- Apps request **permissions** declared in AndroidManifest.xml
-- **Intents** allow inter-app communication (a common attack surface)
-- **APK** (Android Package Kit) — the app distribution format, a signed ZIP
+- Each app runs in an isolated **sandbox** with a unique Linux UID — one app cannot read another's files. (Getting *around* this isolation is a big part of the lab.)
+- Apps request **permissions** declared in AndroidManifest.xml — the manifest is the app's "table of contents," and reading it is always step 1.
+- **Intents** are Android's messaging system between apps; a component marked `exported="true"` can be triggered by *other* apps — a common attack surface.
+- **APK** (Android Package Kit) — the app itself: really just a **signed ZIP file** you can unzip and read.
+
+**Two ways to analyze any app** — we do static first (safer, no device needed), then dynamic:
+
+<img src="../img/dg-static-dynamic.svg" style="width: 88%; height: auto;" align="center">
 
 **Relevant to GCS apps:**
 - Many GCS apps request dangerous permissions: LOCATION, CAMERA, STORAGE, INTERNET, BLUETOOTH
@@ -77,6 +87,8 @@ adb pull /data/app/com.solex.app-1/base.apk solex.apk
 
 ## Static Analysis: APKtool 
 
+**What is smali?** Android apps are written in Java/Kotlin, compiled to **Dalvik bytecode** (the `.dex` inside the APK). We can't get the exact original source back, but two tools get us close: **apktool** turns the bytecode into *smali* (a readable assembly-like form, great for resources and repackaging), while **jadx** (next slide) reconstructs near-Java source that is much easier to read. Use jadx to *understand*, apktool to *modify and repackage*.
+
 **APKtool** – decompiles APK to smali bytecode and resources
 
 ```bash
@@ -122,6 +134,8 @@ grep "exported=\"true\"" solex_decoded/AndroidManifest.xml
 ## Dynamic Analysis: Frida
 
 **Frida** is a dynamic instrumentation toolkit that allows you to inject JavaScript into running Android processes.
+
+**Plain-English:** Frida lets you pause a running app, reach inside it, and read or change what a function is doing *live* — for example, printing every password the app checks, or dumping its memory to disk. In Lab 08 we use exactly this to scrape a memory dump and recover a password. "Instrumentation" just means *adding your own observation points into someone else's running code*.
 
 **Setup:**
 ```bash

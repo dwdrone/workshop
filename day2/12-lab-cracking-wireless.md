@@ -23,6 +23,20 @@
 
 ---
 
+## The Big Picture (Read This First)
+
+Every attack this week needed you to already be *on* the drone's WiFi. **This lab is how you get on it** when you don't know the password.
+
+The trick that makes WiFi cracking possible: you do **not** have to guess passwords against the live network (slow, noisy, detectable). Instead you capture the brief **"handshake"** that happens whenever a device joins, then guess passwords **offline** against that recording — millions per second, silently, on your own laptop. If the password is weak, it falls.
+
+Four moves, that's the whole lab:
+1. **Monitor mode** — put your WiFi card into "listen to everything" mode.
+2. **Find the target** — spot the drone's network and its channel.
+3. **Capture the handshake** — optionally kick a device off (`deauth`) so it reconnects and you catch the handshake.
+4. **Crack it offline** — run a wordlist against the capture.
+
+---
+
 ## Background: WPA2 Authentication
 
 WPA2-PSK (Pre-Shared Key) authentication uses a 4-way handshake to derive session keys:
@@ -36,6 +50,8 @@ Client                           AP
   |<-- GTK + MIC (encrypted) ----|   (Message 3)
   |--- ACK --------------------- >|   (Message 4)
 ```
+
+<img src="../img/dg-4way-handshake.svg" style="width: 96%; height: auto;">
 
 The **4-way handshake** is captured from the air. The PSK can then be brute-forced offline because:
 1. The attacker captures messages 1 and 2 (both contain public nonces)
@@ -113,6 +129,9 @@ sudo airodump-ng wlan1mon \
 - This can take several minutes
 
 **Option B — deauth attack**
+
+**Why this works:** WPA2 management frames aren't authenticated, so you can forge a "you've been disconnected" (deauthentication) frame that looks like it came from the access point. The victim device believes it, drops off, and **automatically reconnects a second later** — replaying the 4-way handshake right into your capture. You're not breaking encryption here; you're just *triggering* the moment you need to record.
+
 ```bash
 # In a separate terminal: send deauth packets to force reconnection
 sudo aireplay-ng --deauth 3 -a <TARGET_BSSID> wlan1mon

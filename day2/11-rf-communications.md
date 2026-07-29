@@ -15,6 +15,16 @@
 
 ---
 
+## Welcome to Day 2: The Invisible Attack Surface
+
+Yesterday everything was a *cable or a network* you could see. Today we go after the part you **can't** see: **radio**. Every drone is surrounded by a cloud of radio signals — control, telemetry, GPS, video, Remote ID — and most of them are unencrypted. If you can receive a signal, you can often read it; if you can transmit, you can often spoof it.
+
+**The one piece of gear that makes this possible** is the **SDR (Software-Defined Radio)** — a USB device (your HackRF) that can tune to almost any frequency and hand the raw signal to software. Before SDRs, each attack needed custom hardware; now one $300 box covers everything from GPS to 5.8 GHz video.
+
+Don't worry if RF feels unfamiliar — the next few slides build it up from zero.
+
+---
+
 ## A Brief History of RF
 
 | Year | Milestone |
@@ -35,6 +45,8 @@
 
 Every UAS has multiple RF links — each one is a potential attack surface:
 
+<img src="../img/dg-rf-spectrum.svg" style="width: 88%; height: auto;" align="center">
+
 | Link | Frequency | Protocol | Direction |
 |------|-----------|----------|-----------|
 | RC Control | 2.4 GHz | DSM2/DSMX, SBUS, CRSF | GCS → UAV |
@@ -51,6 +63,8 @@ Every UAS has multiple RF links — each one is a potential attack surface:
 
 All RF signals are based on sinusoidal waves characterized by:
 
+<img src="../img/rf-sine-wave-basic.png" style="float: right; width: 40%; margin-left: 18px;">
+
 - **Amplitude** — signal strength (voltage)
 - **Frequency** — oscillations per second (Hz)
 - **Phase** — position in the cycle (degrees)
@@ -66,6 +80,13 @@ All RF signals are based on sinusoidal waves characterized by:
 ## Modulation Schemes 1/2
 
 **Modulation** is the process of encoding information onto a carrier wave.
+
+**Plain-English:** a plain sine wave carries no information — it's a steady hum. To send data you have to *change* something about that hum in a pattern the receiver can read back. You only have three things you *can* change: its height (**amplitude**), its pitch (**frequency**), or its timing (**phase**). Every scheme below is just a different combination of those three knobs. "AM radio" wiggles amplitude; "FM radio" wiggles frequency — same idea, applied to drones.
+
+<div class="two-col">
+<div><img src="../img/rf-am-basic.png" style="width: 100%;"><br><em>AM — data rides in the wave's height.</em></div>
+<div><img src="../img/rf-fm-basic.png" style="width: 100%;"><br><em>FM — data rides in the wave's frequency (used by SiK radios).</em></div>
+</div>
 
 ### Analog Modulations
 
@@ -105,7 +126,12 @@ After modulation, data bits must be encoded for reliable transmission:
 | **Manchester** | Transition in middle of each bit period (↓ = 1, ↑ = 0) | Ethernet (10BASE-T), some RC |
 | **Differential Manchester** | Transition = 0, No transition = 1 | Token Ring, robust links |
 
-**Manchester encoding advantage:** Clock recovery is built into the signal — no separate clock line needed.
+<div class="two-col">
+<div><img src="../img/rf-nrz.png" style="width: 100%;"><br><em>NRZ — high = 1, low = 0. Simple, but a long run of 1s has no edges to sync on.</em></div>
+<div><img src="../img/rf-manchester.png" style="width: 100%;"><br><em>Manchester — every bit has a mid-bit transition, so the clock rides along with the data.</em></div>
+</div>
+
+**Manchester encoding advantage:** Clock recovery is built into the signal — no separate clock line needed. (URH in Lab 16 lets you pick the encoding when decoding a capture — now you know what those options mean.)
 
 ---
 
@@ -117,6 +143,8 @@ After modulation, data bits must be encoded for reliable transmission:
 - Can receive (and sometimes transmit) any RF frequency the hardware supports
 - Cheap hardware enables passive monitoring of all UAS RF links
 - Enables replay attacks, signal analysis, and protocol reverse engineering
+
+**What is "I/Q data"?** You'll see this term everywhere in RF tools. An SDR doesn't record "audio" — it records two numbers many millions of times per second: **I** (in-phase) and **Q** (quadrature). Together they capture the amplitude *and* phase of the signal at each instant, which is enough to reconstruct *any* modulation in software. When a tool saves a `.raw` or `.iq` file, that's what's inside. You don't need the math — just know I/Q = "the raw radio, as numbers."
 
 ---
 
@@ -133,8 +161,13 @@ After modulation, data bits must be encoded for reliable transmission:
 ---
 
 ## For this workshop:
+
+<img src="../img/sdr-hackrf-one.png" style="float: right; width: 34%; margin-left: 18px;">
+
 - **HackRF One** — main tool for TX/RX experiments
 - **RTL-SDR** — passive monitoring and ADS-B
+
+The **HackRF One** is the single most important piece of gear on Day 2. That one board can receive (and transmit) anything from 1 MHz to 6 GHz — telemetry, GPS, Remote ID, and 5.8 GHz video — so every RF lab uses it.
 
 **Key HackRF specs:**
 - 1 MHz to 6 GHz — covers all UAS RF links
@@ -166,7 +199,9 @@ gqrx
 
 ### Universal Radio Hacker (URH) – Signal Analysis
 
-URH is a full-featured signal analysis and decoding tool.
+<img src="../img/rf-urh.png" style="float: right; width: 42%; margin-left: 18px;">
+
+URH is a full-featured signal analysis and decoding tool. It takes you the last mile — from "I captured a mystery signal" to "here are the actual 1s and 0s." You mark where the signal is, tell URH the modulation (FSK/ASK) and bit rate, and it demodulates the raw I/Q into bits you can read.
 
 ```bash
 urh

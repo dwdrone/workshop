@@ -29,6 +29,17 @@ We will use the **Flymore Specta app** for the Android dynamic analysis lab.
 
 ---
 
+## The Big Picture (Read This First)
+
+This lab has **two halves**, matching the two analysis styles from Module 07:
+
+1. **Static (Solo app)** — you copy the app off the phone as a `.apk`, unzip/decompile it with **jadx**, and read the code looking for secrets: hardcoded passwords, API keys, drone IP addresses, and the permissions it demands. *You never run the app.*
+2. **Dynamic (Specta app)** — you run the app and attack it live. Using **Frida** you dump the running app's memory to your laptop, turn that memory into a giant wordlist, and feed it to **John the Ripper** to crack the drone's root password from Lab 04.
+
+The punchline connects the two days: the app was carrying the drone's secrets the whole time — either sitting in the code (static) or sitting in memory (dynamic).
+
+---
+
 ## Phase 1: Enable ADB and Extract the APK
 
 
@@ -265,6 +276,8 @@ python3 fridump3.py -r -U
 ```
 ---
 ## Create a wordlist from the memory dump
+
+**The idea:** when the app runs, the drone's password sits somewhere in its memory as plain text. We just dumped all of that memory to disk. We don't know *which* piece of text is the password — so we treat **every unique string in the dump as a password guess.** `sort -u` collapses the dump to a list of unique strings; that becomes our custom wordlist. Then `john` tries each one against the `shadow` hash we recovered in Lab 04. If the password is anywhere in memory, John will find it.
 
 Save the file to the same directory we saved the passwd file earlier
 

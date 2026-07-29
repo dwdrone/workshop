@@ -16,7 +16,17 @@
 
 ## UAS Overview
 
-A UAS is not a single device — it is a system of systems.
+A UAS is not a single device — it is a **system of systems**. Think of it like a tiny aircraft *and* a tiny data center that happen to fly together.
+
+**Why this matters for security:** each box below is a separate little computer or radio, often made by a different vendor, talking over a bus with no passwords. An attacker only has to win *one* of them. As we walk through the ten subsystems, keep asking three questions:
+
+1. **What does it talk to?** (its interfaces = its attack surface)
+2. **Is that conversation encrypted or authenticated?** (usually: no)
+3. **What happens if I lie to it?** (spoofing, injection, DoS)
+
+<img src="../img/holybro-uav-diagram.jpg" style="width: 68%; height: auto;" align="center">
+
+*A typical autopilot wiring diagram — every labeled wire is a bus or link an attacker could tap. Keep this "map" in mind for the rest of the day.*
 
 
 | ID | Subsystem Name | ID | Subsystem Name|
@@ -88,6 +98,12 @@ Many advanced drones pair the flight controller with a **companion computer** fo
 
 **Brushless DC (BLDC) motors** are standard for consumer and commercial drones.
 
+**Beginner note:** a brushless motor cannot be driven by plain battery voltage — it needs its three coils energized in a precise, fast sequence. The **ESC** is the little controller that does that sequencing. The flight controller doesn't move the motor directly; it just tells each ESC "spin this fast," thousands of times per second.
+
+<img src="../img/3dr-solo-esc.jpg" style="float: right; width: 34%; margin-left: 18px;">
+
+**How the FC talks to the ESC:** the classic method is a **PWM** pulse (1000 µs = stop, 2000 µs = full throttle). Newer digital protocols — **DShot**, **BLHeli** — send exact numeric values and can even read RPM back. That two-way BLHeli link is convenient for tuning but is also how an attacker could **reflash the ESC firmware** through the flight controller.
+
 <img src="../img/uav-motor-annotated.jpeg" style="float: right; width: 500px; margin-left: 20px;">
 
 ## ESC (Electronic Speed Controller):
@@ -126,6 +142,10 @@ Many advanced drones pair the flight controller with a **companion computer** fo
 
 ## 5. Telemetry Radio
 
+<img src="../img/3dr-sik-telemetry-radio.png" style="float: right; width: 30%; margin-left: 18px;">
+
+The telemetry radio is the drone's **live data link back to the operator** — battery, GPS, attitude, and the channel a GCS uses to send commands. It is separate from the RC control link. We spend all of Module 15–16 on these.
+
 **SiK Radios (RFDesign, HolyBro, 3DR):**
 - 433 MHz (EU/Asia) or 915 MHz (USA)
 - 250 mW typical output
@@ -162,7 +182,11 @@ Many advanced drones pair the flight controller with a **companion computer** fo
 
 ## 7. IMU (Inertial Measurement Unit)
 
-Sensors that measure the drone's physical state:
+The IMU is the drone's **sense of balance** — the equivalent of your inner ear. Without it, the aircraft cannot tell which way is up and falls out of the sky. It is a cluster of tiny sensors that measure the drone's physical state hundreds of times per second:
+
+<img src="../img/rpi-imu-axis.png" style="float: right; width: 32%; margin-left: 18px;">
+
+**The three axes** you'll see everywhere: **roll** (tilt left/right), **pitch** (nose up/down), and **yaw** (spin left/right). The accelerometer and gyroscope each measure all three. These are **MEMS** chips — microscopic mechanical structures on silicon — which is exactly why they can be disturbed by loud sound or vibration at their resonant frequency (acoustic injection).
 
 - **Accelerometers** – measure linear acceleration (3 axes)
 - **Gyroscopes** – measure angular velocity (3 axes)
@@ -181,6 +205,12 @@ Sensors that measure the drone's physical state:
 ## 8. GPS / GNSS Receiver
 
 Provides absolute position (latitude, longitude, altitude) and time.
+
+**GPS vs. GNSS:** *GPS* is the American satellite system specifically; *GNSS* is the umbrella term for all of them (GPS, GLONASS, Galileo, BeiDou). Modern receivers listen to several at once for a better fix. The receiver works by timing how long signals take to arrive from 4+ satellites — which is exactly why it can be fooled: the signals are faint, unencrypted, and carry no proof of who sent them (Module 13).
+
+<img src="../img/3dr-solo-gps.png" style="float: right; width: 34%; margin-left: 18px;">
+
+**On the 3DR Solo** the GPS is a **u-blox NEO-7** module on its own little board with a patch antenna facing the sky. It outputs position over a serial link in the **NMEA** and **UBX** formats (Module 13). Because it needs a clear view of the sky, its signal is weak and easily overpowered by a ground-based spoofer.
 
 **Satellite constellations:**
 - GPS (US) – L1: 1575.42 MHz
@@ -219,11 +249,15 @@ Provides absolute position (latitude, longitude, altitude) and time.
 
 ## 10. Camera & Gimbal
 
+<img src="../img/gopro-hero4.png" style="float: right; width: 30%; margin-left: 18px;">
+
 **Camera types:**
-- GoPro (WiFi-enabled, HTTP API)
+- GoPro (WiFi-enabled, HTTP API — the 3DR Solo uses a Hero 4)
 - DJI integrated cameras
 - Thermal / multispectral sensors
 - FPV cameras (analog or digital)
+
+The camera is usually the whole *reason* the drone exists — and on the Solo it is a stock GoPro with an open WiFi HTTP API we will drive by hand in Labs 10 and 19.
 
 **Gimbal:**
 - 2-axis or 3-axis stabilization

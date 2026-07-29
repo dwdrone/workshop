@@ -17,6 +17,8 @@
 
 ## Why Drones Log
 
+**Beginner framing:** a flight controller is a black box recorder, like the one on an airliner. It writes down *everything* — every GPS point, every stick movement, every mode change — so engineers can figure out what happened after a crash. That same recording is a gift to an attacker: it is a minute-by-minute diary of where the drone (and its operator) has been.
+
 Drone autopilots generate detailed flight logs for:
 - **Safety:** Crash investigation and root cause analysis
 - **Performance:** Tuning PID controllers and flight behavior
@@ -30,6 +32,8 @@ Drone autopilots generate detailed flight logs for:
 ## ArduPilot: DataFlash Logs
 
 **ArduPilot** stores logs in **DataFlash** format (binary `.BIN` files).
+
+**What "binary format" means for you:** you cannot just `cat` a `.BIN` file and read it — it is packed bytes, not text. Inside, it is organized like a tiny database: a `FMT` header defines each record type, then thousands of records follow (a `GPS` record, an `ATT` record, and so on). Tools like MAVExplorer read that structure back into readable columns. You will do this by hand in Lab 22.
 
 **Storage location:**
 - SD card: `/LOGS/` directory (e.g., `1.BIN`, `2.BIN`, ...)

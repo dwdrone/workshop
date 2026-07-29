@@ -13,6 +13,18 @@
 - Observe the spoofed Remote ID data in Wireshark
 
 ---
+
+## The Big Picture (Read This First)
+
+Module 13 claimed Remote ID is a plaintext, unauthenticated "digital license plate." **This lab proves it by reading one out of the air.**
+
+You'll use an **nRF52840 dongle** (a cheap Nordic radio chip) flashed as a **Bluetooth Low Energy sniffer**, feed its capture into **Wireshark**, and use the **OpenDroneID dissector** so Wireshark decodes the drone's broadcast into readable fields — right down to the **Operator ID** (`DARKWOLF`). No key, no pairing, no permission from the drone. If you can hear it, you can read it.
+
+**Two setup steps that trip people up:**
+- **Flashing the dongle** — it ships in "DFU bootloader mode." You load the sniffer firmware with `nrfutil` once, then it shows up in Wireshark as a capture device.
+- **The dissector** — Wireshark doesn't understand Remote ID until you drop in the `opendroneid` plugin. Verify it under *Help → About → Plugins* before capturing.
+
+---
 ## Setup VirtualBox for NRF USB Passthrough
 
 * In VirtualBox Manager, Select  
@@ -69,6 +81,10 @@ Initially, the nRF5280 is delivered in DFU bootloader mode.
 In VirtualBox, add the nRF 52840 in bootloader mode
 
 * Settings \> USB \> \[+\] (add) \-\> Nordic Semiconductor Open DFU Bootloader 
+
+<img src="../img/nrf-device-list-bootloader.png" style="width: 70%; height: auto;">
+
+*`nrfutil device list` showing the dongle in bootloader mode — note the serial number; you pass it to the program command below.*
 
 To flash, you will need nrfutil setup in Kali above. Open a terminal window and run the following commands
 ```bash

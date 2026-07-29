@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" font-family="Inter, Segoe UI, sans-serif">
+  <rect x="1" y="1" width="898" height="318" rx="12" fill="#0d0d0d" stroke="#1a1a1a"/>
+  <text x="24" y="36" fill="#68E01A" font-size="20" font-weight="700">Every UAS is a bundle of radio links</text>
+  <text x="24" y="60" fill="#7a8290" font-size="13">A HackRF (1 MHz – 6 GHz) reaches all of them. Green = unencrypted by default.</text>
+
+  <!-- axis -->
+  <line x1="60" y1="250" x2="860" y2="250" stroke="#7a8290" stroke-width="2"/>
+  <g fill="#7a8290" font-size="12" text-anchor="middle">
+    <line x1="60"  y1="245" x2="60"  y2="255" stroke="#7a8290"/><text x="60"  y="274">400 MHz</text>
+    <line x1="260" y1="245" x2="260" y2="255" stroke="#7a8290"/><text x="260" y="274">1 GHz</text>
+    <line x1="470" y1="245" x2="470" y2="255" stroke="#7a8290"/><text x="470" y="274">1.5 GHz</text>
+    <line x1="660" y1="245" x2="660" y2="255" stroke="#7a8290"/><text x="660" y="274">2.4 GHz</text>
+    <line x1="850" y1="245" x2="850" y2="255" stroke="#7a8290"/><text x="850" y="274">5.8 GHz</text>
+  </g>
+
+  <!-- link markers: x, label, color -->
+  <g font-size="12" text-anchor="middle">
+    <g>
+      <line x1="95" y1="250" x2="95" y2="150" stroke="#68E01A" stroke-width="2"/>
+      <rect x="45" y="120" width="100" height="30" rx="5" fill="#111" stroke="#68E01A"/>
+      <text x="95" y="140" fill="#68E01A">Telemetry 433/915</text>
+    </g>
+    <g>
+      <line x1="480" y1="250" x2="480" y2="110" stroke="#f87171" stroke-width="2"/>
+      <rect x="430" y="80" width="100" height="30" rx="5" fill="#111" stroke="#f87171"/>
+      <text x="480" y="100" fill="#f87171">GPS 1575.42</text>
+    </g>
+    <g>
+      <line x1="300" y1="250" x2="300" y2="180" stroke="#fbbf24" stroke-width="2"/>
+      <rect x="250" y="150" width="100" height="30" rx="5" fill="#111" stroke="#fbbf24"/>
+      <text x="300" y="170" fill="#fbbf24">ADS-B 1090</text>
+    </g>
+    <g>
+      <line x1="660" y1="250" x2="660" y2="150" stroke="#68E01A" stroke-width="2"/>
+      <rect x="600" y="120" width="120" height="30" rx="5" fill="#111" stroke="#68E01A"/>
+      <text x="660" y="140" fill="#68E01A">WiFi / RC / RID 2.4</text>
+    </g>
+    <g>
+      <line x1="850" y1="250" x2="850" y2="180" stroke="#68E01A" stroke-width="2"/>
+      <rect x="790" y="150" width="105" height="30" rx="5" fill="#111" stroke="#68E01A"/>
+      <text x="842" y="170" fill="#68E01A">FPV video 5.8</text>
+    </g>
+  </g>
+</svg>

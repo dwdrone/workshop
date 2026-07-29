@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 250" font-family="Inter, Segoe UI, sans-serif">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#68E01A"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="898" height="248" rx="12" fill="#0d0d0d" stroke="#1a1a1a"/>
+  <text x="24" y="38" fill="#68E01A" font-size="20" font-weight="700">The Attack Chain — every pentest, in order</text>
+  <g font-size="15" font-weight="700">
+    <g>
+      <rect x="24"  y="70" width="120" height="70" rx="8" fill="#111" stroke="#68E01A"/>
+      <text x="84"  y="100" fill="#f0f0f0" text-anchor="middle">1. Get on</text>
+      <text x="84"  y="120" fill="#7a8290" text-anchor="middle" font-size="12" font-weight="400">WiFi / radio</text>
+    </g>
+    <g>
+      <rect x="168" y="70" width="120" height="70" rx="8" fill="#111" stroke="#68E01A"/>
+      <text x="228" y="100" fill="#f0f0f0" text-anchor="middle">2. Scan</text>
+      <text x="228" y="120" fill="#7a8290" text-anchor="middle" font-size="12" font-weight="400">nmap</text>
+    </g>
+    <g>
+      <rect x="312" y="70" width="120" height="70" rx="8" fill="#111" stroke="#68E01A"/>
+      <text x="372" y="100" fill="#f0f0f0" text-anchor="middle">3. Access</text>
+      <text x="372" y="120" fill="#7a8290" text-anchor="middle" font-size="12" font-weight="400">SSH / default creds</text>
+    </g>
+    <g>
+      <rect x="456" y="70" width="120" height="70" rx="8" fill="#111" stroke="#68E01A"/>
+      <text x="516" y="100" fill="#f0f0f0" text-anchor="middle">4. Pivot</text>
+      <text x="516" y="120" fill="#7a8290" text-anchor="middle" font-size="12" font-weight="400">GCS &#8594; UAV</text>
+    </g>
+    <g>
+      <rect x="600" y="70" width="120" height="70" rx="8" fill="#111" stroke="#68E01A"/>
+      <text x="660" y="100" fill="#f0f0f0" text-anchor="middle">5. Loot</text>
+      <text x="660" y="120" fill="#7a8290" text-anchor="middle" font-size="12" font-weight="400">logs / creds</text>
+    </g>
+    <g>
+      <rect x="744" y="70" width="120" height="70" rx="8" fill="#111" stroke="#ef4444"/>
+      <text x="804" y="100" fill="#f87171" text-anchor="middle">6. Control</text>
+      <text x="804" y="120" fill="#7a8290" text-anchor="middle" font-size="12" font-weight="400">MAVLink</text>
+    </g>
+  </g>
+  <g stroke="#68E01A" stroke-width="2" marker-end="url(#ah)">
+    <line x1="146" y1="105" x2="164" y2="105"/>
+    <line x1="290" y1="105" x2="308" y2="105"/>
+    <line x1="434" y1="105" x2="452" y2="105"/>
+    <line x1="578" y1="105" x2="596" y2="105"/>
+    <line x1="722" y1="105" x2="740" y2="105"/>
+  </g>
+  <text x="24" y="185" fill="#7a8290" font-size="13">Notice: nothing here is drone-specific magic — each step is a normal network / Linux skill.</text>
+  <text x="24" y="212" fill="#7a8290" font-size="13">You never needed to know a password: the drone trusts anyone already on its network.</text>
+</svg>

@@ -3,89 +3,161 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Module 22 – Lab: Adversarial Forensics on UAS Logs</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css">
+    <title>Lab 22 – Lab: Adversarial Forensics on UAS Logs</title>
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
     :root {
         --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
         --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
         --dw-white: #f0f0f0; --dw-gray: #7a8290;
-        --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
-        --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
-        --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
-        --r-main-font-size: 26px;
     }
-    .reveal-viewport { background: var(--dw-bg); }
-    .reveal .slides { text-align: left; }
-    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
-    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
-    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
-    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
-    .reveal a { color: var(--dw-green); }
-    .reveal p, .reveal li { line-height: 1.55; }
-    .reveal ul li { margin-bottom: 8px; }
-    .reveal ul li::marker { color: var(--dw-green); }
-    .reveal .progress span { background: var(--dw-green); }
-    .reveal .controls { color: var(--dw-green); }
-    .reveal .slide-number { color: var(--dw-green); background: rgba(0,0,0,0.7); font-family: var(--r-code-font); font-size: 0.52em; padding: 4px 10px; border-radius: 4px; }
-    .reveal .slides > section { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23161616' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E"); background-size: 56px 97px; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+        margin: 0; background: var(--dw-bg); color: var(--dw-white);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 17px; line-height: 1.6;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%23111111' stroke-width='1' d='M28 0l28 16.3v32.7L28 65.3 0 49V16.3zM28 32l28 16.3v32.7L28 97 0 80.7V48z'/%3E%3C/svg%3E");
+        background-size: 56px 97px; background-attachment: fixed;
+    }
+    a { color: var(--dw-green); }
+
+    /* ── Reading-progress bar (fixed, very top) ── */
+    .progress-track { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: #141414; z-index: 60; }
+    .progress-fill { height: 100%; width: 0; background: var(--dw-green); box-shadow: 0 0 10px rgba(104,224,26,0.6); transition: width 0.1s linear; }
+
+    /* ── Top bar ── */
+    .lab-topbar { position: fixed; top: 3px; left: 0; right: 0; height: 52px; z-index: 55;
+        display: flex; align-items: center; gap: 14px; padding: 0 20px;
+        background: rgba(8,8,8,0.92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--dw-border); }
+    .lab-topbar .back { color: var(--dw-gray); text-decoration: none; font-size: 0.85em; white-space: nowrap; }
+    .lab-topbar .back:hover { color: var(--dw-green); }
+    .lab-topbar .crumb { color: var(--dw-white); font-weight: 600; font-size: 0.9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lab-topbar .crumb .mod { color: var(--dw-green); font-family: 'JetBrains Mono', monospace; margin-right: 8px; font-size: 0.85em; }
+    .lab-topbar .pct { margin-left: auto; color: var(--dw-gray); font-family: 'JetBrains Mono', monospace; font-size: 0.8em; }
+    .nav-toggle { display: none; background: none; border: 1px solid var(--dw-border); color: var(--dw-green); border-radius: 6px; padding: 4px 10px; font-size: 1.1em; cursor: pointer; }
+
+    /* ── Layout ── */
+    .lab-layout { display: grid; grid-template-columns: 264px 1fr; max-width: 1320px; margin: 0 auto; padding-top: 55px; }
+
+    /* ── Sidebar ── */
+    .lab-nav { position: sticky; top: 55px; align-self: start; height: calc(100vh - 55px); overflow-y: auto;
+        padding: 22px 12px 40px 20px; border-right: 1px solid var(--dw-border); }
+    .lab-nav .nav-label { color: var(--dw-gray); font-size: 0.68em; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 12px 8px; }
+    .lab-nav a { display: block; text-decoration: none; color: var(--dw-gray); border-radius: 6px;
+        padding: 6px 10px; font-size: 0.86em; line-height: 1.35; border-left: 2px solid transparent; transition: all 0.12s; }
+    .lab-nav a.nav-top { color: #c9cdd4; font-weight: 600; margin-top: 3px; }
+    .lab-nav a.nav-sub { font-size: 0.8em; padding: 4px 10px 4px 22px; color: var(--dw-gray); }
+    .lab-nav a:hover { color: var(--dw-white); background: rgba(255,255,255,0.03); }
+    .lab-nav a.active { color: var(--dw-green); border-left-color: var(--dw-green); background: var(--dw-green-glow); }
+
+    /* ── Main content ── */
+    .lab-main { padding: 8px 46px 120px; min-width: 0; }
+    .lab-hero { padding: 26px 0 22px; border-bottom: 1px solid var(--dw-border); margin-bottom: 10px; }
+    .lab-hero .meta { margin-bottom: 12px; }
+    .lab-hero .meta .dur { color: var(--dw-gray); font-size: 0.82em; margin-left: 4px; }
+    .lab-hero h1 { color: var(--dw-green); font-size: 2em; line-height: 1.15; letter-spacing: -0.5px; margin: 6px 0 8px; }
+    .lab-hero .section-name { color: var(--dw-gray); font-size: 0.9em; }
+
+    .lab-section { padding: 26px 0 8px; scroll-margin-top: 70px; border-top: 1px solid #121212; }
+    .lab-section:first-of-type { border-top: none; }
+    .lab-section h2 { color: var(--dw-white); font-size: 1.4em; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--dw-green); }
+    .lab-section h3 { color: var(--dw-green); font-size: 0.82em; text-transform: uppercase; letter-spacing: 1.5px; margin: 22px 0 10px; scroll-margin-top: 70px; }
+    .lab-section p { margin: 0 0 12px; }
+    .lab-section ul, .lab-section ol { margin: 0 0 14px; padding-left: 24px; }
+    .lab-section li { margin-bottom: 6px; }
+    .lab-section li::marker { color: var(--dw-green); }
+    .lab-section strong, .lab-section b { color: var(--dw-green); }
+    .lab-section img { max-width: 100%; height: auto; border: 1px solid var(--dw-border); border-radius: 8px; margin: 10px 0; display: block; }
     .tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.6em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 6px; }
     .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
     .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
     .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
-    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
-    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 10px 0; }
     .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
-    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
-    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
-    .reveal pre { margin: 0; box-shadow: none; }
-    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
-    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
-    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
-    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
     .highlight-green { color: var(--dw-green); font-weight: 600; }
     .highlight-red { color: #f87171; font-weight: 600; }
     .highlight-yellow { color: #fbbf24; font-weight: 600; }
     .highlight-blue { color: #60a5fa; font-weight: 600; }
-    .reveal strong, .reveal b { color: var(--dw-green); }
-    .reveal :not(pre) > code { color: var(--dw-green); }
+    .lab-section pre { margin: 0 0 16px; }
+    .lab-section pre code { display: block; background: #050505; color: var(--dw-green); border: 1px solid var(--dw-border);
+        border-top: 2px solid var(--dw-green); border-radius: 8px; padding: 14px 16px; font-family: 'JetBrains Mono','Courier New',monospace;
+        font-size: 0.82em; line-height: 1.6; overflow-x: auto; }
+    .lab-section :not(pre) > code { background: #050505; color: var(--dw-green); border: 1px solid var(--dw-border);
+        border-radius: 4px; padding: 1px 6px; font-family: 'JetBrains Mono','Courier New',monospace; font-size: 0.85em; }
+    .lab-section table { border-collapse: collapse; width: 100%; font-size: 0.86em; margin: 6px 0 18px; display: block; overflow-x: auto; }
+    .lab-section table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border);
+        padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.9em; text-align: left; }
+    .lab-section table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
+    .lab-section table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    .lab-footer { border-top: 1px solid var(--dw-border); margin-top: 40px; padding: 22px 0; color: #3a3a3a; font-size: 0.8em; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+        .lab-layout { grid-template-columns: 1fr; }
+        .nav-toggle { display: inline-block; }
+        .lab-nav { position: fixed; top: 55px; left: 0; bottom: 0; width: 280px; background: #0a0a0a; z-index: 50;
+            transform: translateX(-102%); transition: transform 0.2s ease; border-right: 1px solid var(--dw-border); }
+        body.nav-open .lab-nav { transform: translateX(0); }
+        .lab-main { padding: 8px 20px 100px; }
+    }
     </style>
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
 
-<section data-background-gradient="radial-gradient(circle at 20% 50%, #060606 0%, #080808 60%)">
-    <div style="text-align:center; padding-top: 40px;">
-        <p><span class="tag tag-lab">LAB</span><span style="color:var(--dw-gray); font-size:0.7em;">30 minutes</span></p>
-        <h1 style="font-size:2em; margin-top: 16px;">Lab: Adversarial Forensics on UAS Logs</h1>
-        <h3 style="color:var(--dw-gray); font-weight:300; margin-top: 8px;">Module 22</h3>
-        <hr style="border-color: var(--dw-green-border); margin: 24px auto; width: 60%;">
-        <p style="color:var(--dw-green); font-size:0.9em;">Day 2 – Payloads & Logging</p>
-        <p style="color:var(--dw-gray); font-size:0.7em; margin-top: 40px;">Hack Our Drone Workshop &mdash; Dark Wolf Solutions</p>
-    </div>
-</section>
+<header class="lab-topbar">
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle phases">☰</button>
+    <a class="back" href="index.html">← All Modules</a>
+    <span class="crumb"><span class="mod">LAB 22</span>Lab: Adversarial Forensics on UAS Logs</span>
+    <span class="pct" id="pct">0%</span>
+</header>
 
-<section>
+<div class="lab-layout">
+    <nav class="lab-nav" id="lab-nav">
+        <p class="nav-label">On this page</p>
+            <a class="nav-top" data-target="objectives" href="#objectives">Objectives</a>
+            <a class="nav-top" data-target="background" href="#background">Background</a>
+            <a class="nav-top" data-target="phase-1-access-and-list-logs" href="#phase-1-access-and-list-logs">Phase 1: Access and List Logs</a>
+            <a class="nav-top" data-target="phase-2-exfiltrate-logs" href="#phase-2-exfiltrate-logs">Phase 2: Exfiltrate Logs</a>
+            <a class="nav-top" data-target="phase-3-analyze-with-mavexplorer-cli" href="#phase-3-analyze-with-mavexplorer-cli">Phase 3: Analyze with MAVExplorer (CLI)</a>
+            <a class="nav-top" data-target="phase-4-reconstruct-the-flight-path" href="#phase-4-reconstruct-the-flight-path">Phase 4: Reconstruct the Flight Path</a>
+            <a class="nav-sub" href="#sub-option-a-qgroundcontrol">Option A: QGroundControl</a>
+            <a class="nav-sub" href="#sub-option-b-python-script">Option B: Python Script</a>
+            <a class="nav-sub" href="#sub-option-c-convert-to-kml-for-google-earth">Option C: Convert to KML for Google Earth</a>
+            <a class="nav-top" data-target="phase-5-intelligence-extraction" href="#phase-5-intelligence-extraction">Phase 5: Intelligence Extraction</a>
+            <a class="nav-top" data-target="phase-5-intellegnece-extraction-answers" href="#phase-5-intellegnece-extraction-answers">Phase 5: Intellegnece Extraction (Answers)</a>
+            <a class="nav-top" data-target="plot-the-operator-s-home-location" href="#plot-the-operator-s-home-location">Plot the operator's home location:</a>
+            <a class="nav-top" data-target="phase-6-check-for-anomalous-events" href="#phase-6-check-for-anomalous-events">Phase 6: Check for Anomalous Events</a>
+            <a class="nav-top" data-target="findings-template" href="#findings-template">Findings Template</a>
+            <a class="nav-top" data-target="discussion-questions" href="#discussion-questions">Discussion Questions</a>
+    </nav>
+
+    <main class="lab-main">
+        <div class="lab-hero">
+            <div class="meta"><span class="tag tag-lab">LAB</span><span class="dur">⏱ 30 minutes</span></div>
+            <h1>Lab: Adversarial Forensics on UAS Logs</h1>
+            <div class="section-name">Day 2 – Payloads & Logging</div>
+        </div>
+
+<section class="lab-section" id="objectives">
     <h2>Objectives</h2>
     <div class="objective-box">Extract flight logs from the 3DR Solo via SSH</div>
-    <div class="objective-box">Analyze logs to reconstruct flight history, GPS track, and operator behavior</div>
-    <div class="objective-box">Identify mission waypoints and sensitive locations</div>
-    <div class="objective-box">Demonstrate the forensic intelligence value of UAS logs</div>
+<div class="objective-box">Analyze logs to reconstruct flight history, GPS track, and operator behavior</div>
+<div class="objective-box">Identify mission waypoints and sensitive locations</div>
+<div class="objective-box">Demonstrate the forensic intelligence value of UAS logs</div>
 </section>
 
-<section>
+<section class="lab-section" id="background">
     <h2>Background</h2>
     <p>"Adversarial forensics" means applying forensic analysis techniques from the perspective of an attacker or intelligence collector — not as a defender performing incident response, but as someone who has gained unauthorized access to the drone's data.</p>
+<p><strong>The big picture:</strong> in Lab 10 you learned to <em>get</em> the drone's logs. This lab is about <em>what those logs tell you</em>. You will turn a raw <code>.BIN</code> file into a map of everywhere the drone has flown, pinpoint the operator's home/launch location, and reconstruct their behavior — all from data the drone happily recorded. This is the "so what?" that makes log access a serious finding, not a footnote.</p>
+<p><strong>One number to know:</strong> ArduPilot stores latitude/longitude as integers scaled by <strong>10⁷</strong> (1e7) to avoid decimals. So a logged <code>Lat</code> of <code>407038000</code> is really <code>40.7038000°</code>. Every script below divides by <code>1e7</code> for exactly this reason — that's all that math is doing.</p>
 </section>
 
-<section>
+<section class="lab-section" id="phase-1-access-and-list-logs">
     <h2>Phase 1: Access and List Logs</h2>
     <pre><code class="language-bash"># Ensure you are connected to SoloLink WiFi
 # SSH to the Solo UAV
@@ -101,7 +173,7 @@ ls -lht /log/*.BIN | head -20
 <p><strong>Note:</strong> Each <code>.BIN</code> file is one flight session. The file number is sequential — the highest number is the most recent flight.</p>
 </section>
 
-<section>
+<section class="lab-section" id="phase-2-exfiltrate-logs">
     <h2>Phase 2: Exfiltrate Logs</h2>
     <pre><code class="language-bash"># From your laptop (separate terminal, not the SSH session):
 mkdir -p ~/workshop/logs/solo/
@@ -114,7 +186,7 @@ ls -lh ~/workshop/logs/solo/
 </code></pre>
 </section>
 
-<section>
+<section class="lab-section" id="phase-3-analyze-with-mavexplorer-cli">
     <h2>Phase 3: Analyze with MAVExplorer (CLI)</h2>
     <pre><code class="language-bash">cd ~/workshop/logs/solo/
 
@@ -141,9 +213,9 @@ mavlogdump.py 1.BIN --type CMD
 </code></pre>
 </section>
 
-<section>
+<section class="lab-section" id="phase-4-reconstruct-the-flight-path">
     <h2>Phase 4: Reconstruct the Flight Path</h2>
-    <h3>Option A: QGroundControl</h3>
+    <h3 id="sub-option-a-qgroundcontrol">Option A: QGroundControl</h3>
 <ul>
 <li>
 <p>Open QGroundControl on your laptop</p>
@@ -158,11 +230,7 @@ mavlogdump.py 1.BIN --type CMD
 <p>The flight path is displayed on the map</p>
 </li>
 </ul>
-</section>
-
-<section>
-    <h2>Phase 4: Reconstruct the Flight Path</h2>
-    <h3>Option B: Python Script</h3>
+<h3 id="sub-option-b-python-script">Option B: Python Script</h3>
 <pre><code class="language-python"># Save as: extract_gps.py
 from pymavlink import mavutil
 import sys
@@ -185,11 +253,7 @@ while True:
 # Or visualize with gpx:
 cat flight-path.csv | head -5
 </code></pre>
-</section>
-
-<section>
-    <h2>Phase 4: Reconstruct the Flight Path</h2>
-    <h3>Option C: Convert to KML for Google Earth</h3>
+<h3 id="sub-option-c-convert-to-kml-for-google-earth">Option C: Convert to KML for Google Earth</h3>
 <pre><code class="language-bash"># Using mavlogdump to generate KML
 # (Requires Mission Planner on Windows, or use the Python approach)
 mavlogdump.py 1.BIN --type GPS --format kml &gt; flight.kml
@@ -197,7 +261,7 @@ mavlogdump.py 1.BIN --type GPS --format kml &gt; flight.kml
 </code></pre>
 </section>
 
-<section>
+<section class="lab-section" id="phase-5-intelligence-extraction">
     <h2>Phase 5: Intelligence Extraction</h2>
     <p>Answer these questions from the log data:</p>
 <ol>
@@ -219,7 +283,7 @@ mavlogdump.py 1.BIN --type GPS --format kml &gt; flight.kml
 </ol>
 </section>
 
-<section>
+<section class="lab-section" id="phase-5-intellegnece-extraction-answers">
     <h2>Phase 5: Intellegnece Extraction (Answers)</h2>
     <pre><code class="language-bash"># 1. How many total flights are in the log directory?
 ls /log/*.BIN | wc -l
@@ -240,7 +304,7 @@ mavlogdump.py 1.BIN --type CMD | grep -v &quot;^#&quot;
 </code></pre>
 </section>
 
-<section>
+<section class="lab-section" id="plot-the-operator-s-home-location">
     <h2>Plot the operator's home location:</h2>
     <pre><code class="language-python">from pymavlink import mavutil
 
@@ -262,7 +326,7 @@ while True:
 </code></pre>
 </section>
 
-<section>
+<section class="lab-section" id="phase-6-check-for-anomalous-events">
     <h2>Phase 6: Check for Anomalous Events</h2>
     <pre><code class="language-bash"># Check for failsafe triggers
 mavlogdump.py 1.BIN --type ERR
@@ -278,7 +342,7 @@ mavlogdump.py 1.BIN --type MSG
 </code></pre>
 </section>
 
-<section>
+<section class="lab-section" id="findings-template">
     <h2>Findings Template</h2>
     <p>Fill in for the most recent log file:</p>
 <table>
@@ -329,7 +393,7 @@ mavlogdump.py 1.BIN --type MSG
 </table>
 </section>
 
-<section>
+<section class="lab-section" id="discussion-questions">
     <h2>Discussion Questions</h2>
     <ol>
 <li>
@@ -346,21 +410,54 @@ mavlogdump.py 1.BIN --type MSG
 </li>
 </ol>
 </section>
+        <footer class="lab-footer">
+            Hack Our Drone &mdash; Dark Wolf Solutions &bull; For authorized training use only.
+        </footer>
+    </main>
 </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/notes/notes.js"></script>
+
 <script>
-Reveal.initialize({
-    hash: true,
-    slideNumber: 'c/t',
-    transition: 'fade',
-    transitionSpeed: 'fast',
-    backgroundTransition: 'none',
-    mouseWheel: true,
-    plugins: [RevealHighlight, RevealNotes]
-});
+(function () {
+    var fill = document.getElementById('progress-fill');
+    var pct  = document.getElementById('pct');
+    function onScroll() {
+        var h = document.documentElement;
+        var max = h.scrollHeight - h.clientHeight;
+        var p = max > 0 ? (h.scrollTop / max) : 0;
+        var v = Math.max(0, Math.min(100, p * 100));
+        fill.style.width = v.toFixed(1) + '%';
+        pct.textContent = Math.round(v) + '%';
+    }
+    document.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+
+    // Highlight the current section in the sidebar.
+    var tops = Array.prototype.slice.call(document.querySelectorAll('.lab-nav a.nav-top'));
+    var byId = {};
+    tops.forEach(function (a) { byId[a.getAttribute('data-target')] = a; });
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) {
+                tops.forEach(function (a) { a.classList.remove('active'); });
+                var a = byId[e.target.id];
+                if (a) {
+                    a.classList.add('active');
+                    a.scrollIntoView({ block: 'nearest' });
+                }
+            }
+        });
+    }, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+    document.querySelectorAll('section.lab-section').forEach(function (s) { obs.observe(s); });
+
+    // Mobile sidebar toggle.
+    var toggle = document.getElementById('nav-toggle');
+    var nav = document.getElementById('lab-nav');
+    toggle.addEventListener('click', function () { document.body.classList.toggle('nav-open'); });
+    nav.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') document.body.classList.remove('nav-open');
+    });
+})();
 </script>
 </body>
 </html>

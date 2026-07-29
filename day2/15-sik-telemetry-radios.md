@@ -19,6 +19,8 @@
 
 **SiK** is an open-source firmware for small 915 MHz and 433 MHz telemetry radios used in UAVs.
 
+**Beginner framing:** a SiK radio pair is just a **wireless replacement for a USB cable.** One radio plugs into the drone's flight controller, the other into your laptop. Whatever bytes go in one end come out the other — the radios don't understand or care that those bytes are MAVLink. That "dumb pipe" design is convenient *and* the security problem: the pipe copies everything faithfully, including to any third radio that's listening (which is the whole point of Lab 16).
+
 **Original development:** 3DR (now open-source community)
 
 **Hardware:** SiLabs Si1000 microcontroller + RF transceiver
@@ -79,17 +81,22 @@ minicom -D /dev/ttyUSB0 -b 57600
 # Read all parameters
 ATI5
 
-# Common parameters:
-# S1: SERIAL_SPEED (57600 default)
-# S3: AIR_SPEED (64 kbps default)
-# S5: NUM_CHANNELS (50 FHSS channels)
-# S6: DUTY_CYCLE (100% default)
-# S7: LBT_RSSI (Listen Before Talk)
-# S9: MAVLINK (1 = MAVLink framing)
-# S10: OPPRESEND (0 = off)
-# S15: ENCRYPT_LEVEL (0 = none)
-# S16: ENCRYPTION_KEY (32 hex chars)
+# Standard SiK register map (from a real ATI5 dump):
+# S0:  FORMAT        (EEPROM format version)
+# S1:  SERIAL_SPEED  (57  = 57600 baud, laptop<->radio)
+# S2:  AIR_SPEED     (64  = 64 kbps over the air)
+# S3:  NETID         (25  = network ID -- the key security value)
+# S4:  TXPOWER       (20  = 20 dBm)
+# S5:  ECC           (1   = error-correcting code on)
+# S6:  MAVLINK       (1   = MAVLink framing)
+# S8:  MIN_FREQ      (915000 kHz)
+# S9:  MAX_FREQ      (928000 kHz)
+# S10: NUM_CHANNELS  (50  = FHSS hop channels)
+# S11: DUTY_CYCLE    (100 = % of time allowed to transmit)
+# S15: MAX_WINDOW    (transmit window, ms)
 ```
+
+> **Note:** the *setting number* matters when you change values. The two you'll touch in the lab are **`S2` = AIR_SPEED** and **`S3` = NETID** — both radios in a link must match on these. (Stock SiK firmware has **no** encryption register; see the next slide.)
 
 ---
 
@@ -100,6 +107,8 @@ ATI5
 Two SiK radios communicate only if they have the same NET ID.
 
 **Default NET ID: 25**
+
+<img src="../img/dg-sik-attack.svg" style="width: 88%; height: auto;" align="center">
 
 >**Security implication:** Any SiK radio with NET ID 25 will receive all traffic from any other SiK radio with NET ID 25. 
 
@@ -118,27 +127,32 @@ ATZ       # Reboot radio
 
 ## Encryption: Available but Rarely Used
 
-SiK supports **AES-128** encryption:
+**Important nuance:** AES encryption is **not in stock SiK firmware.** It only appears in *encryption-enabled* builds — for example RFDesign's **RFD900x**, or a SiK build compiled with the AES option. On those builds you get extra registers (an encryption level and a key); on a plain 3DR/HolyBro radio there is nothing to turn on. So for most drones in the field, telemetry encryption is **not merely off — it's absent.**
+
+On a build that supports it, AES-128 looks like this:
 
 ```bash
-# Enable encryption
-ATS15=1         # Set encryption level to 1 (AES-128)
-ATS16=AABBCCDDEEFF00112233445566778899  # 32-char hex key
+# (Only works on encryption-enabled SiK firmware / RFD900x)
+ATS15=1         # Set encryption level to 1 (AES-128)   <-- register # varies by build
+ATS16=AABBCCDDEEFF00112233445566778899  # 32 hex chars = 128-bit key
 AT&W            # Write to EEPROM
 ATZ             # Reboot
 
-# Both air and ground radio must use the same key
+# Both air and ground radio must use the SAME key
 ```
 
 **Why encryption is rarely deployed:**
+- Many common radios don't even ship the feature (see above)
 - Requires manual key management (no key exchange protocol)
-- AES key must be provisioned on both radios
-- No documentation in most manufacturer quick-start guides
+- The same AES key must be provisioned by hand on both radios
+- No mention in most manufacturer quick-start guides
 - Default is always off
 
 ---
 
 ## Frequency Hopping Spread Spectrum (FHSS)
+
+**Plain-English:** instead of sitting on one frequency, the two radios rapidly *jump* together across 50 channels many times a second — like two people agreeing to switch tables constantly so no one can easily listen in. It was designed for **reliability** (if one channel is noisy, the next hop dodges it), not secrecy. The catch: the hop pattern is derived from the (public, default) NET ID, so it keeps out *accidental* interference but not a *deliberate* attacker.
 
 SiK uses FHSS to improve reliability and reduce interference:
 
@@ -154,6 +168,8 @@ SiK uses FHSS to improve reliability and reduce interference:
 ---
 
 ## SiK Eavesdropping Attack
+
+<img src="../img/sikw00f-eavesdrop.png" style="float: right; width: 40%; margin-left: 18px;">
 
 **Passive eavesdropping** requires:
 1. HackRF One (covers 900 MHz band)

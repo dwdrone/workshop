@@ -19,6 +19,8 @@
 
 The **GCS** is any system used to monitor and control a UAV. It receives telemetry, displays a map, and sends commands.
 
+**The key insight for this module:** a GCS is not magic — it is a **computer on a network**, usually joined to the drone by WiFi. That means all your normal network-hacking skills apply: scan it with `nmap`, find open ports, log in over SSH, read its files. The 3DR Solo's controller is literally a small Linux computer. So instead of "how do I hack a drone?", the practical question becomes "how do I hack the little Linux box that flies it?" — which we do hands-on in Lab 10.
+
 **GCS form factors:**
 
 | Type | Examples |
@@ -32,7 +34,9 @@ The **GCS** is any system used to monitor and control a UAV. It receives telemet
 
 ## 3DR Sololink: Dedicated GCS Hardware
 
-The **3DR Sololink** is the dedicated RC controller + GCS for the 3DR Solo.
+<img src="../img/3DR-sololink-rc.jpg" style="float: right; width: 38%; margin-left: 18px;">
+
+The **3DR Sololink** is the dedicated RC controller + GCS for the 3DR Solo. It looks like a game controller, but inside it is a **full Linux computer** — the same i.MX6 chip family as the drone itself. That is the whole point of this module: the "remote control" is really a networked computer you can `nmap` and SSH into (Lab 10).
 
 **Hardware:**
 - ARM Cortex-A9 (i.MX6) — same family as the Solo UAV companion computer
@@ -96,7 +100,9 @@ The **3DR Sololink** is the dedicated RC controller + GCS for the 3DR Solo.
 
 ## GCS Network Architecture
 
-Understanding the network is essential for assessing the GCS.
+Understanding the network is essential for assessing the GCS. Almost every attack this week starts by getting onto this little network and learning who lives at which address.
+
+**How to read the table below:** a `/24` subnet means addresses `10.1.1.0`–`10.1.1.255` are all on the same local network. Two hosts matter: the controller at `.1` and the drone at `.10`. Memorize those two — you will type `10.1.1.10` dozens of times.
 
 **3DR Solo networks:**
 

@@ -15,6 +15,22 @@
 
 ---
 
+## The Big Picture (Read This First)
+
+Module 15 said a SiK link is a "dumb pipe" that copies bytes to **any radio with the same NET ID.** This lab weaponizes that in the simplest possible way: you take a **third** SiK radio, set its NET ID and air speed to match the drone's link, and — that's it — you're now a full participant in the conversation. You can read all telemetry and inject MAVLink commands, exactly like the real GCS.
+
+The flow:
+1. Watch the legitimate link (Phases 1–2) and **read its NET ID**.
+2. Clone that NET ID onto your attack radio (Phase 3).
+3. Intercept and inject (Phases 4–5).
+4. See the raw signal with a HackRF (Phase 6), then watch encryption defeat you (Phase 7).
+
+This is the RF-radio twin of the WiFi attack in Lab 12 — same idea (get onto the link), different physical layer.
+
+<img src="../img/dg-sik-attack.svg" style="width: 100%; height: auto;">
+
+---
+
 ## Hardware Required
 
 - 1× SiK radio pair 
@@ -175,12 +191,18 @@ urh sik-telemetry.raw
 # Configure: FSK, 64k baud, Manchester encoding
 ```
 
+<img src="../img/rf-urh.png" style="width: 70%; height: auto;">
+
+*URH turns the raw I/Q burst into bits. Set the modulation to FSK and the bit rate to match the SiK air speed, and the demodulated packets appear at the bottom.*
+
 ---
 
 ## Phase 7: Enable Encryption (Defense Demo)
 
+> **Note:** the encryption registers below only exist on **encryption-capable SiK builds** (e.g. RFD900x or an AES-enabled SiK firmware). On a stock 3DR/HolyBro radio these commands do nothing — which is itself the lesson: on most fielded radios there is no encryption to turn on. If your radios support it, this phase shows the attack radio going deaf; if they don't, discuss what that means for the drones in your assessment.
+
 ```bash
-# On the GCS radio
+# On the GCS radio (encryption-capable firmware required)
 minicom -D /dev/ttyUSB0 -b 57600
 +++
 ATS15=1

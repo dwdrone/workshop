@@ -19,6 +19,10 @@
 
 "Adversarial forensics" means applying forensic analysis techniques from the perspective of an attacker or intelligence collector — not as a defender performing incident response, but as someone who has gained unauthorized access to the drone's data.
 
+**The big picture:** in Lab 10 you learned to *get* the drone's logs. This lab is about *what those logs tell you*. You will turn a raw `.BIN` file into a map of everywhere the drone has flown, pinpoint the operator's home/launch location, and reconstruct their behavior — all from data the drone happily recorded. This is the "so what?" that makes log access a serious finding, not a footnote.
+
+**One number to know:** ArduPilot stores latitude/longitude as integers scaled by **10⁷** (1e7) to avoid decimals. So a logged `Lat` of `407038000` is really `40.7038000°`. Every script below divides by `1e7` for exactly this reason — that's all that math is doing.
+
 ---
 
 ## Phase 1: Access and List Logs

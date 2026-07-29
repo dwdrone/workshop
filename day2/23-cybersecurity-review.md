@@ -15,6 +15,26 @@
 
 ---
 
+## You Already Did This — Now Here's the Name for It
+
+Over two days you performed a complete drone security assessment. This module gives the **professional structure** to everything you did, so you can repeat it on *any* target and write it up like a pentester.
+
+Map what you did to the five phases below:
+
+| Phase | You did it in... |
+|-------|------------------|
+| Reconnaissance | FCC ID / firmware research (Module 4) |
+| Mapping | `nmap` and `airodump-ng` (Labs 10, 12) |
+| Discovery | Finding default creds, open MAVLink, no SiK encryption (Labs 4, 6, 16) |
+| Exploitation | Root SSH, MAVLink injection, WPA2 crack, video sniff (Labs 8, 10, 12, 18, 20) |
+| Reporting | The findings tables you filled in each lab |
+
+The skill that turns "I ran some tools" into "I did an assessment" is **doing these in order and writing it down.**
+
+<img src="../img/dws-drone-playbook.png" style="width: 55%; height: auto;" align="center">
+
+---
+
 ## Assessment Methodology: The Dark Wolf Drone Playbook
 
 ```
@@ -206,6 +226,10 @@ References:
 
 ### NIST Cybersecurity Framework (CSF)
 
+<img src="../img/nist-csf.png" style="float: right; width: 34%; margin-left: 18px;">
+
+The NIST CSF organizes all of security into five plain-language functions — a useful backbone for structuring any report or program.
+
 | Function | UAS Application |
 |----------|----------------|
 | **Identify** | Asset inventory, threat modeling, risk assessment |
@@ -239,6 +263,8 @@ Compliance with these programs is increasingly required for government and criti
 ## Cybersecurity Maturity Model
 
 Drone operators and manufacturers exist at different maturity levels:
+
+<img src="../img/cybersecurity-maturity-model-collidu.png" style="float: right; width: 34%; margin-left: 18px;">
 
 | Level | Description | UAS Indicator |
 |-------|-------------|--------------|

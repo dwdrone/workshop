@@ -1,5 +1,45 @@
-# Object file
-*.o
+# ─────────────────────────────────────────────────────────────
+# Hack Our Drone workshop — .gitignore
+#
+# NOTE: the source (day1/, day2/ markdown, build_slides.py, serve.py,
+# img/ assets) AND the generated slides/*.html are all tracked on
+# purpose — students view slides/ directly — so none of those are ignored.
+# ─────────────────────────────────────────────────────────────
 
-# Ada Library Information
+# ── Python (build_slides.py, serve.py) ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*_venv/
+
+# ── OS / editor cruft ──
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
+# ── Claude Code ──
+.claude/
+
+# ── Large binaries not kept in source control ──
+Theme.png
+2day-course.zip
+*.AppImage
+
+# ── Built on the student Kali VM by apps/install-workshop-apps.sh ──
+#    (the source scripts in apps/ stay tracked; only the built output is ignored)
+apps/QGroundControl/
+apps/MissionPlanner/
+apps/OpenDroneID/
+apps/nrfutil/
+apps/frida/
+apps/sikw00f/
+apps/mavproxy/
+
+# ── Legacy build artifacts ──
+*.o
 *.ali

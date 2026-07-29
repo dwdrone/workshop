@@ -14,20 +14,25 @@
         --dw-bg: #080808; --dw-panel: #111111; --dw-border: #1a1a1a;
         --dw-green: #68E01A; --dw-green-glow: rgba(104,224,26,0.1); --dw-green-border: rgba(104,224,26,0.3);
         --dw-white: #f0f0f0; --dw-gray: #7a8290;
+    }
+    :root {
         --r-background-color: #080808; --r-main-color: #f0f0f0; --r-heading-color: #ffffff;
         --r-link-color: #68E01A; --r-main-font: 'Inter', system-ui, sans-serif;
         --r-heading-font: 'Inter', system-ui, sans-serif; --r-code-font: 'JetBrains Mono','Courier New',monospace;
-        --r-main-font-size: 26px;
+        --r-main-font-size: 23px;
     }
     .reveal-viewport { background: var(--dw-bg); }
     .reveal .slides { text-align: left; }
+    .reveal .slides section { top: 0 !important; }
     .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: 700; }
-    .reveal h1 { color: var(--dw-green); font-size: 1.9em; letter-spacing: -1px; }
-    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 10px; margin-bottom: 22px; font-size: 1.15em; }
-    .reveal h3 { color: var(--dw-green); font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+    .reveal h1 { color: var(--dw-green); font-size: 1.8em; letter-spacing: -1px; }
+    .reveal h2 { color: var(--dw-white); border-bottom: 2px solid var(--dw-green); padding-bottom: 6px; margin-bottom: 14px; font-size: 1.05em; }
+    .reveal h3 { color: var(--dw-green); font-size: 0.82em; text-transform: uppercase; letter-spacing: 1.5px; margin: 14px 0 8px; }
     .reveal a { color: var(--dw-green); }
-    .reveal p, .reveal li { line-height: 1.55; }
-    .reveal ul li { margin-bottom: 8px; }
+    .reveal p { line-height: 1.4; margin: 0 0 8px; }
+    .reveal ul, .reveal ol { margin: 0 0 8px; }
+    .reveal li { line-height: 1.38; }
+    .reveal ul li { margin-bottom: 4px; }
     .reveal ul li::marker { color: var(--dw-green); }
     .reveal .progress span { background: var(--dw-green); }
     .reveal .controls { color: var(--dw-green); }
@@ -37,27 +42,35 @@
     .tag-presentation { border: 1px solid var(--dw-green); color: var(--dw-green); background: var(--dw-green-glow); }
     .tag-lab { border: 1px solid #60a5fa; color: #93c5fd; background: rgba(96,165,250,0.1); }
     .tag-activity { border: 1px solid #a78bfa; color: #c4b5fd; background: rgba(167,139,250,0.1); }
-    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
-    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 18px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .objective-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; }
+    .warning-box { background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 10px 0; }
     .phase-box { background: var(--dw-green-glow); border-left: 3px solid var(--dw-green); padding: 10px 16px; border-radius: 0 6px 6px 0; margin: 8px 0; font-weight: 600; color: var(--dw-green); }
-    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 16px; font-family: var(--r-code-font); font-size: 0.94em; line-height: 1.7; color: var(--dw-green); white-space: pre; overflow-x: auto; }
-    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 10px; letter-spacing: 5px; font-size: 0.9em; }
-    .reveal pre { margin: 0; box-shadow: none; }
-    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 14px; font-size: 0.94em; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.72em; }
-    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 8px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
-    .reveal table td { border: 1px solid var(--dw-border); padding: 8px 12px; color: var(--dw-white); vertical-align: top; }
-    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
     .highlight-green { color: var(--dw-green); font-weight: 600; }
     .highlight-red { color: #f87171; font-weight: 600; }
     .highlight-yellow { color: #fbbf24; font-weight: 600; }
     .highlight-blue { color: #60a5fa; font-weight: 600; }
+    .terminal { background: #050505; border: 1px solid var(--dw-border); border-top: 2px solid var(--dw-green); border-radius: 0 0 8px 8px; padding: 12px; font-family: var(--r-code-font); font-size: 0.82em; line-height: 1.55; color: var(--dw-green); white-space: pre; overflow-x: auto; }
+    .terminal::before { content: '\25CF \25CF \25CF'; display: block; color: #252525; margin-bottom: 8px; letter-spacing: 5px; font-size: 0.9em; }
+    .reveal pre { margin: 0 0 8px; box-shadow: none; width: 100%; }
+    .reveal pre code { background: #050505 !important; color: var(--dw-green) !important; border: 1px solid var(--dw-border); border-radius: 6px; padding: 10px 12px; font-size: 0.78em; line-height: 1.45; max-height: none; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: 0.68em; margin: 4px 0 8px; }
+    .reveal table th { background: var(--dw-green-glow); color: var(--dw-green); border: 1px solid var(--dw-green-border); padding: 5px 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.82em; }
+    .reveal table td { border: 1px solid var(--dw-border); padding: 5px 9px; color: var(--dw-white); vertical-align: top; }
+    .reveal table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .reveal img { max-height: 62vh; width: auto; border-radius: 6px; }
     .reveal strong, .reveal b { color: var(--dw-green); }
-    .reveal :not(pre) > code { color: var(--dw-green); }
+    .reveal :not(pre) > code { color: var(--dw-green); font-size: 0.9em; }
+    .dw-back { position: fixed; top: 14px; left: 16px; z-index: 60; color: var(--dw-gray); text-decoration: none;
+        font-family: var(--r-main-font); font-size: 14px; font-weight: 600; padding: 6px 12px;
+        background: rgba(8,8,8,0.72); border: 1px solid var(--dw-border); border-radius: 6px;
+        backdrop-filter: blur(4px); transition: color .15s, border-color .15s; }
+    .dw-back:hover { color: var(--dw-green); border-color: var(--dw-green-border); }
+    @media print { .dw-back { display: none; } }
     </style>
 </head>
 <body>
+<a class="dw-back" href="index.html">&#8592; All Modules</a>
 <div class="reveal">
 <div class="slides">
 
@@ -204,8 +217,47 @@
 </section>
 
 <section>
-    <h2>Analog Video Transmission: History and Standards (1/3)</h2>
+    <h2>Analog vs. Digital Video (The 30-Second Version)</h2>
+    <p>There are two completely different ways a drone sends live video, and they fail differently:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Analog</strong> (this module + Lab 20)</th>
+<th><strong>Digital</strong> (RTP/RTSP over WiFi)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How</td>
+<td>Paints the picture directly onto a 5.8 GHz radio wave</td>
+<td>Compresses video into data packets (H.264)</td>
+</tr>
+<tr>
+<td>To watch it</td>
+<td>Tune a receiver to the right channel — that's it</td>
+<td>Join the WiFi and open the stream URL</td>
+</tr>
+<tr>
+<td>Security</td>
+<td><strong>Zero</strong> — no pairing, no encryption; anyone in range sees it</td>
+<td>Usually also unencrypted, but at least needs network access</td>
+</tr>
+<tr>
+<td>Feel</td>
+<td>Fuzzy analog, instant, "old TV"</td>
+<td>Sharp, slight delay, "video call"</td>
+</tr>
+</tbody>
+</table>
+<p>The big takeaway: <strong>analog FPV has no concept of a password at all.</strong> It's broadcast television. That's why Lab 20 needs only an SDR and an antenna — no cracking, no login.</p>
+</section>
+
+<section>
+    <h2>Analog Video Transmission: History and Standards (1/2)</h2>
     <p>Before digital FPV systems, <strong>analog video</strong> was the standard for drone real-time video.</p>
+<p><img src="../img/uas-fpv-ntsc-v-pal.png" style="width: 60%; height: auto;" align="center"></p>
+<p><em>The two dominant analog standards. You mostly care about which one a target uses so you can decode it (Lab 20) — NTSC in the Americas/Japan, PAL almost everywhere else.</em></p>
 <h3>NTSC (National Television System Committee)</h3>
 <ul>
 <li>
@@ -236,7 +288,7 @@
 </section>
 
 <section>
-    <h2>Analog Video Transmission: History and Standards (2/3)</h2>
+    <h2>Analog Video Transmission: History and Standards (2/2)</h2>
     <h3>PAL (Phase Alternating Line)</h3>
 <ul>
 <li>
@@ -264,11 +316,7 @@
 <p><strong>Bandwidth:</strong> 8 MHz per channel</p>
 </li>
 </ul>
-</section>
-
-<section>
-    <h2>Analog Video Transmission: History and Standards (3/3)</h2>
-    <h3>SECAM (Séquentiel Couleur à Mémoire)</h3>
+<h3>SECAM (Séquentiel Couleur à Mémoire)</h3>
 <ul>
 <li>
 <p><strong>Region:</strong> France, Eastern Europe, some of Africa</p>
@@ -317,13 +365,14 @@
 <section>
     <h2>Digital Video: RTP/RTSP Streaming</h2>
     <p>Modern drones use <strong>digital video streaming</strong> over WiFi.</p>
+<p><strong>The easy way to remember the two:</strong> RTSP is the <em>remote control</em> (play/pause), RTP is the <em>video itself</em>. RTSP sets up the session; RTP carries the actual frames.</p>
 <p><strong>RTP (Real-time Transport Protocol):</strong></p>
 <ul>
 <li>
-<p>UDP-based protocol for real-time audio/video delivery</p>
+<p>UDP-based protocol for real-time audio/video delivery — chosen because UDP is fast and a dropped frame doesn't stall the stream</p>
 </li>
 <li>
-<p>Each packet includes: payload type, sequence number, timestamp, SSRC</p>
+<p>Each packet includes: payload type, sequence number, timestamp, SSRC (stream source ID)</p>
 </li>
 <li>
 <p>No connection setup — just start sending to the receiver</p>
@@ -332,7 +381,7 @@
 <p><strong>RTSP (Real-Time Streaming Protocol):</strong></p>
 <ul>
 <li>
-<p>Control protocol for RTP streams (like HTTP for streaming)</p>
+<p>Control protocol for RTP streams (like HTTP for streaming) — this is what your "play" button talks to</p>
 </li>
 <li>
 <p><code>DESCRIBE</code> → <code>SETUP</code> → <code>PLAY</code> → <code>TEARDOWN</code></p>
@@ -341,6 +390,8 @@
 <p>URL format: <code>rtsp://&lt;ip&gt;:&lt;port&gt;/&lt;path&gt;</code></p>
 </li>
 </ul>
+<p><img src="../img/wireshark-rtp-202504120-0904.png" style="width: 58%; height: auto;" align="center"></p>
+<p><em>RTP video packets in Wireshark. Because the stream is usually unencrypted, Wireshark can even reassemble the frames — Telephony → RTP → Stream Analysis will play the captured video back.</em></p>
 <p><strong>Common ports:</strong></p>
 <ul>
 <li>
@@ -364,6 +415,7 @@ ffmpeg -i rtsp://10.1.1.10:8554/solo.sdp -c copy captured-video.mp4
 <section>
     <h2>GoPro Hero 4: HTTP API</h2>
     <p>The <strong>GoPro Hero 3/4</strong> used by the 3DR Solo has a WiFi interface with an HTTP API:</p>
+<p><img src="../img/gopro-hero4-ports.png" style="float: right; width: 34%; margin-left: 18px;"></p>
 <p><strong>IP address:</strong> <code>10.5.5.9</code>
 <strong>Port:</strong> <code>80</code> (HTTP)
 <strong>Authentication:</strong> None (GoPro 4 and earlier)</p>
@@ -469,6 +521,11 @@ curl http://10.5.5.9/videos/DCIM/
 Reveal.initialize({
     hash: true,
     slideNumber: 'c/t',
+    width: 1180,
+    height: 760,
+    margin: 0.04,
+    minScale: 0.2,
+    maxScale: 1.5,
     transition: 'fade',
     transitionSpeed: 'fast',
     backgroundTransition: 'none',

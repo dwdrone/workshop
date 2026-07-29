@@ -60,9 +60,28 @@ Payloads communicate with the drone through several interfaces:
 
 ---
 
+## Analog vs. Digital Video (The 30-Second Version)
+
+There are two completely different ways a drone sends live video, and they fail differently:
+
+| | **Analog** (this module + Lab 20) | **Digital** (RTP/RTSP over WiFi) |
+|---|---|---|
+| How | Paints the picture directly onto a 5.8 GHz radio wave | Compresses video into data packets (H.264) |
+| To watch it | Tune a receiver to the right channel — that's it | Join the WiFi and open the stream URL |
+| Security | **Zero** — no pairing, no encryption; anyone in range sees it | Usually also unencrypted, but at least needs network access |
+| Feel | Fuzzy analog, instant, "old TV" | Sharp, slight delay, "video call" |
+
+The big takeaway: **analog FPV has no concept of a password at all.** It's broadcast television. That's why Lab 20 needs only an SDR and an antenna — no cracking, no login.
+
+---
+
 ## Analog Video Transmission: History and Standards
 
 Before digital FPV systems, **analog video** was the standard for drone real-time video.
+
+<img src="../img/uas-fpv-ntsc-v-pal.png" style="width: 60%; height: auto;" align="center">
+
+*The two dominant analog standards. You mostly care about which one a target uses so you can decode it (Lab 20) — NTSC in the Americas/Japan, PAL almost everywhere else.*
 
 ### NTSC (National Television System Committee)
 - **Region:** USA, Canada, Japan, West South America
@@ -118,15 +137,21 @@ Before digital FPV systems, **analog video** was the standard for drone real-tim
 
 Modern drones use **digital video streaming** over WiFi.
 
+**The easy way to remember the two:** RTSP is the *remote control* (play/pause), RTP is the *video itself*. RTSP sets up the session; RTP carries the actual frames.
+
 **RTP (Real-time Transport Protocol):**
-- UDP-based protocol for real-time audio/video delivery
-- Each packet includes: payload type, sequence number, timestamp, SSRC
+- UDP-based protocol for real-time audio/video delivery — chosen because UDP is fast and a dropped frame doesn't stall the stream
+- Each packet includes: payload type, sequence number, timestamp, SSRC (stream source ID)
 - No connection setup — just start sending to the receiver
 
 **RTSP (Real-Time Streaming Protocol):**
-- Control protocol for RTP streams (like HTTP for streaming)
+- Control protocol for RTP streams (like HTTP for streaming) — this is what your "play" button talks to
 - `DESCRIBE` → `SETUP` → `PLAY` → `TEARDOWN`
 - URL format: `rtsp://<ip>:<port>/<path>`
+
+<img src="../img/wireshark-rtp-202504120-0904.png" style="width: 58%; height: auto;" align="center">
+
+*RTP video packets in Wireshark. Because the stream is usually unencrypted, Wireshark can even reassemble the frames — Telephony → RTP → Stream Analysis will play the captured video back.*
 
 **Common ports:**
 - RTSP: TCP 554
@@ -150,6 +175,8 @@ ffmpeg -i rtsp://10.1.1.10:8554/solo.sdp -c copy captured-video.mp4
 ## GoPro Hero 4: HTTP API
 
 The **GoPro Hero 3/4** used by the 3DR Solo has a WiFi interface with an HTTP API:
+
+<img src="../img/gopro-hero4-ports.png" style="float: right; width: 34%; margin-left: 18px;">
 
 **IP address:** `10.5.5.9`
 **Port:** `80` (HTTP)

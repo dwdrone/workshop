@@ -27,7 +27,15 @@ pip install pymavlink
 
 ---
 
-## Wireshark Setup
+## The Big Picture (Read This First)
+
+This is the capstone of the MAVLink story from Module 17. You will watch the drone's control conversation, then **join it uninvited** — three escalating steps:
+
+1. **Sniff** (Phases 1–3) — capture the traffic with `tcpdump`, decode it in Wireshark, and *read* the drone's GPS, battery, and commands. This breaks **confidentiality**.
+2. **Inject** (Phases 4–5) — use `pymavlink` to send your *own* commands and read/modify parameters. The drone obeys because it never checks who you are. This breaks **authenticity**.
+3. **Replay** (Phase 6) — record a real command (a mode change) and blindly re-send the raw packet with `scapy`; the drone accepts the copy. This breaks **integrity / freshness**.
+
+Notice how each step maps to a CIA property from Module 1 — and how MAVLink v2 signing (Module 17) would stop steps 2 and 3 but *not* step 1. That's the entire security lesson of the protocol, demonstrated with your own hands.
 
 - Go the files provided and look for the `mavlink2.lua` file
 
@@ -69,6 +77,10 @@ sudo tcpdump -i wlan0 udp port 14550 -w ~/workshop/captures/mavlink-session.pcap
 ```bash
 wireshark ~/workshop/captures/mavlink-session.pcap
 ```
+
+<img src="../img/wireshark-mavlink-202504120-0900.png" style="width: 75%; height: auto;">
+
+*Live MAVLink in Wireshark. Every heartbeat, GPS fix, and command is right there in plaintext — that's the confidentiality failure, made visible.*
 
 **In Wireshark:**
 1. Apply filter: `mavlink_proto`

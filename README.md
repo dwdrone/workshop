@@ -6,6 +6,32 @@ The recent expansion of Uncrewed Autonomous Systems (UAS) across various sectors
 
 The curriculum spans the full UAS architecture: Unmanned Aerial Vehicle (UAV), Ground Control Station (GCS), RF communication protocols, payloads, and log analysis. Through expert-led instruction and hands-on lab exercises, participants gain proficiency in identifying, exploiting, and reporting vulnerabilities across all components.
 
+## Viewing the Slides & Labs
+
+Don't open `slides/index.html` directly — serve it over a tiny local web server so
+every image and lab page resolves correctly. Python 3 is the only requirement.
+
+```bash
+# Linux / Kali / macOS
+./serve.sh
+
+# Windows (double-click, or from a terminal)
+serve.bat
+
+# or, anywhere:
+python serve.py
+```
+
+This starts a server and opens the dashboard at `http://localhost:8000/slides/index.html`.
+Press **Ctrl+C** to stop it.
+
+Handy options:
+- `python serve.py --port 9000` — use a different port
+- `python serve.py --host 0.0.0.0` — let other machines on the classroom LAN open the
+  link it prints (instructor shares one screen for the whole room)
+- `python serve.py --no-browser` — start the server without opening a browser
+
+
 ## Difficulty Level
 
 **Beginner / Intermediate**

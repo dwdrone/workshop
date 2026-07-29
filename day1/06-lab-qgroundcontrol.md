@@ -16,6 +16,16 @@
 
 ---
 
+## The Big Picture (Read This First)
+
+This is your **first hands-on contact with a live drone.** QGroundControl (QGC) is the friendly, official app pilots use — think of it as the "legitimate front door." The point of the lab is to notice that this front door has *no lock*: you connect over WiFi and instantly get to read every setting, download the flight history, and upload a new mission — no login, no password.
+
+Later you'll do the same things the "hacker way" with the command-line tool **MAVProxy**, to prove the app was never the security boundary — the drone simply trusts anyone on its network.
+
+> **Safety first:** the drone is powered but has **no propellers**. Nothing you type can hurt anyone. This is the safe place to experiment.
+
+---
+
 ## Prerequisites
 
 - Laptop with QGroundControl installed
@@ -74,6 +84,8 @@ In QGC: Vehicle Setup → Parameters
 ## Phase 3: Connect via MAVProxy (CLI)
 
 MAVProxy is a command-line MAVLink proxy and GCS. It gives you raw access to the MAVLink interface.
+
+**Why switch from the pretty app to a terminal?** QGC hides the raw protocol behind buttons. MAVProxy shows you the actual MAVLink conversation and lets you send *any* command — including ones a real GCS would never expose. This is the tool an attacker would use, and everything you type here is a plain MAVLink message the drone accepts with no authentication. `udp:10.1.1.10:14550` just means "speak MAVLink to the drone at 10.1.1.10 on port 14550."
 
 ```bash
 # Install if needed

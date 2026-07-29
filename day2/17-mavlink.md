@@ -19,6 +19,8 @@
 
 > MAVLink (Micro Air Vehicle Link) is a lightweight messaging protocol for communicating with drones and between onboard components.
 
+**Beginner framing:** MAVLink is the **language** the drone and the GCS speak. Every piece of it is a short **message** with a number — `HEARTBEAT` (#0) means "I'm alive," `GLOBAL_POSITION_INT` (#33) means "here's my GPS," `COMMAND_LONG` (#76) means "do this." Think of each message as a pre-printed **postcard**: a fixed set of fields, packed into as few bytes as possible so it flies over a slow radio link. The security story of this whole module is simple — the postcards have **no return address you can trust and no wax seal**, so anyone can forge one.
+
 - Designed in 2009 by Lorenz Meier (ETH Zürich) for the Pixhawk project
 - Binary protocol (not XML or JSON) — optimized for low-bandwidth links
 - Runs over: UART, USB serial, UDP, TCP, WebSocket
@@ -62,12 +64,24 @@
 - Magic byte changed to `0xFD`
 - Message ID expanded to **3 bytes** (supports 16M message types)
 - **Incompatibility Flags** and **Compatibility Flags**
-- Optional **signature** field (13 bytes): link ID (1B) + timestamp (6B) + HMAC-SHA256 truncated (6B)
+- Optional **signature** field (13 bytes): link ID (1 B) + timestamp (6 B) + signature (6 B)
 - Supports **message signing** for authentication
+
+**How signing actually works (and why it stops the attacks in Lab 18):**
+- Both sides share a secret key. The sender computes `signature = SHA-256(secret_key + packet + link_id + timestamp)`, keeps the **first 48 bits (6 bytes)**, and appends it.
+- The receiver recomputes the same hash. No shared key → no valid signature → **forged/injected commands are rejected** (blocks injection).
+- The **timestamp** (48-bit, 10 µs units since Jan 1 2015) must always increase, so a **captured packet replayed later is rejected** (blocks replay).
+- The **link ID** ties a signature to one channel, so a packet sniffed on WiFi can't be replayed over the SiK radio (blocks *cross-channel* replay).
+
+> Signing gives MAVLink **authenticity + replay protection** — but still **no confidentiality.** The data is authenticated, not encrypted, so an eavesdropper can still *read* everything; they just can't forge it.
 
 ---
 
 ## Common MAVLink Messages
+
+<img src="../img/mavlink-message-flow.png" style="float: right; width: 34%; margin-left: 18px;">
+
+Each message is a numbered postcard. You don't memorize all of them — just recognize the handful that carry telemetry (drone → GCS) versus the few that carry commands (GCS → drone), because the command messages are what an attacker forges.
 
 | Message | Direction | Purpose |
 |---------|-----------|---------|
@@ -181,7 +195,9 @@ conn.mav.command_long_send(
 
 ### Wireshark
 
-MAVLink dissector is built into Wireshark:
+MAVLink dissector is built into Wireshark, so captured packets decode into readable fields — exactly what you'll see in Lab 18:
+
+<img src="../img/wireshark-mavlink-details-202504120-0901.png" style="width: 62%; height: auto;" align="center">
 
 ```bash
 # Capture MAVLink traffic

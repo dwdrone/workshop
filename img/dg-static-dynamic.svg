@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" font-family="Inter, Segoe UI, sans-serif">
+  <rect x="1" y="1" width="898" height="298" rx="12" fill="#0d0d0d" stroke="#1a1a1a"/>
+  <text x="24" y="36" fill="#68E01A" font-size="20" font-weight="700">Two Ways to Analyze Any App</text>
+
+  <!-- static -->
+  <rect x="30" y="60" width="400" height="210" rx="10" fill="#101010" stroke="#68E01A"/>
+  <text x="50" y="92" fill="#68E01A" font-size="17" font-weight="700">STATIC — read it, don't run it</text>
+  <g fill="#f0f0f0" font-size="14">
+    <text x="50" y="124">&#8226; Unzip / decompile the APK</text>
+    <text x="50" y="150">&#8226; Read the code &amp; manifest</text>
+    <text x="50" y="176">&#8226; grep for passwords, keys, URLs</text>
+  </g>
+  <text x="50" y="216" fill="#7a8290" font-size="13">Tools: jadx, apktool, AndroBugs</text>
+  <text x="50" y="242" fill="#7a8290" font-size="13">Safe, offline, no device needed</text>
+
+  <!-- dynamic -->
+  <rect x="470" y="60" width="400" height="210" rx="10" fill="#101010" stroke="#60a5fa"/>
+  <text x="490" y="92" fill="#93c5fd" font-size="17" font-weight="700">DYNAMIC — run it, watch it</text>
+  <g fill="#f0f0f0" font-size="14">
+    <text x="490" y="124">&#8226; Launch the app on a device</text>
+    <text x="490" y="150">&#8226; Hook functions / dump memory</text>
+    <text x="490" y="176">&#8226; Sniff its live network traffic</text>
+  </g>
+  <text x="490" y="216" fill="#7a8290" font-size="13">Tools: Frida, logcat, Wireshark</text>
+  <text x="490" y="242" fill="#7a8290" font-size="13">Catches secrets only present at runtime</text>
+</svg>

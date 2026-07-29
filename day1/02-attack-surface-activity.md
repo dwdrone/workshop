@@ -18,6 +18,10 @@
 
 The **attack surface** is the sum of all points where an unauthorized user can try to enter, extract data from, or attack a system.
 
+**Everyday analogy:** the attack surface of a house is every door, window, mail slot, and chimney — every way in. You don't need to know *how* you'll break in yet; first you just list every opening. Security assessment works the same way: before exploiting anything, you inventory every interface. A door you never knew about is one you can't lock.
+
+**Attack surface vs. attack vector:** the *surface* is all the possible entry points (the list of doors). A *vector* is the specific path an attacker actually uses (climbing through the unlocked bathroom window). This activity is about mapping the surface — the rest of the course exploits specific vectors.
+
 ## For a UAS, this includes:
 - Every physical port and interface
 - Every wireless link
@@ -72,6 +76,10 @@ Reducing attack surface = removing unnecessary interfaces, disabling unused serv
 **Time:** 20 minutes
 
 ### Instructions
+
+<img src="../img/dws-uas-decomposition.png" style="width: 60%; height: auto;" align="center">
+
+*A UAS "decomposition" — break the system into parts, then list the ways into each part. Use this as a template for your own diagram.*
 
 Working in pairs, draw an attack surface diagram for the **3DR Solo UAS system**. Your diagram should include:
 

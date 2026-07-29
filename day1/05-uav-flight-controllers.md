@@ -25,7 +25,13 @@ The **flight controller (FC)** is the embedded computer that:
 4. Outputs motor speeds via ESC
 5. Communicates with the GCS via MAVLink
 
-The FC is the **root of trust** for the drone. If the FC is compromised, the drone is compromised.
+**What is a "control loop"?** A multirotor is naturally unstable — it wants to tip over. Many times per second the FC compares *where the drone is pointing* (from the IMU) to *where it should be pointing*, then nudges each motor to correct the difference. That fast measure-compare-correct cycle is a **PID loop**. Steps 1→4 above repeat roughly 400 times every second.
+
+<img src="../img/dg-control-loop.svg" style="width: 88%; height: auto;" align="center">
+
+The FC is the **root of trust** for the drone. If the FC is compromised, the drone is compromised — which is why so much of this course circles back to it.
+
+> **Beginner mental model:** the FC is the pilot's hands and inner ear; the GCS (next modules) is the pilot's eyes and map. MAVLink is the phone line between them — and today that phone line has no caller ID and no encryption.
 
 ---
 
@@ -73,6 +79,8 @@ The FC is the **root of trust** for the drone. If the FC is compromised, the dro
 ## MAVLink: The Bridge
 
 **MAVLink (Micro Air Vehicle Link)** is the lightweight messaging protocol connecting the flight controller to the GCS and companion computer.
+
+<img src="../img/mavlink-structure.png" style="float: right; width: 40%; margin-left: 18px;">
 
 **Characteristics:**
 - Header-based binary protocol
@@ -122,7 +130,9 @@ Flight controllers support multiple operating modes:
 
 ## Parameters System
 
-Flight controllers expose **hundreds of configurable parameters** that control every aspect of flight behavior.
+Flight controllers expose **hundreds of configurable parameters** that control every aspect of flight behavior. Think of them as the drone's **settings menu** — except the whole menu is exposed over MAVLink, and by default anyone on the link can read *and change* it.
+
+A parameter is just a name/value pair (e.g. `FENCE_RADIUS = 300`). ArduPilot has ~1,200 of them. The security problem is not any single value — it is that the entire configuration is remotely writable without a password.
 
 ```
 # Examples of critical parameters:
