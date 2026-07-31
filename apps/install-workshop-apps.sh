@@ -3,7 +3,7 @@
 # Exit immediately if any command exits with a non-zero status.
 set -e
 
-echo "version 20260725-1608 (Reinstall & Rerun Enabled)"
+echo "version 20260731-1622 (Reinstall & Rerun Enabled)"
 
 # --- Configuration Variables ---
 INSTALL_USER="kali"
