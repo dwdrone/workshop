@@ -1,276 +1,429 @@
 #!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status.
+# Exit immediately if any command exits with a non-zero status.
 set -e
 
-echo "version 20260725-1608"
+echo "version 20260725-1608 (Reinstall & Rerun Enabled)"
 
-
-# TODO: mavlink wireshark plugin
-
+# --- Configuration Variables ---
 INSTALL_USER="kali"
 INSTALL_GROUP="${INSTALL_USER}"
 HOME_DIR="/home/${INSTALL_USER}"
 APP_DIR="${HOME_DIR}/workshop/apps"
-echo "Starting app installation for Dark Wolf workshop for user ${USER} on Kali Rolling 2026.2 and similar"
 
-echo "--- Updating and upgrading system packages ---"
-sudo apt update
-sudo apt upgrade -y
-#sudo apt dist-upgrade -y
+# --- Argument Parsing & Help Setup ---
+REINSTALL_ALL=false
+declare -A REINSTALL_COMPONENTS
 
+show_usage() {
+    echo "Usage: $0 [--reinstall <all|component_name>]"
+    echo ""
+    echo "Options:"
+    echo "  --reinstall all             Force clean reinstallation of all components"
+    echo "  --reinstall <component>     Force clean reinstallation of a specific component"
+    echo "  -h, --help                  Show this help message"
+    echo ""
+    echo "Available Components:"
+    echo "  wireshark"
+    echo "  jadx"
+    echo "  qgc | qgroundcontrol"
+    echo "  opendroneid | odid"
+    echo "  adb"
+    echo "  sdrangel"
+    echo "  missionplanner | mp"
+    echo "  nrfutil"
+    echo "  frida"
+    echo "  sikw00f"
+    echo "  mavproxy"
+    echo "  mono"
+    exit 1
+}
 
-sudo TERM=dumb DEBIAN_FRONTEND=noninteractive apt -y install mono-devel
-sudo TERM=dumb DEBIAN_FRONTEND=noninteractive apt -y install mono-libraries-debug
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+        --reinstall)
+            if [[ -n "$2" && ! "$2" =~ ^-- ]]; then
+                COMPONENT=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+                if [ "$COMPONENT" = "all" ]; then
+                    REINSTALL_ALL=true
+                else
+                    # Normalize aliases
+                    case "$COMPONENT" in
+                        qgroundcontrol) COMPONENT="qgc" ;;
+                        odid)           COMPONENT="opendroneid" ;;
+                        mp)             COMPONENT="missionplanner" ;;
+                    esac
+                    REINSTALL_COMPONENTS["$COMPONENT"]=true
+                fi
+                shift 2
+            else
+                # Default to 'all' if --reinstall is used without an argument
+                REINSTALL_ALL=true
+                shift 1
+            fi
+            ;;
+        -h|--help)
+            show_usage
+            ;;
+        *)
+            echo "Unknown option: $1"
+            show_usage
+            ;;
+    esac
+done
 
+echo "Starting app installation for Dark Wolf workshop for user ${INSTALL_USER} on Kali Rolling"
 
+# --- Helper Functions ---
 
-# --- Install essential development tools ---
-echo "--- Installing Git, Python tools dependencies, OpenJDK ---"
-sudo apt install -y git
-#sudo apt install -y python3 python3-pip python3-venv openjdk-17-jdk curl unzip pipenv
-sudo apt install -y python3 python3-pip python3-venv openjdk-21-jdk curl unzip pipenv
+# Standardized wrapper for apt installations
+apt_install() {
+    local cmd=("sudo" "TERM=dumb" "DEBIAN_FRONTEND=noninteractive" "apt-get" "install" "-y")
+    if [ "$FORCE_REINSTALL_APT" = true ]; then
+        cmd+=("--reinstall")
+    fi
+    echo "--- Installing packages: $* ---"
+    "${cmd[@]}" "$@"
+}
 
-# --- Install flatpack ---
-echo "--- Installing additional wifi tools ---"
-sudo apt install hcxdumptool hcxtools
+# Check if an apt package is currently installed
+is_pkg_installed() {
+    dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "ok installed"
+}
 
-# --- Install snapd ---
-echo "--- Installing and starting snapd ---"
-sudo apt install -y snapd
-sudo systemctl enable snapd
-sudo systemctl start snapd
+# Determine if a component should be reinstalled
+should_reinstall() {
+    local component=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    # Map aliases
+    case "$component" in
+        qgroundcontrol) component="qgc" ;;
+        odid)           component="opendroneid" ;;
+        mp)             component="missionplanner" ;;
+    esac
+    if [ "$REINSTALL_ALL" = true ] || [ "${REINSTALL_COMPONENTS[$component]}" = true ]; then
+        return 0 # true
+    fi
+    return 1 # false
+}
 
-# --- Install flatpack ---
-echo "--- Installing flatpack ---"
-sudo apt install -y flatpak
-sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+# --- System Preparation ---
+echo "--- Checking system package updates ---"
+sudo apt-get update
 
-
-# --- Apps Directory ---
-echo "--- Creating apps directory ---"
-if [ ! -d "$APP_DIR" ]; then
-  # Directory does not exist, so create it
-  echo "Creating ${APP_DIR}"
-  mkdir -p "${APP_DIR}"
+# Install Mono development tools (reinstall if requested)
+local_reinstall_mono=false
+if should_reinstall "mono"; then
+    local_reinstall_mono=true
 fi
-echo "Local apps are installed into ${APP_DIR}"
+if [ "$local_reinstall_mono" = true ] || ! is_pkg_installed "mono-devel" || ! is_pkg_installed "mono-libraries-debug"; then
+    FORCE_REINSTALL_APT=$local_reinstall_mono apt_install mono-devel mono-libraries-debug
+fi
 
-# --- Install Wireshark ---
-install_wireshark() {
-    echo "--- Installing Wireshark ---"
-    echo "wireshark-common wireshark-common/install-setuid boolean true" | sudo debconf-set-selections
-    DEBIAN_FRONTEND=noninteractive sudo apt install -y wireshark
-    # Allow non-root users (like 'vagrant') to capture packets
-    # sudo dpkg-reconfigure wireshark-common # Select 'Yes' when prompted
-    sudo usermod -aG wireshark ${INSTALL_USER}
-    # Note: The 'vagrant' user will need to log out and back in for group changes to take effect.
-    mkdir -p /home/kali/.local/lib/wireshark/plugins
-    cp ../files/bit32.lua /home/kali/.local/lib/wireshark/plugins
-    cp ../files/mavlink_2_common.lua /home/kali/.local/lib/wireshark/plugins
-    
-} 
-
-# --- Install JADX-GUI ---
-install_jadx() {
-    echo "--- Installing JADX-GUI ---"
-    #JADX_VERSION="1.4.7" # Check https://github.com/skylot/jadx/releases for the latest version
-    #JADX_URL="https://github.com/skylot/jadx/releases/download/v${JADX_VERSION}/jadx-${JADX_VERSION}.zip"
-    #JADX_INSTALL_DIR="${APP_DIR}/jadx"
-
-    #echo "Downloading JADX-GUI v${JADX_VERSION} from ${JADX_URL}..."
-    #curl -LO "${JADX_URL}"
-    #mkdir -p "${JADX_INSTALL_DIR}"
-    #sudo unzip "jadx-${JADX_VERSION}.zip" -d "${JADX_INSTALL_DIR}"
-    #rm "jadx-${JADX_VERSION}.zip"
-
-    # Create a symlink for easy access from /usr/local/bin
-    #if [ ! -L "/usr/local/bin/jadx-gui" ]; then
-      # Directory does not exist, so create it
-      #sudo ln -s "${JADX_INSTALL_DIR}/jadx-${JADX_VERSION}/bin/jadx-gui" /usr/local/bin/jadx-gui
-    #fi
-    sudo apt -y install jadx
-    echo "JADX-GUI installed. Run 'jadx-gui' from the terminal."
-}
-
-# --- Install QGroundControl ---
-install_qgroundcontrol() {
-    echo "--- Installing QGroundControl ---"
-    QGC_VERSION="v4.0.1" # Check https://github.com/skylot/jadx/releases for the latest version
-    # App name varies by version
-    #QGC_APP="QGroundControl-x86_64.AppImage" 
-    QGC_APP="QGroundControl.AppImage" 
-    QGC_URL="https://github.com/mavlink/qgroundcontrol/releases/download/${QGC_VERSION}/${QGC_APP}"
-    QGC_DIR="${APP_DIR}/QGroundControl"
-    mkdir -p ${QGC_DIR}
-    mv runQGC.sh ${QGC_DIR} 
-    chmod +x ${QGC_DIR}/runQGC.sh
-    mv libfuse2.sh ${QGC_DIR} 
-    chmod +x ${QGC_DIR}/libfuse2.sh
-    cd ${QGC_DIR}
-    sudo apt install gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl -y
-    sudo apt install python3-gi python3-gst-1.0 -y
-    #sudo apt install libfuse2 -y
-    sudo apt install libfuse3-4 -y
-    sudo apt install libxcb-xinerama0 libxkbcommon-x11-0 libxcb-cursor-dev -y
-    sudo ./libfuse2.sh
-    cd ${QGC_DIR}
-
-    echo "Downloading ${QGC_APP}  v${QGC_VERSION} from ${QGC_URL}..."
-    sudo curl -LO "${QGC_URL}"
-    if [ ! -f QGroundControl.AppImage ]; then
-        sudo mv ${QGC_APP} QGroundControl.AppImage
+# Install essential development tools & dependencies (only if missing)
+essential_pkgs=(git python3 python3-pip python3-venv openjdk-21-jdk curl unzip pipenv)
+missing_essentials=()
+for pkg in "${essential_pkgs[@]}"; do
+    if ! is_pkg_installed "$pkg"; then
+        missing_essentials+=("$pkg")
     fi
-    sudo chmod +x ${QGC_DIR}/QGroundControl.AppImage
-    sudo chmod +x ${QGC_DIR}/runQGC.sh
-}
+done
+if [ ${#missing_essentials[@]} -gt 0 ]; then
+    apt_install "${missing_essentials[@]}"
+fi
 
-# --- Install OpenDroneID ---
-install_opendroneid() {
-    echo "--- Installing OpenDroneID ---"
-    ODID_DIR="${APP_DIR}/OpenDroneID"
-    if [ ! -d "${ODID_DIR}" ]; then
-       mkdir -p "${ODID_DIR}"
-       sudo git clone https://github.com/opendroneid/wireshark-dissector ${ODID_DIR}
-    fi
-}
+# Install additional WiFi tools (only if missing)
+if ! is_pkg_installed "hcxdumptool" || ! is_pkg_installed "hcxtools"; then
+    apt_install hcxdumptool hcxtools
+fi
 
-# --- Install ADB ---
-install_adb() {
-    echo "--- Installing adb ---"
-    sudo apt -y install adb
-}
+# Install and enable snapd (only if missing)
+if ! is_pkg_installed "snapd"; then
+    apt_install snapd
+    sudo systemctl enable --now snapd
+fi
 
-# --- Install SDRangel ---
-install_sdrangel() {
-    echo "--- Installing sdrangel ---"
-    sudo snap install sdrangel
-    sudo snap connect sdrangel:raw-usb
-    sudo snap connect sdrangel:audio-record
-    sudo systemctl enable --now snapd.socket
-    sudo systemctl enable --now snapd.apparmor
-    sudo snap refresh
-    # sudo snap warnings
-}
+# Install flatpak (only if missing)
+if ! is_pkg_installed "flatpak"; then
+    apt_install flatpak
+    sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+fi
 
-
-# --- Install MissionPlanner ---
-install_missionplanner() {
-    echo "--- Installing MissionPlanner  ---"
-    MP_DIR="${APP_DIR}/MissionPlanner"
-    MP_URL="https://firmware.ardupilot.org/Tools/MissionPlanner/MissionPlanner-latest.zip"
-    if [ ! -d "${MP_DIR}" ]; then
-        mkdir -p "${MP_DIR}"
-        cd ${MP_DIR}
-        sudo TERM=dumb certmgr -ssl https://autotest.ardupilot.org/LogMessages/Copter/LogMessages.xml.xz
-        wget http://ftp.us.debian.org/debian/pool/main/m/mono/ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
-        sudo dpkg -i ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
-        wget ${MP_URL}
-        unzip MissionPlanner-latest.zip
-    fi
-}
-
-# --- Install MissionPlanner ---
-install_nrfutil() {
-    echo "--- Installing NRFUtil ---"
-    NRF_DIR="${APP_DIR}/nrfutil"
-    NRF_URL="https://files.nordicsemi.com/ui/api/v1/download?repoKey=swtools&path=external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil&isNativeBrowsing=false"
-    NRF_UDEV="https://raw.githubusercontent.com/NordicSemiconductor/nrf-udev/refs/heads/main/nrf-udev_1.0.1-all/lib/udev/rules.d/71-nrf.rules"
-    if [ ! -d "${NRF_DIR}" ]; then
-        mkdir -p "${NRF_DIR}"
-        cd ${NRF_DIR}
-	wget ${NRF_URL} -O nrfutil
-	cp nrfutil /home/kali/.local/bin
-	chown kali:kali /home/kali/.local/bin
-	chmod +x /home/kali/.local/bin/nrfutil
-	wget ${NRF_UDEV} -O 71-nrf.rules
-	sudo cp 71-nrf.rules /etc/udev/rules.d
-	sudo udevadm trigger
-    fi
-}
-
+# Ensure the apps directory exists
+mkdir -p "${APP_DIR}"
+echo "Local apps directory: ${APP_DIR}"
 
 # --- Setup Python applications in individual virtual environments ---
 
-# Set venvs ownership to vagrant
-sudo chown -R ${INSTALL_USER}:${INSTALL_GROUP} ${APP_DIR}
-
-# Function to setup a Python application in its own venv
+# Helper function to setup a Python application in its own virtual environment
 setup_python_app_venv() {
     local app_name=$1
     local pip_packages=$2
     local venv_path="${APP_DIR}/${app_name}/${app_name}_venv"
     local bin_dir="${venv_path}/bin"
 
-    # Create venv and activate it
-    python3 -m venv "${venv_path}"
-    source "${bin_dir}/activate"
-    
-    # Install packages
-    echo "Installing ${pip_packages} into ${app_name}_venv..."
-    pip install --no-cache-dir ${pip_packages}
-    
-    # Deactivate venv
-    deactivate
+    if should_reinstall "${app_name}"; then
+        echo "Forcing reinstall of Python virtual env for ${app_name}..."
+        sudo rm -rf "${APP_DIR}/${app_name}"
+    fi
 
-    # Add the venv's bin directory to the vagrant user's PATH
-    # This makes commands like 'frida', 'sikw00f', etc. directly executable
-    echo "Adding ${bin_dir} to users PATH in .bashrc"
-    echo "export PATH=\"${bin_dir}:\$PATH\"" | sudo tee -a ${USER_HOME}/.bashrc > /dev/null
-    sudo chown ${INSTALL_USER}:${INSTALL_GROUP} ${USER_HOME}/.bashrc # Ensure vagrant owns their .bashrc
+    if [ ! -d "${venv_path}" ]; then
+        mkdir -p "${APP_DIR}/${app_name}"
+        python3 -m venv "${venv_path}"
+        
+        # Install packages within an isolated subshell
+        (
+            source "${bin_dir}/activate"
+            echo "Installing ${pip_packages} into ${app_name}_venv..."
+            pip install --no-cache-dir ${pip_packages}
+        )
 
-    echo "${app_name} installed in its virtual environment. Will be available after re-logging in or sourcing .bashrc."
+        # Add the venv's bin directory to the user's PATH in .bashrc idempotently
+        echo "Adding ${bin_dir} to user's PATH in .bashrc"
+        if ! grep -q "${bin_dir}" "${HOME_DIR}/.bashrc" 2>/dev/null; then
+            echo "export PATH=\"${bin_dir}:\$PATH\"" | sudo tee -a "${HOME_DIR}/.bashrc" > /dev/null
+        fi
+        sudo chown "${INSTALL_USER}:${INSTALL_GROUP}" "${HOME_DIR}/.bashrc"
+
+        echo "${app_name} installed in virtual environment."
+    else
+        echo "${app_name} virtual environment already exists, skipping creation."
+    fi
 }
 
-# Install Frida
+# --- Specific Application Installation Functions ---
+
+install_wireshark() {
+    echo "--- Installing Wireshark ---"
+    local FORCE_REINSTALL_APT=false
+    if should_reinstall "wireshark"; then
+        FORCE_REINSTALL_APT=true
+    fi
+    
+    if [ "$FORCE_REINSTALL_APT" = true ] || ! is_pkg_installed "wireshark"; then
+        echo "wireshark-common wireshark-common/install-setuid boolean true" | sudo debconf-set-selections
+        apt_install wireshark
+        sudo usermod -aG wireshark "${INSTALL_USER}"
+    fi
+    
+    # Setup plugins directory
+    local plugin_dir="${HOME_DIR}/.local/lib/wireshark/plugins"
+    mkdir -p "${plugin_dir}"
+    
+    # Copy Lua plugins if available
+    if [ -f "../files/bit32.lua" ]; then
+        cp ../files/bit32.lua "${plugin_dir}/"
+    fi
+    if [ -f "../files/mavlink_2_common.lua" ]; then
+        cp ../files/mavlink_2_common.lua "${plugin_dir}/"
+    fi
+}
+
+install_jadx() {
+    echo "--- Installing JADX-GUI ---"
+    local FORCE_REINSTALL_APT=false
+    if should_reinstall "jadx"; then
+        FORCE_REINSTALL_APT=true
+    fi
+    
+    if [ "$FORCE_REINSTALL_APT" = true ] || ! is_pkg_installed "jadx"; then
+        apt_install jadx
+        echo "JADX-GUI installed. Run 'jadx-gui' from the terminal."
+    fi
+}
+
+install_qgroundcontrol() {
+    echo "--- Installing QGroundControl ---"
+    local qgc_version="v4.0.1"
+    local qgc_app="QGroundControl.AppImage"
+    local qgc_url="https://github.com/mavlink/qgroundcontrol/releases/download/${qgc_version}/${qgc_app}"
+    local qgc_dir="${APP_DIR}/QGroundControl"
+    
+    mkdir -p "${qgc_dir}"
+    
+    # Move utility scripts into the app directory if they are in current work dir
+    [ -f runQGC.sh ] && mv runQGC.sh "${qgc_dir}/"
+    [ -f libfuse2.sh ] && mv libfuse2.sh "${qgc_dir}/"
+    chmod +x "${qgc_dir}/runQGC.sh" "${qgc_dir}/libfuse2.sh"
+    
+    # Install dependencies
+    if should_reinstall "qgc" || ! is_pkg_installed "gstreamer1.0-plugins-bad" || ! is_pkg_installed "libfuse3-4"; then
+        apt_install gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl \
+                    python3-gi python3-gst-1.0 libfuse3-4 \
+                    libxcb-xinerama0 libxkbcommon-x11-0 libxcb-cursor-dev
+    fi
+
+    if should_reinstall "qgc"; then
+        echo "Forcing reinstall of QGroundControl: removing existing AppImage..."
+        sudo rm -f "${qgc_dir}/QGroundControl.AppImage"
+    fi
+
+    if [ ! -f "${qgc_dir}/QGroundControl.AppImage" ]; then
+        (
+            cd "${qgc_dir}"
+            sudo ./libfuse2.sh
+            
+            echo "Downloading ${qgc_app} ${qgc_version} from ${qgc_url}..."
+            sudo curl -LO "${qgc_url}"
+            if [ ! -f QGroundControl.AppImage ]; then
+                sudo mv "${qgc_app}" QGroundControl.AppImage
+            fi
+            sudo chmod +x QGroundControl.AppImage runQGC.sh
+        )
+    else
+        echo "QGroundControl is already installed, skipping."
+    fi
+}
+
+install_opendroneid() {
+    echo "--- Installing OpenDroneID ---"
+    local odid_dir="${APP_DIR}/OpenDroneID"
+    
+    if should_reinstall "opendroneid"; then
+        echo "Forcing reinstall of OpenDroneID..."
+        sudo rm -rf "${odid_dir}"
+    fi
+    
+    if [ ! -d "${odid_dir}" ]; then
+        mkdir -p "${odid_dir}"
+        sudo git clone https://github.com/opendroneid/wireshark-dissector "${odid_dir}"
+    else
+        echo "OpenDroneID is already installed, skipping."
+    fi
+}
+
+install_adb() {
+    echo "--- Installing adb ---"
+    local FORCE_REINSTALL_APT=false
+    if should_reinstall "adb"; then
+        FORCE_REINSTALL_APT=true
+    fi
+    if [ "$FORCE_REINSTALL_APT" = true ] || ! is_pkg_installed "adb"; then
+        apt_install adb
+    fi
+}
+
+install_sdrangel() {
+    echo "--- Installing sdrangel ---"
+    if should_reinstall "sdrangel"; then
+        echo "Forcing reinstall of SDRangel..."
+        sudo snap remove sdrangel || true
+    fi
+    
+    if ! snap list | grep -q sdrangel; then
+        sudo snap install sdrangel
+        sudo snap connect sdrangel:raw-usb
+        sudo snap connect sdrangel:audio-record
+        sudo systemctl enable --now snapd.socket
+        sudo systemctl enable --now snapd.apparmor
+        sudo snap refresh
+    else
+        echo "SDRangel is already installed, skipping."
+    fi
+}
+
+install_missionplanner() {
+    echo "--- Installing MissionPlanner ---"
+    local mp_dir="${APP_DIR}/MissionPlanner"
+    local mp_url="https://firmware.ardupilot.org/Tools/MissionPlanner/MissionPlanner-latest.zip"
+    
+    if should_reinstall "missionplanner"; then
+        echo "Forcing reinstall of MissionPlanner..."
+        sudo rm -rf "${mp_dir}"
+    fi
+    
+    if [ ! -d "${mp_dir}" ]; then
+        mkdir -p "${mp_dir}"
+        (
+            cd "${mp_dir}"
+            sudo TERM=dumb certmgr -ssl https://autotest.ardupilot.org/LogMessages/Copter/LogMessages.xml.xz
+            wget http://ftp.us.debian.org/debian/pool/main/m/mono/ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
+            sudo dpkg -i ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
+            wget "${mp_url}"
+            unzip MissionPlanner-latest.zip
+        )
+    else
+        echo "MissionPlanner is already installed, skipping."
+    fi
+}
+
+install_nrfutil() {
+    echo "--- Installing NRFUtil ---"
+    local nrf_dir="${APP_DIR}/nrfutil"
+    local nrf_url="https://files.nordicsemi.com/ui/api/v1/download?repoKey=swtools&path=external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil&isNativeBrowsing=false"
+    local nrf_udev="https://raw.githubusercontent.com/NordicSemiconductor/nrf-udev/refs/heads/main/nrf-udev_1.0.1-all/lib/udev/rules.d/71-nrf.rules"
+    
+    if should_reinstall "nrfutil"; then
+        echo "Forcing reinstall of NRFUtil..."
+        sudo rm -rf "${nrf_dir}"
+        sudo rm -f "${HOME_DIR}/.local/bin/nrfutil"
+    fi
+    
+    if [ ! -d "${nrf_dir}" ]; then
+        mkdir -p "${nrf_dir}"
+        (
+            cd "${nrf_dir}"
+            wget "${nrf_url}" -O nrfutil
+            local local_bin_dir="${HOME_DIR}/.local/bin"
+            mkdir -p "${local_bin_dir}"
+            cp nrfutil "${local_bin_dir}/"
+            chown "${INSTALL_USER}:${INSTALL_GROUP}" "${local_bin_dir}" "${local_bin_dir}/nrfutil"
+            chmod +x "${local_bin_dir}/nrfutil"
+            wget "${nrf_udev}" -O 71-nrf.rules
+            sudo cp 71-nrf.rules /etc/udev/rules.d/
+            sudo udevadm trigger
+        )
+    else
+        echo "NRFUtil is already installed, skipping."
+    fi
+}
+
 install_frida() {
+    echo "--- Installing Frida ---"
     setup_python_app_venv "frida" "frida-tools==14.8.1"
-    cd /home/kali/workshop/apps/frida
-    git clone https://github.com/rootbsd/fridump3
+    (
+        cd "${APP_DIR}/frida"
+        if [ ! -d "fridump3" ]; then
+            git clone https://github.com/rootbsd/fridump3
+        fi
+    )
 }
 
-
-# Install Sikw00f
 install_sikw00f() {
-    # create directory, install from git below
-    setup_python_app_venv "sikw00f" "pymavlink==2.4.42"
+    echo "--- Installing Sikw00f ---"
+    local needs_clone=false
+    if [ ! -d "${APP_DIR}/sikw00f/sikw00f" ]; then
+        needs_clone=true
+    fi
 
-    # git install Sikw00f
-    cd ${APP_DIR}/sikw00f
-    source sikw00f_venv/bin/activate
-    git clone https://github.com/nicholasaleks/sikw00f
-    cd sikw00f
-    pipenv requirements > requirements.txt
-    python3 -m pip install -r requirements.txt
-    deactivate
-    chmod +x sikw00f.py
+    setup_python_app_venv "sikw00f" "pymavlink==2.4.42"
+    
+    if [ "$needs_clone" = true ] || should_reinstall "sikw00f"; then
+        (
+            cd "${APP_DIR}/sikw00f"
+            if [ ! -d "sikw00f" ]; then
+                git clone https://github.com/nicholasaleks/sikw00f
+            fi
+            cd "sikw00f"
+            source "../sikw00f_venv/bin/activate"
+            pipenv requirements > requirements.txt
+            python3 -m pip install -r requirements.txt
+            chmod +x sikw00f.py
+        )
+    fi
 }
 
-# Install MAVProxy
-# MAVProxy might have specific dependencies or a different executable name.
-# It's usually `mavproxy.py` from the installed package. The `setup_python_app_venv`
-# puts the bin dir in PATH, so it should be found.
 install_mavproxy() {
+    echo "--- Installing MAVProxy ---"
     setup_python_app_venv "mavproxy" "MAVProxy"
 }
 
-# Set ownership to user 
-sudo chown -R ${INSTALL_USER}:${INSTALL_GROUP} ${APP_DIR}
+# --- Execution ---
 
-# --- Final Cleanup ---
-echo "--- Performing final cleanup ---"
-sudo apt autoremove -y
-sudo apt clean
+# Pre-install ownership setup
+sudo chown -R "${INSTALL_USER}:${INSTALL_GROUP}" "${APP_DIR}"
 
-echo "Installation complete!"
-echo "---------------------------------------------------------"
-#echo "Post-installation notes:"
-#echo "- For Wireshark group changes to take effect, you must log out of the GUI/SSH and log back in."
-#echo "- For Python tools to be directly in your PATH, you might need to 'source ~/.bashrc' or log out/in."
-#echo "  Example: kali@kali:~$ source ~/.bashrc"
-#echo "  Then try: frida --version, sikw00f --help, mavproxy.py --help, nrfutil --version"
-#echo "- JADX-GUI can be launched by typing 'jadx-gui' in a terminal."
-
+# Run installation stages
 install_wireshark
 install_jadx
 install_qgroundcontrol
@@ -283,10 +436,13 @@ install_frida
 install_sikw00f
 install_mavproxy
 
+# Post-install cleanup
+echo "--- Performing final cleanup ---"
+sudo apt-get autoremove -y
+sudo apt-get clean
 
-# require uses input
-#flatpak install flathub com.obsproject.Studio
-# run
-#flatpak run com.obsproject.Studio
+# Final ownership reset
+sudo chown -R "${INSTALL_USER}:${INSTALL_GROUP}" "${APP_DIR}"
 
-sudo chown -R kali:kali ${APP_DIR}
+echo "Installation complete!"
+echo "---------------------------------------------------------"
