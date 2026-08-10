@@ -124,7 +124,7 @@
             <a class="nav-top" data-target="phase-1-start-your-kali-vm" href="#phase-1-start-your-kali-vm">Phase 1: Start Your Kali VM</a>
             <a class="nav-top" data-target="phase-2-copy-the-workshop-files-onto-the-vm" href="#phase-2-copy-the-workshop-files-onto-the-vm">Phase 2: Copy the Workshop Files onto the VM</a>
             <a class="nav-top" data-target="phase-3-run-the-installer" href="#phase-3-run-the-installer">Phase 3: Run the Installer</a>
-            <a class="nav-top" data-target="phase-4-finish-setup-two-small-steps" href="#phase-4-finish-setup-two-small-steps">Phase 4: Finish Setup (Two Small Steps)</a>
+            <a class="nav-top" data-target="phase-4-finish-setup-three-small-steps" href="#phase-4-finish-setup-three-small-steps">Phase 4: Finish Setup (Three Small Steps)</a>
             <a class="nav-top" data-target="phase-5-verify-your-toolkit" href="#phase-5-verify-your-toolkit">Phase 5: Verify Your Toolkit</a>
             <a class="nav-sub" href="#sub-setup-checklist">Setup Checklist</a>
             <a class="nav-top" data-target="phase-6-virtualbox-usb-passthrough-you-ll-use-this-all-week" href="#phase-6-virtualbox-usb-passthrough-you-ll-use-this-all-week">Phase 6: VirtualBox USB Passthrough (You'll Use This All Week)</a>
@@ -313,13 +313,30 @@ chmod +x install-workshop-apps.sh
 <div class="warning-box"><strong>Leave it alone until you see <code>Installation complete!</code></strong> If it stops with a red error, note the last <code>--- Installing X ---</code> banner — that tells you which tool failed, and the Troubleshooting section below covers the common ones.</div>
 </section>
 
-<section class="lab-section" id="phase-4-finish-setup-two-small-steps">
-    <h2>Phase 4: Finish Setup (Two Small Steps)</h2>
+<section class="lab-section" id="phase-4-finish-setup-three-small-steps">
+    <h2>Phase 4: Finish Setup (Three Small Steps)</h2>
     <p>A couple of changes only take effect after you refresh your shell and session:</p>
-<pre><code class="language-bash"># 1. Reload your shell so the new tool paths are active
-source ~/.bashrc
+<h1>reload</h1>
+<p><strong>1. Reload your shell so the new tool paths are active</strong></p>
+<pre><code class="language-bash">source ~/.bashrc
 </code></pre>
-<p><strong>2. Log out and back in</strong> (or reboot the VM). This is required so that:</p>
+<h1>edit</h1>
+<p><strong>2. Make your sudo passwordless</strong></p>
+<pre><code class="language-bash">vi /etc/sudoers
+# enter edit mode
+i
+# change this: 
+%sudo ALL=(ALL) ALL
+# to this: 
+%sudo ALL=(ALL) NOPASSWD:ALL
+# exit edit mode
+:esc:
+# force the save with the following key presses
+:w!
+:q!
+</code></pre>
+<h1>change</h1>
+<p><strong>3. Log out and back in</strong> (or reboot the VM). This is required so that:</p>
 <ul>
 <li>
 <p>Your user joins the <strong><code>wireshark</code></strong> group (needed to capture packets without root), and</p>
@@ -345,25 +362,39 @@ adb version
 # --- Analysis / GCS ---
 wireshark --version | head -1
 jadx --version
-mavproxy.py --version
-nrfutil --version
 
 # --- Radio ---
 snap list sdrangel        # SDRangel installed via snap
 </code></pre>
+<p>The nrfutil will attempt to download firmware on first invocation. If not connected to the internet, you will see failures, but this expected. Verify you do not see <code>command not found</code></p>
+<pre><code class="language-bash">nrfutil --version
+</code></pre>
+<p>To check mavproxy, first source the environment</p>
+<pre><code class="language-bash">cd ~/workshop/apps/mavproxy
+source mavproxy_venv/bin/activate
+mavproxy.py
+deactivate
+cd
+</code></pre>
 <p><strong>GUI tools</strong> — launch each once to confirm it opens, then close it:</p>
 <pre><code class="language-bash">jadx-gui &amp;                                   # Android decompiler (Lab 08)
-~/workshop/apps/QGroundControl/runQGC.sh &amp;   # QGroundControl (Lab 06)
+cd ~/workshop/apps/QGroundControl &amp;&amp; ./runQGC.sh &amp;   # QGroundControl (Lab 06)
+# you can use the [x] button on upper right hand corner to close QGC
 </code></pre>
 <p><strong>Python venv tools</strong> (Frida, sikw00f) live in their own environments. If a command isn't found on the <code>PATH</code>, activate its venv directly:</p>
 <pre><code class="language-bash"># Frida (Lab 08)
 frida --version  || source ~/workshop/apps/frida/frida_venv/bin/activate &amp;&amp; frida --version
-
-# sikw00f (Lab 16)
-ls ~/workshop/apps/sikw00f/sikw00f/sikw00f.py
+</code></pre>
+<pre><code class="language-bash"># sikw00f (Lab 16)
+cd ~/workshop/apps/sikw00f
+source sikw00f_venv/bin/activate
+cd sikw00f
+python3 sikwoof.py
+deactivate
+cd
 </code></pre>
 <h3 id="sub-setup-checklist">Setup Checklist</h3>
-<p>Tick each item before class starts:</p>
+<p>Check each item before class starts:</p>
 <table>
 <thead>
 <tr>
@@ -460,7 +491,7 @@ ls ~/workshop/apps/sikw00f/sikw00f/sikw00f.py
 </tr>
 <tr>
 <td>Android phone</td>
-<td>(phone model)</td>
+<td>Nexus 6P</td>
 <td>Lab 08 (Android)</td>
 </tr>
 </tbody>
@@ -473,10 +504,10 @@ ls ~/workshop/apps/sikw00f/sikw00f/sikw00f.py
     <h2>Troubleshooting</h2>
     <p><strong>QGroundControl won't launch / crashes immediately</strong>
 QGC is an AppImage that needs the older <code>libfuse2</code>. The installer builds it via <code>libfuse2.sh</code>. Always start QGC with the helper script, which fixes <code>/etc/mtab</code> first:</p>
-<pre><code class="language-bash">~/workshop/apps/QGroundControl/runQGC.sh
+<pre><code class="language-bash">cd ~/workshop/apps/QGroundControl &amp;&amp; ./runQGC.sh
 </code></pre>
 <p><strong>Mission Planner: SSL / certificate errors on first run</strong>
-Mission Planner runs on <strong>Mono</strong> and needs the Mono CA certificates the installer added. If you still see cert errors, re-run:</p>
+Changes in the mono library have affected the mono-debug library files. You may need to prepend the <code>TERM=dumb</code> definition to <code>mono</code> commands. Mission Planner runs on <strong>Mono</strong> and needs the Mono CA certificates the installer added. If you still see cert errors, re-run:</p>
 <pre><code class="language-bash">sudo TERM=dumb certmgr -ssl https://autotest.ardupilot.org/LogMessages/Copter/LogMessages.xml.xz
 </code></pre>
 <p><strong><code>command not found</code> for frida / mavproxy.py / sikw00f</strong>

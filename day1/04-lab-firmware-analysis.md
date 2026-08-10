@@ -1,4 +1,4 @@
-# Lab: UAV Firmware Analysis
+ # Lab: UAV Firmware Analysis
 
 **Type:** Lab
 **Duration:** 60 minutes
@@ -44,7 +44,7 @@ UAV firmware contains the operating system, configuration files, startup scripts
 
 ---
 
-## Phase 1: Obtain Firmware
+## Phase 1: Obtain Firmware (OEM)
 
 ### Option A – Download from Manufacturer
 
@@ -56,8 +56,9 @@ UAV firmware contains the operating system, configuration files, startup scripts
 # FCC ID for 3DR Solo: 2AC3P-800
 # https://fccid.io/2AC3P-800
 ```
-## Phase 1: Obtain Firmware
-### Option B – Extract from a Running Device
+
+## Phase 1: Obtain Firmware (Extrac)
+### Option B.1 – Extract from a Running Device
 
 ```bash
 # Connect to 3DR Solo WiFi: SoloLink_XXXXXXXX
@@ -75,7 +76,19 @@ dd if=/dev/mmcblk0p2 | gzip > solo-rootfs.img.gz
 # On your laptop:
 scp root@10.1.1.10:/tmp/solo-rootfs.img.gz .
 ```
-## Phase 1: Obtain Firmware
+
+### Option B.2 – Extract from a Running Device
+
+```bash
+# Connect to 3DR Solo WiFi: SoloLink_XXXXXXXX
+# SSH to the Solo companion computer and dump the mtd (partition) table
+ssh root@192.168.1.1 -C "cat /proc/mtd"
+
+# Dump a partition (example: root filesystem)
+ssh root@ 192.168.1.1 -C "dd if=/dev/mmcblk0p2" | dd of=solo-rootfs.img
+```
+
+## Phase 1: Obtain Firmware (Dump)
 ### Option C – Extract from SD Card
 
 - Remove microSD card from 3DR Solo UAV
@@ -88,7 +101,7 @@ scp root@10.1.1.10:/tmp/solo-rootfs.img.gz .
 
 - Pull SD card for the 3D solo UAV
 - Insert the MicroSD card into the provided Gigastone USB thumbdrive
-- If a format dialog pops up in Wndows *DO NOT FORMAT* just hit *CANCEL*
+- If a format dialog pops up in Windows *DO NOT FORMAT* just hit *CANCEL*
 <img src="../img/dont_format.png" style="width: 80%; height: auto;" align="center">
 
 ## Kali USB passthrough
@@ -104,43 +117,75 @@ In VirtualBox you need to confgure the USB passtrough to be able to see the SD c
 ```bash
 fdisk -l 
 ```
-We see a 32gb file system on /dev/sdb
+Search for a 7-8gb file system. For our example, this will be on /dev/sdb
 
 Two of the partitions (sdb3 and sdb4) are Linux partitions
 
 <img src="../img/fdisk.png" style="width: 80%; height: auto;" align="center">
 
-## Create mount point 
+## Create mount points 
 
-- Create a mount point for the sdb3 partition using the following command
+- Create a mount point for the partitions 1-4 using the following command
 ```bash
+sudo mkdir -p /mnt/solo/p1
+sudo mkdir -p /mnt/solo/p2
 sudo mkdir -p /mnt/solo/p3
+sudo mkdir -p /mnt/solo/p4
 ```
-Creates a mount point to attach the /dev/sdb partition
+Creates a mount points to attach the microsd firmware partitions
 
-## Mount partition
+## Mount partitions
 
-- Mount the sdb3 partition as a “Read Only” file system
+- Mount the solo firmware partitions as a “Read Only” file system
 
 ```bash
-sudo mount -o rw /dev/sdb3 /mnt/solo/p3
+sudo mount -o ro /dev/sdb1 /mnt/solo/p1
+sudo mount -o ro /dev/sdb2 /mnt/solo/p2
+sudo mount -o ro /dev/sdb3 /mnt/solo/p3
+sudo mount -o ro /dev/sdb4 /mnt/solo/p4
 ```
-Mounts the microSD partition 3 as ‘read only’ to /mnt/solo/p3
+Mounts the microSD partitions as ‘read only’
 
-## List out files
+## Expanding the squashfs file system
 
-- Find out what files and directories are in this partition
+- Find out what files and directories are in the first two partitions
 ```bash
-ls /mnt/solo/p3
-cp /mnt/solo/p2/3dr.....squashfs .
-sudo unsquashfs 3dr...squashfs
+ls -l /mnt/solo/p1
+ls -l /mnt/solo/p2
+```
+
+```bash
+ls -l /mnt/solo/p1
+total 75564
+-rw-r--r-- 1 kali kali 68190208 Feb 13  2022  3dr-solo-imx6solo-3dr-1080p.squashfs
+drwxr-xr-x 2 kali kali     2048 Feb 13  2022  'System Volume Information'
+-rw-r--r-- 1 kali kali    39914 Feb 13  2022  imx6solo-3dr-1080p.dtb
+-rw-r--r-- 1 kali kali   298228 Feb 13  2022  u-boot.imx
+-rw-r--r-- 1 kali kali  8844864 Feb 13  2022  uImage
+```
+
+```bash
+ls -l /mnt/solo/p2
+total 75564
+-rw-r--r-- 1 penne penne 68190208 Jan 26  2020  3dr-solo-imx6solo-3dr-1080p.squashfs
+drwxr-xr-x 2 penne penne     2048 Feb 13  2022  'System Volume Information'
+-rw-r--r-- 1 penne penne    39914 Jan 26  2020  imx6solo-3dr-1080p.dtb
+-rw-r--r-- 1 penne penne   298228 Jan 26  2020  u-boot.imx
+-rw-r--r-- 1 penne penne  8844864 Jan 26  2020  uImage
+```
+
+### Why are p1 and p2 near duplicates? How do they differ?
+
+Expand the squashfs using the `unsquashfs` command
+
+```bash
+cp /mnt/solo/p2/3dr-solo-imx6solo-3dr-1080p.squashfs /tmp
+cd /tmp
+sudo su -
+unsquashfs 3dr-solo-imx6solo-3dr-1080p.squashfs
 ls # squashfs-root
-cd unsquash-root/etc
-mkdir /home/kali/unshadow
-cp passwd /home/kali/unshadow
-cp shadow /home/kali/unshadow
-ls /home/kali/unshadow
-
+cd squash-root
+find .
 ```
 <img src="../img/listfiles.png" style="width: 80%; height: auto;" align="center">
 
@@ -155,14 +200,18 @@ We see some of the files we expect on a linux root filesystem, but not all.
 
 ```bash
 # Shadow file — password hashes
-cat /mnt/solo/etc/shadow
+cat /tmp/squashfs-root/etc/shadow
+cat /mnt/solo/p3/etc/shadow
 
 # Passwd file — user accounts
-cat /mnt/solo/etc/passwd
+cat /tmp/squashfs-root/etc/passwd
+cat /mnt/solo/p3/etc/passwd
 
 # Look for hardcoded passwords in scripts
-grep -r "password" /mnt/solo/etc/ --include="*.conf" --include="*.sh"
-grep -r "passwd" /mnt/solo/usr/share/ -l
+grep -r "password" /tmp/squashfs-root/etc --include="*.conf" --include="*.sh"
+grep -r "password" /mnt/solo/p3/etc --include="*.conf" --include="*.sh"
+grep -r "passwd" /tmp/squashfs-root/usr/share -l
+grep -r "passwd" /mnt/solo/p3/usr/share/ -l
 ```
 ### Check for Wifi Creds
 
@@ -199,7 +248,7 @@ cat /mnt/solo/p3/etc/init.d/* | grep -i "start"
 ### Check for Development Artifacts
 
 ```bash
-find /mnt/solo/p3 -name "*.log" -o -name "debug*" 2>/dev/null
+find /mnt/solo/p4 -name "*.log" -o -name "debug*" 2>/dev/null
 grep -r "TODO\|FIXME\|HACK\|debug" /mnt/solo/etc/ 2>/dev/null
 ```
 
@@ -366,7 +415,10 @@ ssh1 -i tester root@10.1.1.10
 Once you have found all the content you need unmounnt the microsd card with the following command: 
 
 ```bash
-sudo umount /mnt/solo/pe3
+sudo umount /mnt/solo/p1
+sudo umount /mnt/solo/p2
+sudo umount /mnt/solo/p3
+sudo umount /mnt/solo/p4
 ```
 ---
 
@@ -376,3 +428,75 @@ sudo umount /mnt/solo/pe3
 2. If the WiFi passphrase is embedded in firmware, what does that mean for all 3DR Solo drones using the same firmware version?
 3. How would you responsibly disclose a firmware vulnerability to a manufacturer?
 4. What security controls would you add to this firmware?
+
+---
+
+## VSCode / Co-Pilot
+
+```
+we are performing a security audit on a 3dr solo we own to determine if it is cyber secure. scan the subdirectories for security misconfigurations and hardcoded passwords, ssh keys, tokens and other credentials
+```
+
+```
+A scan of the extracted filesystem snapshot found several likely security issues.
+
+Findings:
+
+High risk:
+
+sshd_config allows PermitRootLogin and PermitEmptyPasswords, which is a weak SSH posture.
+wpa_supplicant.conf, hostapd.conf, and hostapd.base contain hardcoded Wi-Fi credentials and a default SSID/passphrase pattern.
+
+Medium risk:
+
+passwd and shadow include a root account with a stored password hash.
+ssh_host_rsa_key, ssh_host_dsa_key, and ssh_host_ecdsa_key are private SSH host keys stored on disk.
+authorized_keys exists, which indicates SSH public-key authorization is in use.
+
+Low/no obvious third-party tokens found:
+
+I did not find obvious GitHub/Slack/AWS/etc. token patterns in the scanned text files.
+Bottom line:
+
+The device image appears to have weak SSH defaults, hardcoded network credentials, and retained private SSH material. That is not cyber-secure by modern standards.
+
+Recommended next steps:
+
+Disable root SSH login and empty-password login.
+Rotate the Wi-Fi passphrase and SSH host keys.
+Change the root password and review any authorized SSH keys.
+
+```
+
+```
+I scanned squashfs-root and found the following credential-related artifacts:
+
+SSH/private-key material
+
+authorized_keys exists and contains an SSH public key.
+home/root/.ssh/id_rsa-mav-df-xfer exists as a private SSH key file.
+id_rsa-mav-df-xfer.pub exists as the matching public key.
+
+Account credential material
+
+shadow contains a root password hash:
+root:I8hkLIWAASD4Q:18287:0:99999:7:::
+passwd contains the root account entry.
+SSH misconfigurations
+
+sshd_config has:
+PermitRootLogin yes
+PermitEmptyPasswords yes
+
+Hardcoded Wi-Fi credentials
+
+hostapd.orig contains:
+wpa_passphrase=sololink
+Other credential-like strings
+
+openssl.cnf contains example placeholder text such as input_password = secret and output_password = secret, but these appear to be sample/template values rather than live credentials.
+API/token-style secrets
+
+I did not find obvious third-party service tokens (GitHub/AWS/Slack/etc.) in this directory.
+MAI-Code-1-Flash • 1x
+```

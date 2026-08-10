@@ -108,16 +108,35 @@ chmod +x install-workshop-apps.sh
 
 ---
 
-## Phase 4: Finish Setup (Two Small Steps)
+## Phase 4: Finish Setup (Three Small Steps)
 
 A couple of changes only take effect after you refresh your shell and session:
 
+# reload
+**1. Reload your shell so the new tool paths are active**
 ```bash
-# 1. Reload your shell so the new tool paths are active
 source ~/.bashrc
 ```
 
-**2. Log out and back in** (or reboot the VM). This is required so that:
+# edit
+**2. Make your sudo passwordless**
+```bash
+vi /etc/sudoers
+# enter edit mode
+i
+# change this: 
+%sudo ALL=(ALL) ALL
+# to this: 
+%sudo ALL=(ALL) NOPASSWD:ALL
+# exit edit mode
+:esc:
+# force the save with the following key presses
+:w!
+:q!
+```
+
+# change 
+**3. Log out and back in** (or reboot the VM). This is required so that:
 - Your user joins the **`wireshark`** group (needed to capture packets without root), and
 - The Python tool `PATH` entries load in every new terminal.
 
@@ -142,18 +161,33 @@ adb version
 # --- Analysis / GCS ---
 wireshark --version | head -1
 jadx --version
-mavproxy.py --version
-nrfutil --version
 
 # --- Radio ---
 snap list sdrangel        # SDRangel installed via snap
+```
+
+The nrfutil will attempt to download firmware on first invocation. If not connected to the internet, you will see failures, but this expected. Verify you do not see `command not found`
+
+```bash
+nrfutil --version
+```
+
+To check mavproxy, first source the environment
+
+```bash
+cd ~/workshop/apps/mavproxy
+source mavproxy_venv/bin/activate
+mavproxy.py
+deactivate
+cd
 ```
 
 **GUI tools** — launch each once to confirm it opens, then close it:
 
 ```bash
 jadx-gui &                                   # Android decompiler (Lab 08)
-~/workshop/apps/QGroundControl/runQGC.sh &   # QGroundControl (Lab 06)
+cd ~/workshop/apps/QGroundControl && ./runQGC.sh &   # QGroundControl (Lab 06)
+# you can use the [x] button on upper right hand corner to close QGC
 ```
 
 **Python venv tools** (Frida, sikw00f) live in their own environments. If a command isn't found on the `PATH`, activate its venv directly:
@@ -161,14 +195,21 @@ jadx-gui &                                   # Android decompiler (Lab 08)
 ```bash
 # Frida (Lab 08)
 frida --version  || source ~/workshop/apps/frida/frida_venv/bin/activate && frida --version
+```
 
+```bash
 # sikw00f (Lab 16)
-ls ~/workshop/apps/sikw00f/sikw00f/sikw00f.py
+cd ~/workshop/apps/sikw00f
+source sikw00f_venv/bin/activate
+cd sikw00f
+python3 sikwoof.py
+deactivate
+cd
 ```
 
 ### Setup Checklist
 
-Tick each item before class starts:
+Check each item before class starts:
 
 | # | Item | OK? |
 |---|------|-----|
@@ -201,7 +242,7 @@ Almost every hardware lab works by handing a **physical USB device** from your l
 | TP-Link Wi-Fi adapter | `Realtek 802.11ac WLAN Adapter` | Lab 12 (Wi-Fi) |
 | HackRF One SDR | `Great Scott Gadgets HackRF One` | Labs 11, 16, 20 |
 | nRF52840 dongle | `Nordic … / ZEPHYR nRF Sniffer` | Lab 14 (Remote ID) |
-| Android phone | (phone model) | Lab 08 (Android) |
+| Android phone | Nexus 6P | Lab 08 (Android) |
 
 <img src="../img/VirtualBox-USB-HackRF.png" style="width: 70%; height: auto;">
 
@@ -214,11 +255,11 @@ Almost every hardware lab works by handing a **physical USB device** from your l
 **QGroundControl won't launch / crashes immediately**
 QGC is an AppImage that needs the older `libfuse2`. The installer builds it via `libfuse2.sh`. Always start QGC with the helper script, which fixes `/etc/mtab` first:
 ```bash
-~/workshop/apps/QGroundControl/runQGC.sh
+cd ~/workshop/apps/QGroundControl && ./runQGC.sh
 ```
 
 **Mission Planner: SSL / certificate errors on first run**
-Mission Planner runs on **Mono** and needs the Mono CA certificates the installer added. If you still see cert errors, re-run:
+Changes in the mono library have affected the mono-debug library files. You may need to prepend the `TERM=dumb` definition to `mono` commands. Mission Planner runs on **Mono** and needs the Mono CA certificates the installer added. If you still see cert errors, re-run:
 ```bash
 sudo TERM=dumb certmgr -ssl https://autotest.ardupilot.org/LogMessages/Copter/LogMessages.xml.xz
 ```
@@ -272,3 +313,4 @@ cd ~/workshop
 When your checklist is all ticked, your VM matches every instructor demo for the next two days. If anything is still red, flag an instructor now — it's much cheaper to fix here than mid-lab.
 
 Next up: **Module 01 — UAS Cybersecurity**, where we put names to the attack chain you'll run on a real drone.
+
