@@ -380,7 +380,10 @@ install_nrfutil() {
 
 install_frida() {
     echo "--- Installing Frida ---"
-    setup_python_app_venv "frida" "frida-tools==14.8.1"
+    #setup_python_app_venv "frida" "frida-tools==14.8.1"
+    # match server 16.7.19
+    setup_python_app_venv "frida" "frida-tools==13.7.1"
+    
     (
         cd "${APP_DIR}/frida"
         if [ ! -d "fridump3" ]; then
