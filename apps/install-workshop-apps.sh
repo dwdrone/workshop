@@ -418,7 +418,7 @@ install_mavproxy() {
     setup_python_app_venv "mavproxy" "MAVProxy"
     cd "mavproxy"
     source "mavproxy_venv/bin/activate"
-    python3 -m pip install setuptools
+    python3 -m pip install "setuptools<81"
     python3 -m pip install future pymavlink pyserial
     cd -
 }
