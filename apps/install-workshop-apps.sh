@@ -416,6 +416,11 @@ install_sikw00f() {
 install_mavproxy() {
     echo "--- Installing MAVProxy ---"
     setup_python_app_venv "mavproxy" "MAVProxy"
+    cd "mavproxy"
+    source "mavproxy_venv/bin/activate"
+    python3 -m pip install setuptools
+    python3 -m pip install future pymavlink pyserial
+    cd -
 }
 
 # --- Execution ---
