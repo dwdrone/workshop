@@ -64,6 +64,7 @@ FILE_MAP = {
     "day1/21-uas-logging.md":               "slides/21-uas-logging.html",
     "day1/22-lab-forensics.md":             "slides/22-lab-forensics.html",
     "day2/23-cybersecurity-review.md":      "slides/23-cybersecurity-review.html",
+    "day2/99-lab-chanbw.md":      "slides/99-lab-chanbw.html",
 }
 
 # ---------------------------------------------------------------------------
